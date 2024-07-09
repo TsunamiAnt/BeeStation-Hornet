@@ -56,6 +56,27 @@
 
 	return icon
 
+/datum/role_preference/midround_ghost/eldervampire
+	name = "Elder Vampire (Midround)"
+	description = "Eons you have slumbered, your coffin disguised cleverly. \
+	Now you wake, thirsting for a millenia's worth of blood. \
+	That's what is expected of course, maybe you will be different? \
+	Maybe you will unite the station under thrallship to yourself?\n\
+	Maybe you will simply fade into obscurity."
+	//antag_datum = /datum/antagonist/eldervampire
+	use_icon = /datum/role_preference/antagonist/nuclear_operative
+
+/datum/role_preference/midround_ghost/eldervampire/get_preview_icon()
+	var/icon/icon = icon('icons/mob/spacedragon.dmi', "spacedragon")
+
+	icon.Blend("#d10b0b", ICON_MULTIPLY)
+	icon.Blend(icon('icons/mob/spacedragon.dmi', "overlay_base"), ICON_OVERLAY)
+
+	icon.Crop(10, 9, 54, 53)
+	icon.Scale(ANTAGONIST_PREVIEW_ICON_SIZE, ANTAGONIST_PREVIEW_ICON_SIZE)
+
+	return icon
+
 /datum/role_preference/midround_ghost/nuclear_operative
 	name = "Nuclear Operative (Midround)"
 	description = "Congratulations, agent. You have been chosen to join the Syndicate \

@@ -780,6 +780,52 @@
 	if(prob(announce_chance))
 		announce_swarmer()
 	return S
+//////////////////////////////////////////////
+//                                          //
+//             VAMPIRE (GHOST)				//
+//			("Elder" to distinguish			//
+// 				from halloween race)        //
+//                                     		//
+//////////////////////////////////////////////
+
+/datum/dynamic_ruleset/midround/from_ghosts/eldervampire
+	name = "Elder Vampire"
+	midround_ruleset_style = MIDROUND_RULESET_STYLE_HEAVY
+	//antag_datum = /datum/antagonist/eldervampire
+	role_preference = /datum/role_preference/midround_ghost/eldervampire
+	enemy_roles = list(JOB_NAME_SECURITYOFFICER, JOB_NAME_DETECTIVE, JOB_NAME_WARDEN, JOB_NAME_HEADOFSECURITY, JOB_NAME_CAPTAIN)
+	required_enemies = list(2,2,1,1,1,1,1,1,0,0)
+	required_candidates = 1
+	weight = 3
+	cost = 8
+	minimum_players = 15
+	repeatable = FALSE
+
+/datum/dynamic_ruleset/midround/from_ghosts/eldervampire/ready(forced = FALSE)
+	if(!..())
+		return FALSE
+	if(!length(GLOB.xeno_spawn))
+		log_game("DYNAMIC: [ruletype] ruleset [name] ready() failed due to no valid spawn locations.")
+		return FALSE
+	return TRUE
+
+/datum/dynamic_ruleset/midround/from_ghosts/eldervampire/generate_ruleset_body(mob/applicant)
+	var/datum/mind/player_mind = new /datum/mind(applicant.key)
+	player_mind.active = TRUE
+
+	var/mob/living/carbon/human/species/vampire/S = new /mob/living/carbon/human/species/vampire(pick(GLOB.xeno_spawn))
+	player_mind.transfer_to(S)
+
+	S.real_name = "Test Vampire Hottie"
+	S.name = "Test Vampire Hottie"
+	S.dna.update_dna_identity()
+
+	SEND_SOUND(S, sound('sound/magic/mutate.ogg'))
+
+	message_admins("[ADMIN_LOOKUPFLW(S)] has been made into an Elder Vampire by the midround ruleset.")
+	log_game("DYNAMIC: [key_name(S)] was spawned as an Elder Vampire by the midround ruleset.")
+	return S
+
 
 //////////////////////////////////////////////
 //                                          //
