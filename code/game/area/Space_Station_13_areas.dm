@@ -78,6 +78,61 @@ NOTE: there are two lists of areas in the end of this file: centcom and station 
 /area/asteroid/nearstation/bomb_site
 	name = "Bomb Testing Asteroid"
 
+// LAIRSTATION
+/area/asteroid/JungleHellscape
+	name = "Jungle"
+	icon_state = "asteroid"
+	outdoors = TRUE
+	area_flags = VALID_TERRITORY | UNIQUE_AREA | CAVES_ALLOWED
+	dynamic_lighting = DYNAMIC_LIGHTING_DISABLED
+	sound_environment = SOUND_ENVIRONMENT_NONE
+	ambient_buzz = 'sound/ambience/jungle.ogg'
+
+/area/asteroid/JungleHellscape/flying/
+	name = "Jungle(Flying Low)"
+	mood_bonus = 2
+	mood_message = "<span class='warning'>What a view!.\n</span>"
+
+/area/asteroid/JungleHellscape/flying/medium
+	name = "Jungle(Flying High)"
+
+/area/asteroid/JungleHellscape/flying/high
+	name = "Jungle(Flying VERY High)"
+
+/area/asteroid/JungleHellscape/sparse
+	name = "Sparse Jungle"
+	sound_environment = SOUND_ENVIRONMENT_NONE
+	mood_bonus = 1
+	mood_message = "<span class='warning'>The trees look nice.\n</span>"
+	map_generator = /datum/map_generator/sand_generator
+
+/area/asteroid/JungleHellscape/medium
+	name = "Jungle's Edge"
+	sound_environment = SOUND_ENVIRONMENT_NONE
+	mood_bonus = -2
+	mood_message = "<span class='warning'>The forest looks way denser up close...\n</span>"
+	map_generator = /datum/map_generator/grass_generator
+	sound_environment = SOUND_ENVIRONMENT_FOREST
+	ambientsounds = list('sound/ambience/ambisin4.ogg','sound/ambience/ambisin1.ogg','sound/ambience/ambilava.ogg')
+
+/area/asteroid/JungleHellscape/emptyThick
+	name = "Deep Jungle"
+	sound_environment = null
+	mood_bonus = -4
+	mood_message = "<span class='warning'>This jungle is creepy as hell. I can barely see!\n</span>"
+	sound_environment = SOUND_ENVIRONMENT_FOREST
+	ambientsounds = list('sound/ambience/ambisin4.ogg','sound/ambience/ambisin1.ogg','sound/ambience/ambilava.ogg')
+
+/area/asteroid/JungleHellscape/thick
+	name = "Deep Jungle"
+	sound_environment = null
+	mood_bonus = -4
+	mood_message = "<span class='warning'>This jungle is creepy as hell. I can barely see!\n</span>"
+	map_generator = /datum/map_generator/deep_jungle_generator
+	sound_environment = SOUND_ENVIRONMENT_FOREST
+	ambientsounds = list('sound/ambience/ambisin4.ogg','sound/ambience/ambisin1.ogg','sound/ambience/ambilava.ogg')
+
+//	ECHOSTATION
 /area/asteroid/paradise
 	name = "paradise"
 	icon_state = "asteroid"

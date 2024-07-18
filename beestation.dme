@@ -871,6 +871,7 @@
 #include "code\datums\map_generators\map_placer.dm"
 #include "code\datums\mapgen\_MapGenerator.dm"
 #include "code\datums\mapgen\CaveGenerator.dm"
+#include "code\datums\mapgen\DeepJungleGenerator.dm"
 #include "code\datums\mapgen\GrassGenerator.dm"
 #include "code\datums\mapgen\JungleGenerator.dm"
 #include "code\datums\mapgen\SandGenerator.dm"

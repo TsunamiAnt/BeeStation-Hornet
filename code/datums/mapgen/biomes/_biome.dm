@@ -46,6 +46,18 @@
 /datum/biome/jungle/deep
 	flora_density = 65
 
+/datum/biome/jungle/superdeep
+	flora_density = 100
+	flora_x_offset = 8
+	flora_y_offset = 8
+	fauna_types = list(,
+		/mob/living/simple_animal/butterfly,
+		/mob/living/simple_animal/hostile/lizard,
+		/mob/living/simple_animal/parrot,
+		/mob/living/simple_animal/sloth,
+		/mob/living/carbon/monkey
+	)
+
 /datum/biome/wasteland
 	turf_type = /turf/open/floor/plating/dirt/jungle/wasteland
 
