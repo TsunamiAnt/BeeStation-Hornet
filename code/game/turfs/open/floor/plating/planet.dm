@@ -61,7 +61,7 @@
 	initial_gas_mix = OPENTURF_DEFAULT_ATMOS
 	planetary_atmos = TRUE
 	desc = "Greener on the other side."
-	color = "#0f9731"
+	color = "#d1f9ff"
 
 /turf/open/floor/grass/jungle/Initialize(mapload)
 	.=..()
