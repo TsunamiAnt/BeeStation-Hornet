@@ -20,18 +20,17 @@
 		{"Up" : true, "Down" : true, "Baseturf" : "/turf/open/openspace", "Linkage" : "Cross", "Gravity": true},
 		{"Up" : true, "Down" : true, "Baseturf" : "/turf/open/openspace", "Linkage" : "Cross", "Gravity": true},
 		{"Up" : true, "Down" : true, "Baseturf" : "/turf/open/openspace", "Linkage" : "Cross", "Gravity": true},
-		{"Up" : true, "Down" : true, "Baseturf" : "/turf/open/openspace", "Linkage" : "Cross", "Gravity": true},
 		{"Down" : true, "Baseturf" : "/turf/open/openspace", "Linkage" : "Cross", "Gravity": true}],
 
 	"starlight": "cycle",
 	"starlight_colours": [
 		"#040412",
-		"#25507a",
-		"#E2E9FF",
-		"#FFF7EF",
-		"#FFD5B3",
-		"#FFAA5F",
-		"#968857",
-		"#110c1c"
+		"#11365c",
+		"#59380f",
+		"#82130b",
+		"#59380f",
+		"#11365c",
+		"#040412",
+		"#040412"
 		]
 	}

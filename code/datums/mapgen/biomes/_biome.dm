@@ -46,7 +46,15 @@
 /datum/biome/jungle/deep
 	flora_density = 65
 
-/datum/biome/jungle/superdeep
+//Lairstation Super deep jungle
+/datum/biome/lairjungle
+	turf_type = /turf/open/floor/grass/jungle
+	flora_types = list(
+		/obj/structure/flora/grass/jungle,
+		/obj/structure/flora/tree/jungletrunk,
+		/obj/structure/flora/junglebush,
+		/obj/structure/flora/junglebush/b,
+		/obj/structure/flora/junglebush/large)
 	flora_density = 100
 	flora_x_offset = 8
 	flora_y_offset = 8

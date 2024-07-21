@@ -141,6 +141,39 @@
 	icon_state = "[icon_state][rand(1, 6)]"
 	. = ..()
 
+
+//Multi-Z jungle Tree.
+
+/obj/structure/flora/tree/jungletrunk
+	name = "tree"
+	icon_state = "treetrunk"
+	desc = "It's seriously hampering your view of the jungle."
+	icon = 'icons/obj/flora/jungletrees.dmi'
+	pixel_x = -48
+	pixel_y = -12
+	zmm_flags = ZMM_WIDE_LOAD
+
+//Same as normal tree, except we also generate a random treetop one z above
+/obj/structure/flora/tree/jungletrunk/Initialize(mapload)
+	icon_state = "[icon_state][rand(1, 6)]"
+	var/turf/T = get_turf(src)
+	var/newtop = /obj/structure/flora/tree/jungletop
+	new newtop(GET_TURF_ABOVE(T))
+	. = ..()
+
+/obj/structure/flora/tree/jungletop
+	name = "treetop"
+	icon_state = "treetop"
+	desc = "It's seriously hampering your view of the jungle."
+	icon = 'icons/obj/flora/jungletrees.dmi'
+	pixel_x = -48
+	pixel_y = 32
+	zmm_flags = ZMM_WIDE_LOAD
+
+/obj/structure/flora/tree/jungletop/Initialize(mapload)
+	icon_state = "[icon_state][rand(1, 6)]"
+	. = ..()
+
 /obj/structure/flora/tree/jungle/small
 	pixel_y = 0
 	pixel_x = -32
