@@ -38,9 +38,9 @@
 	plane = T.plane
 	RegisterSignal(T, COMSIG_ATOM_UPDATE_OVERLAYS,  PROC_REF(stage_one_copy))
 	//Smoothing
-	smoothing_flags = T.smoothing_flags
-	smoothing_groups = T.smoothing_groups
-	canSmoothWith = T.canSmoothWith
+	//smoothing_flags = T.smoothing_flags
+	//smoothing_groups = T.smoothing_groups
+	//canSmoothWith = T.canSmoothWith
 	//Replace the turf we're imitating
 	if(base_turf)
 		T.ChangeTurf(base_turf)

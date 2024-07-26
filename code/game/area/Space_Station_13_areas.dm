@@ -78,7 +78,7 @@ NOTE: there are two lists of areas in the end of this file: centcom and station 
 /area/asteroid/nearstation/bomb_site
 	name = "Bomb Testing Asteroid"
 
-// LAIRSTATION
+// LAIRSTATION Outside:
 /area/asteroid/JungleHellscape
 	name = "Jungle"
 	icon_state = "asteroid"
@@ -131,6 +131,119 @@ NOTE: there are two lists of areas in the end of this file: centcom and station 
 	map_generator = /datum/map_generator/deep_jungle_generator
 	sound_environment = SOUND_ENVIRONMENT_FOREST
 	ambientsounds = list('sound/ambience/ambisin4.ogg','sound/ambience/ambisin1.ogg','sound/ambience/ambilava.ogg')
+
+// LAIRSTATION misc:
+/area/lair/elevator/level1
+	name = "Level 1 Elevator Lobby"
+	icon_state = "dorms"
+
+/area/lair/elevator/level3
+	name = "Level 3 Elevator Lobby"
+	icon_state = "dorms"
+
+/area/lair/elevator/level5
+	name = "Level 5 Elevator Lobby"
+	icon_state = "dorms"
+
+/area/lair/elevator/level7
+	name = "Level 7 Elevator Lobby"
+	icon_state = "dorms"
+
+// LAIRSTATION Engineering
+/area/lair/engineering/
+	ambience_index = AMBIENCE_ENGI
+	sound_environment = SOUND_AREA_LARGE_ENCLOSED
+	airlock_hack_difficulty = AIRLOCK_WIRE_SECURITY_ADVANCED
+
+/area/lair/engineering/control
+	name = "Reactor Control Room"
+	icon_state = "engine"
+
+/area/lair/engineering/chamber
+	name = "Reactor Chamber"
+	icon_state = "engine"
+
+// LAIRSTATION Maintenance shafts:
+/area/maintenance/lair/shaft/central
+	name = "Central Maintenance Shaft"
+	icon_state = "centralmaint"
+
+/area/maintenance/lair/shaft/west
+	name = "West Maintenance Shaft"
+	icon_state = "centralmaint"
+
+/area/maintenance/lair/shaft/east
+	name = "East Maintenance Shaft"
+	icon_state = "centralmaint"
+
+/area/maintenance/lair/shaft/stairwayprimary
+	name = "Primary Stairwell"
+	icon_state = "centralmaint"
+
+// LAIRSTATION Elevator Maints
+/area/maintenance/lair/level2/elevator
+	name = "Level 2 Elevator Maintenance"
+	icon_state = "centralmaint"
+
+/area/maintenance/lair/level4/elevator
+	name = "Level 4 Elevator Maintenance"
+	icon_state = "centralmaint"
+
+/area/maintenance/lair/level6/elevator
+	name = "Level 6 Elevator Maintenance"
+	icon_state = "centralmaint"
+
+// LAIRSTATION Maint Level 2
+/area/maintenance/lair/level2/north
+	name = "Level 2 North Maintenance"
+	icon_state = "centralmaint"
+
+/area/maintenance/lair/level2/west
+	name = "Level 2 West Maintenance"
+	icon_state = "centralmaint"
+
+/area/maintenance/lair/level2/east
+	name = "Level 2 East Maintenance"
+	icon_state = "centralmaint"
+
+/area/maintenance/lair/level2/south
+	name = "Level 2 South Maintenance"
+	icon_state = "centralmaint"
+
+// LAIRSTATION Maint Level 4
+/area/maintenance/lair/level4/north
+	name = "Level 4 North Maintenance"
+	icon_state = "centralmaint"
+
+/area/maintenance/lair/level4/west
+	name = "Level 4 West Maintenance"
+	icon_state = "centralmaint"
+
+/area/maintenance/lair/level4/east
+	name = "Level 4 East Maintenance"
+	icon_state = "centralmaint"
+
+/area/maintenance/lair/level4/south
+	name = "Level 4 South Maintenance"
+	icon_state = "centralmaint"
+
+// LAIRSTATION Maint Level 6
+/area/maintenance/lair/level6/north
+	name = "Level 6 North Maintenance"
+	icon_state = "centralmaint"
+
+/area/maintenance/lair/level6/west
+	name = "Level 6 West Maintenance"
+	icon_state = "centralmaint"
+
+/area/maintenance/lair/level6/east
+	name = "Level 6 East Maintenance"
+	icon_state = "centralmaint"
+
+/area/maintenance/lair/level6/south
+	name = "Level 6 South Maintenance"
+	icon_state = "centralmaint"
+
 
 //	ECHOSTATION
 /area/asteroid/paradise
