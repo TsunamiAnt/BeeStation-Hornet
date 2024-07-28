@@ -166,7 +166,9 @@
 /turf/open/floor/plating/dirt/planetary,
 /area/asteroid/JungleHellscape)
 "aM" = (
-/obj/machinery/atmospherics/components/binary/pump,
+/obj/machinery/atmospherics/components/binary/pump{
+	name = "Co2 Purge"
+	},
 /turf/open/floor/catwalk_floor/iron_smooth,
 /area/lair/engineering/chamber)
 "aO" = (
@@ -247,7 +249,7 @@
 	pixel_x = -4;
 	pixel_y = 3
 	},
-/turf/open/floor/iron/smooth,
+/turf/open/floor/iron/white/textured,
 /area/lair/engineering/control)
 "ba" = (
 /obj/structure/sign/poster/official/moth3,
@@ -341,6 +343,7 @@
 	network = list("ss13","engine")
 	},
 /obj/effect/mapping_helpers/apc/discharged,
+/obj/machinery/power/apc/auto_name/directional/north,
 /turf/open/floor/engine,
 /area/engine/supermatter)
 "bw" = (
@@ -615,7 +618,7 @@
 /obj/machinery/light{
 	dir = 4
 	},
-/turf/open/floor/iron/smooth,
+/turf/open/floor/iron/white/textured,
 /area/lair/engineering/control)
 "cL" = (
 /obj/effect/gibspawner/robot,
@@ -1229,23 +1232,19 @@
 /obj/machinery/atmospherics/pipe/simple/general/hidden{
 	dir = 4
 	},
-/obj/machinery/door/firedoor,
-/obj/machinery/door/airlock/engineering/glass{
-	name = "Telecommunications";
-	req_access_txt = "61"
-	},
 /turf/open/floor/iron/dark/textured,
 /area/tcommsat/computer)
 "fa" = (
-/obj/machinery/atmospherics/pipe/simple/green/hidden{
-	dir = 8
+/obj/effect/spawner/structure/window/depleteduranium,
+/obj/structure/cable/yellow{
+	icon_state = "4-8"
 	},
-/obj/effect/turf_decal/stripes/line{
-	dir = 1
+/obj/machinery/door/poddoor/shutters/radiation{
+	id = "controlshutter"
 	},
-/obj/effect/turf_decal/caution/red,
-/turf/open/floor/iron/smooth_large,
-/area/lair/engineering/chamber)
+/obj/machinery/door/firedoor,
+/turf/open/floor/plating,
+/area/lair/engineering/control)
 "fe" = (
 /turf/closed/wall/r_wall,
 /area/lair/engineering/chamber)
@@ -1277,8 +1276,9 @@
 /turf/open/floor/plating/dirt/jungle,
 /area/asteroid/JungleHellscape/emptyThick)
 "fk" = (
-/obj/machinery/atmospherics/pipe/manifold/amethyst/hidden{
-	dir = 4
+/obj/machinery/atmospherics/components/binary/volume_pump{
+	dir = 4;
+	name = "Moderator to purge"
 	},
 /turf/open/floor/catwalk_floor/iron_smooth,
 /area/lair/engineering/chamber)
@@ -1423,13 +1423,10 @@
 /turf/open/floor/plating/dirt/planetary,
 /area/awaymission/caves)
 "fC" = (
-/obj/structure/rack,
-/obj/item/clothing/mask/gas{
-	pixel_x = 3;
-	pixel_y = 3
-	},
-/turf/open/floor/iron,
-/area/space)
+/obj/effect/turf_decal/stripes/full,
+/obj/item/RBMK_box/body/coolant_input,
+/turf/open/floor/iron/smooth_large,
+/area/lair/engineering/chamber)
 "fD" = (
 /turf/closed/wall/r_wall,
 /area/maintenance/lair/level2/elevator)
@@ -1630,7 +1627,7 @@
 /obj/machinery/shower{
 	pixel_y = 12
 	},
-/turf/open/floor/iron/smooth,
+/turf/open/floor/iron/white/textured,
 /area/lair/engineering/control)
 "gn" = (
 /obj/structure/fluff/hedge,
@@ -1824,11 +1821,10 @@
 /turf/open/floor/carpet/orange,
 /area/lair/engineering/control)
 "hi" = (
-/obj/machinery/atmospherics/pipe/simple/scrubbers/hidden{
-	dir = 4
+/obj/item/fuel_rod,
+/turf/open/indestructible/sound/pool{
+	name = "New Fuel Rod Pool"
 	},
-/obj/machinery/atmospherics/pipe/simple/amethyst/hidden,
-/turf/open/floor/catwalk_floor/iron_smooth,
 /area/lair/engineering/chamber)
 "hj" = (
 /obj/structure/fluff/hedge,
@@ -1892,6 +1888,7 @@
 	dir = 4
 	},
 /obj/machinery/atmospherics/components/unary/thermomachine/freezer/on,
+/obj/machinery/power/apc/auto_name/directional/north,
 /turf/open/floor/iron/dark/telecomms{
 	initial_gas_mix = "o2=22;n2=82;TEMP=293.15"
 	},
@@ -2027,17 +2024,8 @@
 /obj/effect/turf_decal/tile/yellow{
 	dir = 8
 	},
-/obj/structure/rack,
-/obj/item/geiger_counter{
-	pixel_y = 5;
-	pixel_x = 4
-	},
-/obj/item/geiger_counter{
-	pixel_x = -4;
-	pixel_y = 2
-	},
-/obj/item/geiger_counter,
-/turf/open/floor/iron/smooth,
+/obj/structure/tank_dispenser,
+/turf/open/floor/iron/white/textured,
 /area/lair/engineering/control)
 "hV" = (
 /obj/effect/turf_decal/siding/dark/corner{
@@ -2310,27 +2298,35 @@
 /turf/open/floor/bamboo,
 /area/maintenance/lair/level6/east)
 "iS" = (
+/obj/machinery/door/firedoor,
+/obj/structure/fans/tiny,
+/obj/machinery/atmospherics/pipe/simple/supply/hidden/layer2,
+/obj/machinery/atmospherics/pipe/simple/scrubbers/hidden/layer4,
+/obj/machinery/atmospherics/pipe/simple/general/hidden,
 /obj/machinery/door/airlock/engineering/glass{
 	name = "Server Room";
 	req_access_txt = "61"
 	},
-/obj/machinery/door/firedoor,
-/obj/structure/fans/tiny,
-/obj/machinery/atmospherics/pipe/heat_exchanging/junction,
-/obj/machinery/atmospherics/pipe/simple/supply/hidden/layer2,
-/obj/machinery/atmospherics/pipe/simple/scrubbers/hidden/layer4,
 /turf/open/floor/engine{
 	initial_gas_mix = "n2=100;TEMP=80";
 	name = "mainframe floor"
 	},
 /area/tcommsat/computer)
 "iT" = (
-/obj/machinery/atmospherics/pipe/simple/amethyst/hidden{
-	dir = 9
+/obj/effect/turf_decal/tile/yellow{
+	dir = 1
 	},
-/obj/machinery/meter,
-/turf/open/floor/catwalk_floor/iron_smooth,
-/area/lair/engineering/chamber)
+/obj/effect/turf_decal/tile/yellow{
+	dir = 8
+	},
+/obj/machinery/computer/monitor{
+	dir = 4
+	},
+/obj/structure/cable/yellow{
+	icon_state = "0-2"
+	},
+/turf/open/floor/iron/smooth,
+/area/lair/engineering/control)
 "iW" = (
 /obj/machinery/atmospherics/pipe/simple/supply/hidden/layer2{
 	dir = 4
@@ -2659,8 +2655,10 @@
 /turf/open/floor/plating,
 /area/engine/engine_room)
 "kj" = (
-/obj/machinery/atmospherics/components/binary/volume_pump{
-	dir = 1
+/obj/effect/turf_decal/stripes/line,
+/obj/structure/railing,
+/obj/machinery/atmospherics/pipe/simple/green/hidden{
+	dir = 8
 	},
 /turf/open/floor/catwalk_floor/iron_smooth,
 /area/lair/engineering/chamber)
@@ -2934,6 +2932,7 @@
 	dir = 1
 	},
 /obj/effect/mapping_helpers/apc/discharged,
+/obj/machinery/power/apc/auto_name/directional/north,
 /turf/open/floor/plating,
 /area/engine/engine_room)
 "ls" = (
@@ -2943,10 +2942,11 @@
 /turf/open/floor/iron/textured_half,
 /area/maintenance/lair/level4/elevator)
 "lu" = (
-/obj/structure/table,
-/obj/item/crowbar/large,
-/turf/open/floor/iron,
-/area/space)
+/obj/machinery/atmospherics/components/binary/pump{
+	name = "Moderator line"
+	},
+/turf/open/floor/catwalk_floor/iron_smooth,
+/area/lair/engineering/chamber)
 "lv" = (
 /obj/effect/spawner/lootdrop/maintenance/two,
 /obj/effect/gibspawner/robot,
@@ -3253,6 +3253,12 @@
 	},
 /turf/open/openspace,
 /area/maintenance/lair/shaft/central)
+"mN" = (
+/obj/machinery/light,
+/turf/open/indestructible/sound/pool{
+	name = "Fuel Rod Pool"
+	},
+/area/lair/engineering/chamber)
 "mO" = (
 /obj/structure/sign/departments/minsky/security/security,
 /turf/closed/wall,
@@ -3836,10 +3842,10 @@
 /turf/open/floor/noslip/dark,
 /area/lair/elevator/level1)
 "pm" = (
-/obj/machinery/atmospherics/pipe/simple/scrubbers/hidden{
+/obj/machinery/atmospherics/components/binary/pump{
+	name = "Coolant IN";
 	dir = 4
 	},
-/obj/machinery/atmospherics/pipe/simple/cyan/hidden,
 /turf/open/floor/catwalk_floor/iron_smooth,
 /area/lair/engineering/chamber)
 "pn" = (
@@ -3868,6 +3874,10 @@
 /obj/effect/decal/cleanable/cobweb/cobweb2,
 /turf/open/floor/bamboo,
 /area/maintenance/lair/level6/east)
+"py" = (
+/obj/machinery/power/apc/auto_name/directional/north,
+/turf/open/floor/catwalk_floor/iron_smooth,
+/area/lair/engineering/chamber)
 "pA" = (
 /obj/effect/turf_decal/siding/dark,
 /turf/open/floor/iron/dark/smooth_large,
@@ -3893,7 +3903,7 @@
 /obj/machinery/suit_storage_unit/radsuit,
 /obj/effect/turf_decal/delivery,
 /obj/machinery/airalarm/directional/east,
-/turf/open/floor/iron/smooth,
+/turf/open/floor/iron/white/textured,
 /area/lair/engineering/control)
 "pH" = (
 /obj/machinery/door/airlock/engineering/glass{
@@ -3949,6 +3959,7 @@
 	dir = 1
 	},
 /obj/effect/turf_decal/tile/yellow,
+/obj/machinery/power/apc/auto_name/directional/north,
 /turf/open/floor/iron/smooth,
 /area/engine/break_room)
 "pQ" = (
@@ -3965,11 +3976,12 @@
 /turf/open/floor/iron/techmaint,
 /area/asteroid/JungleHellscape/flying/high)
 "pS" = (
-/obj/machinery/atmospherics/pipe/manifold/amethyst/hidden{
-	dir = 8
+/obj/machinery/atmospherics/pipe/simple/supply/visible/layer2,
+/obj/machinery/atmospherics/components/binary/volume_pump/layer4{
+	dir = 1
 	},
 /turf/open/floor/catwalk_floor/iron_smooth,
-/area/lair/engineering/chamber)
+/area/engine/atmos)
 "pT" = (
 /turf/open/water/jungle,
 /area/asteroid/JungleHellscape/emptyThick)
@@ -4050,8 +4062,7 @@
 /turf/open/floor/iron/dark/smooth_large,
 /area/crew_quarters/heads/hop)
 "qv" = (
-/obj/machinery/atmospherics/pipe/manifold/amethyst/hidden,
-/obj/machinery/meter,
+/obj/machinery/atmospherics/pipe/manifold/green/hidden,
 /turf/open/floor/catwalk_floor/iron_smooth,
 /area/lair/engineering/chamber)
 "qz" = (
@@ -4450,11 +4461,9 @@
 	},
 /area/lair/elevator/level1)
 "sd" = (
-/obj/machinery/atmospherics/components/unary/tank/plasma{
-	name = "Plasma Coolant"
-	},
-/turf/open/floor/catwalk_floor/iron_smooth,
-/area/lair/engineering/chamber)
+/obj/machinery/firealarm/directional/north,
+/turf/open/floor/iron/dark/textured,
+/area/tcommsat/computer)
 "sf" = (
 /obj/effect/turf_decal/siding/dark/corner{
 	dir = 1
@@ -4598,13 +4607,15 @@
 /turf/open/floor/iron/techmaint,
 /area/asteroid/JungleHellscape/flying/high)
 "sO" = (
-/obj/machinery/atmospherics/pipe/simple/green/hidden,
-/obj/machinery/atmospherics/components/binary/valve/digital,
 /obj/effect/turf_decal/stripes/line,
 /obj/structure/railing,
 /obj/structure/cable/yellow{
 	icon_state = "1-2"
 	},
+/obj/machinery/atmospherics/pipe/simple/green/hidden{
+	dir = 9
+	},
+/obj/machinery/meter,
 /turf/open/floor/catwalk_floor/iron_smooth,
 /area/lair/engineering/chamber)
 "sP" = (
@@ -5269,6 +5280,9 @@
 /area/engine/engine_room)
 "vq" = (
 /obj/effect/turf_decal/stripes/line,
+/obj/machinery/atmospherics/pipe/simple/green/hidden{
+	dir = 8
+	},
 /turf/open/floor/catwalk_floor/iron_smooth,
 /area/lair/engineering/chamber)
 "vr" = (
@@ -5297,12 +5311,15 @@
 /turf/open/floor/iron/techmaint,
 /area/asteroid/JungleHellscape/flying/high)
 "vz" = (
-/obj/machinery/atmospherics/components/binary/valve/digital{
-	dir = 4;
-	name = "Coolant Input"
+/obj/effect/turf_decal/tile/yellow,
+/obj/effect/turf_decal/tile/blue{
+	dir = 4
 	},
-/turf/open/floor/catwalk_floor/iron_smooth,
-/area/lair/engineering/chamber)
+/obj/machinery/power/apc/auto_name/directional/east,
+/turf/open/floor/iron/smooth_edge{
+	dir = 8
+	},
+/area/engine/atmos)
 "vA" = (
 /obj/machinery/atmospherics/components/unary/vent_scrubber/on/layer4,
 /turf/open/floor/iron/smooth_large,
@@ -5333,10 +5350,11 @@
 /obj/structure/cable/yellow{
 	icon_state = "1-4"
 	},
-/obj/structure/cable/yellow{
-	icon_state = "1-2"
+/obj/machinery/atmospherics/components/binary/pump{
+	name = "Moderator IN";
+	dir = 1
 	},
-/turf/open/floor/wax,
+/turf/open/floor/catwalk_floor/iron_smooth,
 /area/lair/engineering/chamber)
 "vJ" = (
 /obj/machinery/conveyor{
@@ -5514,6 +5532,10 @@
 "wv" = (
 /obj/machinery/atmospherics/pipe/simple/green/visible,
 /obj/effect/spawner/structure/window/depleteduranium,
+/obj/machinery/door/poddoor/shutters/radiation{
+	id = "controlshutter"
+	},
+/obj/machinery/door/firedoor,
 /turf/open/floor/plating,
 /area/lair/engineering/chamber)
 "ww" = (
@@ -5662,10 +5684,7 @@
 /obj/structure/cable/yellow{
 	icon_state = "4-8"
 	},
-/obj/item/flashlight{
-	pixel_x = 1;
-	pixel_y = 5
-	},
+/obj/item/book/manual/wiki/rbmk,
 /turf/open/floor/iron/smooth,
 /area/lair/engineering/control)
 "wZ" = (
@@ -5742,10 +5761,9 @@
 /turf/closed/wall/r_wall,
 /area/maintenance/lair/shaft/central)
 "xt" = (
-/obj/structure/cable/yellow{
-	icon_state = "1-2"
-	},
-/turf/open/floor/catwalk_floor/iron_smooth,
+/obj/effect/turf_decal/stripes/full,
+/obj/item/RBMK_box/body,
+/turf/open/floor/iron/smooth_large,
 /area/lair/engineering/chamber)
 "xu" = (
 /obj/effect/turf_decal/tile/blue{
@@ -5967,12 +5985,7 @@
 /turf/open/floor/catwalk_floor/iron_smooth,
 /area/engine/atmos)
 "yi" = (
-/obj/machinery/power/generator{
-	dir = 4
-	},
-/obj/structure/cable/yellow{
-	icon_state = "0-2"
-	},
+/obj/item/multitool,
 /turf/open/floor/catwalk_floor/iron_smooth,
 /area/lair/engineering/chamber)
 "yj" = (
@@ -6004,11 +6017,9 @@
 /turf/open/floor/plating,
 /area/engine/engine_room)
 "ym" = (
-/obj/machinery/atmospherics/components/binary/circulator{
-	dir = 1
-	},
-/obj/structure/cable/yellow{
-	icon_state = "1-2"
+/obj/machinery/atmospherics/components/binary/valve/digital{
+	dir = 4;
+	name = "Coolant Line"
 	},
 /turf/open/floor/catwalk_floor/iron_smooth,
 /area/lair/engineering/chamber)
@@ -6077,8 +6088,11 @@
 /obj/effect/turf_decal/tile/yellow{
 	dir = 8
 	},
-/obj/machinery/computer/bank_machine{
+/obj/machinery/computer/reactor/control_rods{
 	dir = 4
+	},
+/obj/structure/cable/yellow{
+	icon_state = "1-2"
 	},
 /turf/open/floor/iron/smooth,
 /area/lair/engineering/control)
@@ -6445,6 +6459,7 @@
 	},
 /obj/item/tank/internals/emergency_oxygen/engi,
 /obj/item/tank/internals/emergency_oxygen/engi,
+/obj/machinery/power/apc/auto_name/directional/north,
 /turf/open/floor/iron/smooth,
 /area/engine/storage_shared)
 "zE" = (
@@ -6564,12 +6579,15 @@
 /turf/open/floor/catwalk_floor/iron_smooth,
 /area/engine/atmos)
 "Ab" = (
-/obj/machinery/atmospherics/pipe/simple/amethyst/hidden{
-	dir = 5
+/obj/effect/turf_decal/tile/yellow{
+	dir = 1
 	},
-/obj/machinery/meter,
-/turf/open/floor/catwalk_floor/iron_smooth,
-/area/lair/engineering/chamber)
+/obj/effect/turf_decal/tile/yellow{
+	dir = 4
+	},
+/obj/machinery/power/apc/auto_name/directional/north,
+/turf/open/floor/iron/smooth_edge,
+/area/engine/break_room)
 "Af" = (
 /obj/effect/turf_decal/tile/yellow{
 	dir = 1
@@ -6612,7 +6630,7 @@
 /area/lair/engineering/chamber)
 "Ao" = (
 /obj/structure/elevator_segment/primary,
-/turf/closed/wall,
+/turf/closed/wall/r_wall,
 /area/lair/elevator/level1)
 "Aq" = (
 /obj/effect/spawner/lootdrop/maintenance/two,
@@ -6679,11 +6697,12 @@
 /obj/effect/turf_decal/tile/yellow{
 	dir = 8
 	},
-/obj/machinery/modular_computer/console/preset/engineering{
-	dir = 4
-	},
 /obj/structure/cable/yellow{
 	icon_state = "4-8"
+	},
+/obj/structure/rack,
+/obj/structure/cable/yellow{
+	icon_state = "1-4"
 	},
 /turf/open/floor/iron/smooth,
 /area/lair/engineering/control)
@@ -6851,10 +6870,22 @@
 /turf/closed/wall/r_wall,
 /area/lair/engineering/control)
 "Bd" = (
+/obj/effect/turf_decal/tile/yellow{
+	dir = 1
+	},
+/obj/effect/turf_decal/tile/yellow{
+	dir = 8
+	},
+/obj/machinery/modular_computer/console/preset/engineering{
+	dir = 4
+	},
 /obj/structure/cable/yellow{
 	icon_state = "0-2"
 	},
-/turf/open/floor/carpet/orange,
+/obj/structure/cable/yellow{
+	icon_state = "1-2"
+	},
+/turf/open/floor/iron/smooth,
 /area/lair/engineering/control)
 "Be" = (
 /obj/machinery/status_display/ai{
@@ -6925,10 +6956,6 @@
 /turf/closed/wall/r_wall,
 /area/maintenance/lair/level4/west)
 "Bx" = (
-/obj/machinery/atmospherics/pipe/simple/green/hidden{
-	dir = 9
-	},
-/obj/machinery/meter,
 /obj/effect/turf_decal/stripes/line{
 	dir = 1
 	},
@@ -6945,7 +6972,10 @@
 /turf/open/openspace,
 /area/maintenance/lair/shaft/stairwayprimary)
 "Bz" = (
-/obj/machinery/atmospherics/components/binary/volume_pump,
+/obj/machinery/atmospherics/components/binary/pump{
+	name = "Coolant Out";
+	dir = 4
+	},
 /turf/open/floor/catwalk_floor/iron_smooth,
 /area/lair/engineering/chamber)
 "BC" = (
@@ -6973,11 +7003,8 @@
 /turf/open/floor/catwalk_floor/iron_smooth,
 /area/engine/atmos)
 "BK" = (
-/obj/structure/cable/yellow{
-	icon_state = "4-8"
-	},
-/turf/open/floor/wax,
-/area/lair/engineering/chamber)
+/turf/open/floor/iron/dark/textured,
+/area/tcommsat/computer)
 "BN" = (
 /obj/effect/decal/cleanable/blood,
 /obj/structure/stone_tile/block,
@@ -7040,7 +7067,7 @@
 /obj/machinery/shower{
 	pixel_y = 12
 	},
-/turf/open/floor/iron/smooth,
+/turf/open/floor/iron/white/textured,
 /area/lair/engineering/control)
 "Cd" = (
 /turf/closed/wall/r_wall,
@@ -7058,12 +7085,19 @@
 /turf/open/floor/iron/smooth_edge,
 /area/lair/elevator/level7)
 "Cj" = (
-/obj/machinery/atmospherics/pipe/simple/scrubbers/hidden{
+/obj/effect/turf_decal/tile/yellow{
+	dir = 1
+	},
+/obj/effect/turf_decal/tile/yellow{
+	dir = 8
+	},
+/obj/structure/sign/warning/electricshock{
+	pixel_x = -32
+	},
+/turf/open/floor/iron/smooth_edge{
 	dir = 4
 	},
-/obj/machinery/meter,
-/turf/open/floor/catwalk_floor/iron_smooth,
-/area/lair/engineering/chamber)
+/area/engineering/hallway)
 "Ck" = (
 /turf/closed/wall/r_wall,
 /area/engine/storage_shared)
@@ -7168,6 +7202,7 @@
 /obj/structure/cable/yellow{
 	icon_state = "4-8"
 	},
+/obj/machinery/door/firedoor,
 /turf/open/floor/plating,
 /area/maintenance/lair/shaft/west)
 "CN" = (
@@ -7604,10 +7639,10 @@
 /turf/open/floor/plating,
 /area/engine/engine_room)
 "EF" = (
-/obj/machinery/atmospherics/pipe/simple/green/hidden{
-	dir = 9
+/obj/item/fuel_rod/depleted,
+/turf/open/indestructible/sound/pool{
+	name = "Fuel Rod Pool"
 	},
-/turf/open/floor/catwalk_floor/iron_smooth,
 /area/lair/engineering/chamber)
 "EG" = (
 /obj/structure/sign/directions/command{
@@ -8175,10 +8210,6 @@
 	},
 /area/engine/break_room)
 "GK" = (
-/obj/machinery/newscaster{
-	pixel_x = 31;
-	pixel_y = 2
-	},
 /obj/machinery/telecomms/relay/preset/auto,
 /turf/open/floor/catwalk_floor/iron_dark,
 /area/tcommsat/computer)
@@ -8213,9 +8244,6 @@
 /obj/machinery/light,
 /obj/structure/cable/yellow{
 	icon_state = "4-8"
-	},
-/obj/structure/cable/yellow{
-	icon_state = "1-4"
 	},
 /turf/open/floor/iron/smooth,
 /area/lair/engineering/control)
@@ -8285,6 +8313,7 @@
 /area/asteroid/JungleHellscape/flying/high)
 "Hh" = (
 /obj/structure/pool_ladder,
+/obj/item/fuel_rod,
 /turf/open/indestructible/sound/pool{
 	name = "New Fuel Rod Pool"
 	},
@@ -8472,9 +8501,7 @@
 /turf/closed/wall/r_wall,
 /area/lair/elevator/level1)
 "HL" = (
-/obj/machinery/atmospherics/pipe/simple/orange/hidden{
-	dir = 4
-	},
+/obj/machinery/atmospherics/pipe/manifold/orange/hidden,
 /turf/open/floor/catwalk_floor/iron_smooth,
 /area/lair/engineering/chamber)
 "HM" = (
@@ -8523,7 +8550,9 @@
 	},
 /area/engineering/hallway)
 "HZ" = (
-/turf/open/floor/wax,
+/obj/effect/turf_decal/stripes/full,
+/obj/item/RBMK_box/body/waste_output,
+/turf/open/floor/iron/smooth_large,
 /area/lair/engineering/chamber)
 "Ic" = (
 /obj/machinery/light{
@@ -8575,6 +8604,7 @@
 /obj/structure/cable/yellow{
 	icon_state = "0-2"
 	},
+/obj/machinery/power/apc/auto_name/directional/north,
 /turf/open/floor/catwalk_floor/iron_smooth,
 /area/engine/engine_smes)
 "Ij" = (
@@ -8609,9 +8639,6 @@
 	dir = 10
 	},
 /obj/machinery/light,
-/obj/structure/sign/warning/electricshock{
-	pixel_x = -32
-	},
 /turf/open/floor/catwalk_floor/iron_smooth,
 /area/engine/engine_smes)
 "It" = (
@@ -8727,11 +8754,13 @@
 /turf/open/floor/iron/dark/textured,
 /area/engine/break_room)
 "IY" = (
-/obj/machinery/atmospherics/pipe/simple/green/hidden,
 /obj/machinery/light{
 	dir = 8
 	},
 /obj/effect/turf_decal/stripes/line,
+/obj/machinery/atmospherics/pipe/simple/green/hidden{
+	dir = 5
+	},
 /turf/open/floor/catwalk_floor/iron_smooth,
 /area/lair/engineering/chamber)
 "Jc" = (
@@ -8882,6 +8911,7 @@
 /area/maintenance/lair/shaft/east)
 "JG" = (
 /obj/machinery/pool_filter,
+/obj/item/fuel_rod,
 /turf/open/indestructible/sound/pool{
 	name = "New Fuel Rod Pool"
 	},
@@ -9172,12 +9202,17 @@
 /turf/open/floor/plating,
 /area/crew_quarters/heads/hop)
 "KE" = (
-/obj/machinery/atmospherics/components/binary/valve/digital{
-	dir = 4;
-	name = "Coolant Output"
+/obj/effect/turf_decal/tile/yellow{
+	dir = 1
 	},
-/turf/open/floor/catwalk_floor/iron_smooth,
-/area/lair/engineering/chamber)
+/obj/effect/turf_decal/tile/yellow{
+	dir = 8
+	},
+/obj/machinery/power/apc/auto_name/directional/west,
+/turf/open/floor/iron/smooth_edge{
+	dir = 4
+	},
+/area/engineering/hallway)
 "KF" = (
 /obj/effect/spawner/lootdrop/maintenance/two,
 /obj/effect/spawner/lootdrop/maintenance/three,
@@ -9348,6 +9383,10 @@
 /obj/effect/spawner/structure/window/depleteduranium,
 /obj/structure/cable/yellow{
 	icon_state = "4-8"
+	},
+/obj/machinery/door/firedoor,
+/obj/machinery/door/poddoor/shutters/radiation{
+	id = "controlshutter"
 	},
 /turf/open/floor/plating,
 /area/lair/engineering/control)
@@ -9821,7 +9860,7 @@
 /obj/machinery/shower{
 	pixel_y = 12
 	},
-/turf/open/floor/iron/smooth,
+/turf/open/floor/iron/white/textured,
 /area/lair/engineering/control)
 "Nh" = (
 /obj/structure/sign/warning/enginesafety,
@@ -9881,9 +9920,13 @@
 	},
 /area/quartermaster/office)
 "Nt" = (
-/obj/structure/rack,
-/turf/open/floor/iron,
-/area/space)
+/obj/effect/spawner/structure/window/depleteduranium,
+/obj/machinery/door/poddoor/shutters/radiation{
+	id = "smesshutter"
+	},
+/obj/machinery/door/firedoor,
+/turf/open/floor/plating,
+/area/lair/engineering/chamber)
 "Nv" = (
 /obj/effect/turf_decal/stripes/line{
 	dir = 4
@@ -10150,8 +10193,6 @@
 /obj/effect/turf_decal/stripes/line{
 	dir = 6
 	},
-/obj/machinery/airalarm/directional/north,
-/obj/machinery/firealarm/directional/west,
 /obj/machinery/atmospherics/components/unary/vent_scrubber/on/layer4,
 /obj/machinery/computer/telecomms/monitor,
 /obj/item/multitool{
@@ -10544,6 +10585,7 @@
 /obj/machinery/light{
 	dir = 1
 	},
+/obj/machinery/atmospherics/components/unary/tank/carbon_dioxide,
 /turf/open/floor/catwalk_floor/iron_smooth,
 /area/lair/engineering/chamber)
 "Qd" = (
@@ -10647,6 +10689,13 @@
 	},
 /turf/open/floor/catwalk_floor/iron_smooth,
 /area/engine/atmos)
+"Qw" = (
+/obj/structure/sign/warning/radiation{
+	pixel_y = 32
+	},
+/obj/machinery/atmospherics/components/unary/tank/carbon_dioxide,
+/turf/open/floor/catwalk_floor/iron_smooth,
+/area/lair/engineering/chamber)
 "Qx" = (
 /obj/effect/turf_decal/stripes/line,
 /obj/structure/cable/yellow{
@@ -10692,10 +10741,8 @@
 /turf/open/floor/iron/smooth,
 /area/lair/engineering/chamber)
 "QE" = (
-/obj/machinery/atmospherics/pipe/simple/scrubbers/hidden,
-/obj/machinery/meter,
-/turf/open/floor/catwalk_floor/iron_smooth,
-/area/lair/engineering/chamber)
+/turf/open/floor/iron/white/textured,
+/area/lair/engineering/control)
 "QG" = (
 /obj/structure/railing,
 /turf/open/floor/iron/techmaint,
@@ -10784,6 +10831,10 @@
 /area/engine/engine_room)
 "Ra" = (
 /obj/effect/spawner/structure/window/depleteduranium,
+/obj/machinery/door/poddoor/shutters/radiation{
+	id = "controlshutter"
+	},
+/obj/machinery/door/firedoor,
 /turf/open/floor/plating,
 /area/lair/engineering/control)
 "Rd" = (
@@ -11326,6 +11377,13 @@
 	dir = 4
 	},
 /obj/structure/table/reinforced,
+/obj/machinery/button/door{
+	id = "controlshutter";
+	name = "Radiation Shutters";
+	pixel_y = 4;
+	req_access_txt = "24"
+	},
+/obj/machinery/power/apc/auto_name/directional/north,
 /turf/open/floor/iron/smooth,
 /area/lair/engineering/control)
 "Th" = (
@@ -11411,15 +11469,23 @@
 /turf/open/floor/plating/dirt/planetary,
 /area/asteroid/JungleHellscape)
 "Tw" = (
-/obj/machinery/atmospherics/pipe/simple/green/hidden{
-	dir = 5
-	},
-/obj/effect/turf_decal/stripes/line{
+/obj/effect/turf_decal/tile/yellow{
 	dir = 1
 	},
-/obj/effect/turf_decal/caution/red,
-/turf/open/floor/iron/smooth_large,
-/area/lair/engineering/chamber)
+/obj/effect/turf_decal/tile/yellow{
+	dir = 8
+	},
+/obj/machinery/button/door{
+	id = "smesshutter";
+	name = "Radiation Shutters";
+	pixel_x = -24;
+	pixel_y = 10;
+	req_access_txt = "24"
+	},
+/turf/open/floor/iron/smooth_edge{
+	dir = 4
+	},
+/area/engineering/hallway)
 "Tz" = (
 /obj/structure/sign/nanotrasen{
 	pixel_x = -32
@@ -11539,10 +11605,10 @@
 /turf/open/floor/iron/dark/textured,
 /area/security/checkpoint/customs/auxiliary)
 "TT" = (
-/obj/structure/cable/yellow{
-	icon_state = "1-2"
-	},
-/turf/open/floor/wax,
+/obj/structure/cable/yellow,
+/obj/effect/turf_decal/stripes/full,
+/obj/item/RBMK_box/core,
+/turf/open/floor/iron/smooth_large,
 /area/lair/engineering/chamber)
 "TY" = (
 /obj/effect/turf_decal/tile/green{
@@ -11776,29 +11842,25 @@
 /turf/open/floor/plating,
 /area/maintenance/lair/shaft/west)
 "UX" = (
-/obj/machinery/atmospherics/pipe/manifold/scrubbers/hidden{
-	dir = 8
-	},
+/obj/machinery/atmospherics/pipe/manifold4w/scrubbers/hidden,
+/obj/machinery/meter,
 /turf/open/floor/catwalk_floor/iron_smooth,
 /area/lair/engineering/chamber)
 "UY" = (
-/obj/machinery/light{
-	dir = 4
-	},
-/turf/open/indestructible/sound/pool{
-	name = "Fuel Rod Pool"
-	},
-/area/lair/engineering/chamber)
+/obj/machinery/airalarm/directional/north,
+/turf/open/floor/catwalk_floor/iron_dark,
+/area/tcommsat/computer)
 "UZ" = (
 /obj/structure/railing/corner,
 /turf/open/floor/iron/techmaint,
 /area/asteroid/JungleHellscape/flying/high)
 "Vc" = (
-/obj/structure/cable/yellow,
 /obj/structure/cable/yellow{
 	icon_state = "1-2"
 	},
-/turf/open/floor/wax,
+/obj/effect/turf_decal/stripes/full,
+/obj/item/RBMK_box/body/moderator_input,
+/turf/open/floor/iron/smooth_large,
 /area/lair/engineering/chamber)
 "Vd" = (
 /obj/effect/turf_decal/stripes/line{
@@ -12232,11 +12294,16 @@
 /turf/open/floor/engine,
 /area/engine/supermatter)
 "WL" = (
-/obj/machinery/atmospherics/components/binary/circulator/cold,
-/turf/open/floor/catwalk_floor/iron_smooth,
-/area/lair/engineering/chamber)
+/obj/machinery/atmospherics/pipe/simple/supply/hidden/layer2,
+/obj/machinery/atmospherics/pipe/simple/scrubbers/hidden/layer4,
+/obj/machinery/atmospherics/pipe/heat_exchanging/junction,
+/turf/open/floor/iron/dark/smooth_large,
+/area/tcommsat/server)
 "WM" = (
 /obj/structure/pool_ladder,
+/obj/machinery/light{
+	dir = 4
+	},
 /turf/open/indestructible/sound/pool{
 	name = "Fuel Rod Pool"
 	},
@@ -12395,11 +12462,14 @@
 /obj/effect/turf_decal/tile/yellow{
 	dir = 8
 	},
-/obj/machinery/computer/monitor{
-	dir = 4
-	},
 /obj/structure/sign/warning/radiation{
 	pixel_y = 32
+	},
+/obj/structure/rack,
+/obj/item/storage/toolbox/mechanical,
+/obj/item/storage/toolbox/electrical{
+	pixel_y = 3;
+	pixel_x = 3
 	},
 /turf/open/floor/iron/smooth,
 /area/lair/engineering/control)
@@ -12467,9 +12537,7 @@
 /turf/open/floor/iron/dark/smooth_large,
 /area/crew_quarters/heads/hop)
 "XC" = (
-/obj/machinery/atmospherics/pipe/simple/cyan/hidden{
-	dir = 8
-	},
+/obj/machinery/atmospherics/pipe/manifold/cyan/hidden,
 /turf/open/floor/catwalk_floor/iron_smooth,
 /area/lair/engineering/chamber)
 "XD" = (
@@ -12564,7 +12632,7 @@
 /obj/effect/turf_decal/tile/yellow,
 /obj/machinery/suit_storage_unit/radsuit,
 /obj/effect/turf_decal/delivery,
-/turf/open/floor/iron/smooth,
+/turf/open/floor/iron/white/textured,
 /area/lair/engineering/control)
 "XZ" = (
 /obj/effect/mapping_helpers/atmos_auto_connect,
@@ -12579,7 +12647,7 @@
 	},
 /obj/machinery/suit_storage_unit/radsuit,
 /obj/effect/turf_decal/delivery,
-/turf/open/floor/iron/smooth,
+/turf/open/floor/iron/white/textured,
 /area/lair/engineering/control)
 "Yb" = (
 /obj/structure/fence/corner{
@@ -13116,7 +13184,16 @@
 /obj/structure/sign/poster/official/safety_internals{
 	pixel_y = 32
 	},
-/turf/open/floor/iron/smooth,
+/obj/item/clothing/mask/gas,
+/obj/item/clothing/mask/gas{
+	pixel_x = -3;
+	pixel_y = -3
+	},
+/obj/item/clothing/mask/gas{
+	pixel_x = 3;
+	pixel_y = 3
+	},
+/turf/open/floor/iron/white/textured,
 /area/lair/engineering/control)
 "ZZ" = (
 /turf/closed/wall/r_wall,
@@ -17924,7 +18001,7 @@ Mk
 wv
 Xf
 Rv
-Xf
+lu
 Ni
 Pu
 Xf
@@ -17933,10 +18010,10 @@ JD
 An
 Xf
 Xf
-aM
+Xf
 Xf
 IY
-Tw
+Hc
 Ws
 JG
 nd
@@ -18182,20 +18259,20 @@ fe
 ua
 QH
 aM
-EF
+qv
 GZ
 GZ
 GZ
 CB
 sV
-Ob
 sV
 lW
 GZ
+GZ
 vq
-fa
+Hc
 Ws
-nd
+hi
 nd
 Iu
 ue
@@ -18394,7 +18471,7 @@ JN
 JN
 JN
 JN
-fC
+JN
 JN
 HM
 HM
@@ -18436,23 +18513,23 @@ nX
 DE
 UJ
 fe
+ua
+QH
+aM
+qv
+GZ
 Bp
-pm
 Ob
-sV
-sV
-sV
-sV
 XL
 GZ
 GZ
+pm
 GZ
-vz
 GZ
-kk
-fa
+kj
+Hc
 Ws
-nd
+hi
 dL
 Iu
 Hb
@@ -18651,7 +18728,7 @@ JN
 JN
 JN
 JN
-Nt
+JN
 JN
 HM
 HM
@@ -18693,24 +18770,24 @@ nX
 jq
 Ea
 fe
-Rt
-Cj
-Ek
-pS
-Bz
-Ab
+Qw
+QH
+aM
+qv
 GZ
+GZ
+Ek
 XC
 GZ
+xt
+fC
+xt
 GZ
-HZ
-HZ
-HZ
-kk
-fa
+kj
+Hc
 Ws
 Hh
-nd
+hi
 Iu
 Iu
 CL
@@ -18908,7 +18985,7 @@ JN
 JN
 JN
 JN
-lu
+JN
 JN
 HM
 HM
@@ -18951,14 +19028,14 @@ nX
 mI
 fe
 Qc
-Gl
-Ek
+QH
+aM
 qv
 GZ
-WL
-yi
+GZ
+GZ
 ym
-xt
+GZ
 xt
 TT
 Vc
@@ -19201,25 +19278,25 @@ Qh
 EV
 jC
 AL
-ZS
+vz
 Qh
 ns
 nX
 Pr
 fe
-sd
-hi
-aM
-fk
-kj
-iT
 GZ
+Gl
+GZ
+fk
+GZ
+GZ
+Ek
 HL
 GZ
-GZ
+xt
 HZ
-HZ
-BK
+xt
+Mr
 kk
 Hc
 Pz
@@ -19472,10 +19549,10 @@ NR
 as
 as
 fw
+yi
 GZ
+Bz
 GZ
-GZ
-KE
 Mr
 kk
 Hc
@@ -19483,8 +19560,8 @@ Pz
 ng
 ng
 ng
-ng
-ng
+EF
+mN
 aB
 Mi
 WX
@@ -19725,22 +19802,22 @@ GZ
 GZ
 GZ
 jf
-QE
+va
 bZ
 bZ
 wk
-NX
 RM
 NX
 bz
+GZ
 Mr
 Zb
 Hc
 Pz
 WM
-UY
 ng
-UY
+EF
+ng
 ng
 iC
 Ur
@@ -19990,15 +20067,15 @@ Ra
 Ra
 Ra
 Ra
-Lq
+fa
 Bc
 Ic
 bg
 fe
-fe
-yx
-fe
-fe
+Nt
+Nt
+Nt
+Nt
 iC
 lr
 kb
@@ -20235,7 +20312,7 @@ fg
 iW
 qI
 fe
-GZ
+py
 GZ
 GZ
 Bc
@@ -20244,14 +20321,14 @@ hU
 aX
 Bc
 Xl
+iT
 yv
-yv
-yv
+Bd
 Az
 Ra
 Hc
 bg
-fe
+Nt
 Xq
 zA
 zA
@@ -20496,14 +20573,14 @@ GZ
 GZ
 GZ
 Xc
-Nx
-Nx
-Nx
+QE
+QE
+QE
 Xc
 Nx
-do
 ew
 do
+ew
 pB
 Ra
 Hc
@@ -20754,18 +20831,18 @@ Rz
 QD
 Bc
 Ng
-Nx
+QE
 XY
 ba
 OL
 ew
 hg
-Bd
+ew
 GS
 Bc
 fe
-fe
 vs
+yx
 JQ
 JQ
 bn
@@ -20991,7 +21068,7 @@ ax
 IU
 gb
 ny
-ny
+pS
 uk
 nX
 nX
@@ -21011,7 +21088,7 @@ fe
 fe
 Bc
 Cb
-Nx
+QE
 Ya
 Bc
 Tg
@@ -21023,10 +21100,10 @@ Bc
 dO
 sg
 sg
-sg
+Cj
 sg
 Uh
-sg
+Tw
 iC
 lZ
 el
@@ -21259,7 +21336,7 @@ TQ
 YS
 gP
 bH
-Sr
+Ab
 iW
 LO
 xI
@@ -21763,7 +21840,7 @@ IU
 Ct
 Pr
 Cd
-Xt
+UY
 Xt
 Ps
 Cd
@@ -21785,7 +21862,7 @@ fl
 KC
 zZ
 Gz
-sg
+KE
 sg
 SD
 eP
@@ -22534,9 +22611,9 @@ IU
 Ct
 kl
 Cd
-Cd
+sd
 eZ
-Cd
+BK
 Cd
 yX
 pQ
@@ -23052,7 +23129,7 @@ hw
 Ke
 kz
 iS
-EO
+WL
 EO
 eX
 LN
