@@ -377,6 +377,21 @@
 		name = "empty scroll"
 		icon_state = "blankscroll"
 
+/obj/item/book/granter/martial/jiujitsu
+	martial = /datum/martial_art/jiujitsu
+	name = "Security Jiujitsu Manual"
+	oneuse = TRUE
+	martialname = "Jiujitsu"
+	desc = "A book filled with NT-Approved hand-to-hand techniques for security guards on duty."
+	greet = "<span class='sciradio'> You suddenly feel a lot more prepared for hand-to-hand arrests...\
+	You're can now stun enemies with punches, as well as grapple and. You can learn more about your newfound art by using the Recall police training verb in the ju-jitsu tab.</span>"
+	remarks = list("ass1,ass2,ass3,ass4")
+
+/obj/item/book/granter/martial/jujitsu/onlearned(mob/living/carbon/user)
+	..()
+	if(oneuse)
+		desc = "This book is just wrecked... Did someone test out the techniques ON the book??"
+
 /obj/item/book/granter/martial/tribal_claw
 	martial = /datum/martial_art/tribal_claw
 	name = "old scroll"
