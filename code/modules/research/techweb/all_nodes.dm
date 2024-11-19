@@ -1246,22 +1246,6 @@
 	export_price = 5000
 
 ////////////////////////Medical////////////////////////
-/datum/techweb_node/cloning
-	id = "cloning"
-	tech_tier = 3
-	display_name = "Genetic Engineering"
-	description = "We have the technology to make him."
-	prereq_ids = list("biotech")
-	design_ids = list(
-		"clonecontrol",
-		"clonepod",
-		"clonescanner",
-		"cloning_disk",
-		"scan_console",
-	)
-	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 2500)
-	export_price = 5000
-
 /datum/techweb_node/cryotech
 	id = "cryotech"
 	tech_tier = 3
@@ -1335,6 +1319,23 @@
 	design_ids = list("healthanalyzer_advanced", "extrapolator")
 	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 5000)
 	export_price = 5000
+
+/datum/techweb_node/cloning
+	id = "cloning"
+	tech_tier = 4
+	display_name = "Genetic Engineering"
+	description = "We have the technology to make him."
+	prereq_ids = list("adv_biotech")
+	design_ids = list(
+		"clonecontrol",
+		"clonepod",
+		"clonescanner",
+		"cloning_disk",
+		"scan_console",
+	)
+	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 5000)
+	export_price = 5000
+	hidden = TRUE
 
 /datum/techweb_node/cyber_organs_upgraded
 	id = "cyber_organs_upgraded"
