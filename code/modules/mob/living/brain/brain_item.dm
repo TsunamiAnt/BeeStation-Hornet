@@ -82,6 +82,8 @@
 	if(brain_death && !(organ_flags & ORGAN_FAILING))
 		brain_death = FALSE
 		brainmob.revive(TRUE) // We fixed the brain, fix the brainmob too.
+		log_admin("[brainmob] just had their brain healed by something. If you did not do this yourself, contact TsunamiAnt On discord IMMEDIATELY")
+		message_admins("[brainmob] just had their brain healed by something. If you did not do this yourself, find out what happened and contact TsunamiAnt On discord IMMEDIATELY")
 
 /obj/item/organ/brain/proc/transfer_identity(mob/living/L)
 	name = "[L.name]'s brain"

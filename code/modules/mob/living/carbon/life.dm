@@ -8,21 +8,10 @@
 		damageoverlaytemp = 0
 		update_damage_hud()
 
+	OrganHandling()
+
 	if(!IS_IN_STASIS(src))
-
 		//Reagent processing needs to come before breathing, to prevent edge cases.
-		if(stat != DEAD)
-			for(var/V in internal_organs)
-				var/obj/item/organ/O = V
-				O.on_life()
-		else
-			if(reagents && !reagents.has_reagent(/datum/reagent/toxin/formaldehyde, 1)) // No organ decay if the body contains formaldehyde.
-				for(var/V in internal_organs)
-					var/obj/item/organ/O = V
-					O.on_death() //Needed so organs decay while inside the body.
-
-		. = ..()
-
 		if(QDELETED(src))
 			return
 
@@ -37,8 +26,8 @@
 		if(stat != DEAD && has_dna())
 			for(var/datum/mutation/HM as() in dna.mutations)
 				HM.on_life()
-
 	else
+
 		. = ..()
 
 	if(stat == DEAD)
@@ -61,6 +50,27 @@
 
 	if(stat != DEAD)
 		return 1
+
+// Featuring only the latest in massive shitcode: ORGANS
+/mob/living/carbon/proc/OrganHandling()
+	if(stat != DEAD)									// If alive do this
+		for(var/V in internal_organs)
+			var/obj/item/organ/O = V
+			O.on_life()
+	else												// If not, but we're in stasis, do this
+		if(IS_IN_STASIS(src))
+			for(var/V in internal_organs)
+				var/obj/item/organ/O = V
+				O.on_deathPreserved()
+		else												// If not alive, or in stasis, but we got formaldehyde, do this
+			if(reagents && reagents.has_reagent(/datum/reagent/toxin/formaldehyde, 1))
+				for(var/V in internal_organs)
+					var/obj/item/organ/O = V
+					O.on_deathPreserved()
+			else											// If the body is not preserved at all, do this
+				for(var/V in internal_organs)
+					var/obj/item/organ/O = V
+					O.on_death()
 
 ///////////////
 // BREATHING //

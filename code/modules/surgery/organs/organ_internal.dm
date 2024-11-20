@@ -107,6 +107,11 @@ INITIALIZE_IMMEDIATE(/obj/item/organ)
 		return
 	applyOrganDamage(maxHealth * decay_factor * 0.5 * delta_time)
 
+/obj/item/organ/proc/on_deathPreserved(delta_time = 2)	//runs decay when outside of a person
+	if(organ_flags & (ORGAN_SYNTHETIC | ORGAN_FROZEN))
+		return
+	applyOrganDamage(maxHealth * ( decay_factor / 2 ) * 0.5 * delta_time)
+
 /obj/item/organ/proc/on_life()	//repair organ damage if the organ is not failing
 	if(organ_flags & ORGAN_FAILING)
 		return
