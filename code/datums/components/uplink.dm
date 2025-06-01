@@ -1,5 +1,7 @@
 #define PEN_ROTATIONS 2
 
+GLOBAL_LIST_EMPTY(uplinks)
+
 /**
  * Uplinks
  *
@@ -68,6 +70,8 @@
 
 	previous_attempts = list()
 
+	GLOB.uplinks += src
+
 /datum/component/uplink/InheritComponent(datum/component/uplink/U)
 	lockable |= U.lockable
 	active |= U.active
@@ -78,6 +82,7 @@
 
 /datum/component/uplink/Destroy()
 	purchase_log = null
+	GLOB.uplinks -= src
 	return ..()
 
 /datum/component/uplink/proc/update_items()
@@ -380,5 +385,10 @@
 		return
 	explosion(T,1,2,3)
 	qdel(parent) //Alternatively could brick the uplink.
+
+/datum/component/uplink/proc/getOwner()
+	if(!owner)
+		return
+	return (owner)
 
 #undef PEN_ROTATIONS

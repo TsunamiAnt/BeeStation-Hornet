@@ -1,3 +1,7 @@
+#define TC_SALARY_BOOST 1 HOURS
+
+GLOBAL_LIST_EMPTY(paid)
+
 SUBSYSTEM_DEF(economy)
 	name = "Economy"
 	wait = 5 MINUTES
@@ -17,6 +21,8 @@ SUBSYSTEM_DEF(economy)
 	///Multiplied as they go to all department accounts rather than just cargo.
 	var/bounty_modifier = 9
 
+	// Amount of TC paid. Doubled after 1 hour.
+	var/TC_salary = 2
 	/// Number of mail items generated.
 	var/mail_waiting
 	/// Mail Holiday: AKA does mail arrive today? Always blocked on Sundays, but not on bee, the mail is 24/7.
@@ -52,6 +58,24 @@ SUBSYSTEM_DEF(economy)
 	for(var/A in bank_accounts)
 		var/datum/bank_account/B = A
 		B.payday(1)
+
+	//Syndies get a salary too!
+	// List of ckeys we have paid out TC to.
+	var/list/paid
+	message_admins("PAID PRE TEST:[paid]")
+	for(var/datum/component/uplink/U in GLOB.uplinks)
+		if(!(U.getOwner() in paid))
+			if(world.time-SSticker.round_start_time > TC_SALARY_BOOST)
+				U.telecrystals += TC_salary * 2
+				message_admins("[TC_salary]] paid into [U] with user of '[U.getOwner()]'. PAID is now:[paid]")
+			else
+				U.telecrystals += TC_salary
+				message_admins("[TC_salary]] paid into [U] with user of '[U.getOwner()]'. PAID is now:[paid]")
+			paid += U.getOwner()
+	paid.Cut()
+	message_admins("PAID CUT TEST:[paid]")
+
+	//Mail
 	var/effective_mailcount = living_player_count()
 	mail_waiting = clamp(mail_waiting + clamp(effective_mailcount, 1, MAX_MAIL_PER_MINUTE), 0, MAX_MAIL_LIMIT)
 
@@ -147,3 +171,4 @@ SUBSYSTEM_DEF(economy)
 		if(D.nonstation_account)
 			D.adjust_money(amount) // Who'd think Nanotrasen gets a lot of profit from your station
 
+#undef TC_SALARY_BOOST
