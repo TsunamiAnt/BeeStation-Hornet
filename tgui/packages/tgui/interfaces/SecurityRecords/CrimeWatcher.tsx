@@ -16,12 +16,15 @@ export const CrimeWatcher = (props) => {
       <Stack.Item>
         <Tabs fluid>
           <Tabs.Tab onClick={() => setSelectedTab(SECURETAB.Crimes)} selected={selectedTab === SECURETAB.Crimes}>
-            Crimes: {crimes.length}
+            Charges
           </Tabs.Tab>
           <Tabs.Tab onClick={() => setSelectedTab(SECURETAB.Citations)} selected={selectedTab === SECURETAB.Citations}>
-            Citations: {citations.length}
+            Citations
           </Tabs.Tab>
-          <Tooltip content="Add a new crime or citation" position="bottom">
+          <Tabs.Tab onClick={() => setSelectedTab(SECURETAB.Records)} selected={selectedTab === SECURETAB.Records}>
+            Records
+          </Tabs.Tab>
+          <Tooltip content="Add a new entry" position="bottom">
             <Tabs.Tab onClick={() => setSelectedTab(SECURETAB.Add)} selected={selectedTab === SECURETAB.Add}>
               <Icon name="plus" />
             </Tabs.Tab>

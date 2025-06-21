@@ -41,6 +41,7 @@ export type Crime = {
 export enum SECURETAB {
   Crimes,
   Citations,
+  Records,
   Add,
 }
 
