@@ -376,7 +376,7 @@ GLOBAL_LIST_INIT(arcade_prize_pool, list(
 
 /obj/machinery/computer/arcade/orion_trail
 	name = "The Orion Trail"
-	desc = "Learn how our ancestors got to Orion, and have fun in the process!"
+	desc = "Learn how our ancestors got to Auri, and have fun in the process!"
 	icon_state = "arcade"
 	circuit = /obj/item/circuitboard/computer/arcade/orion_trail
 	var/busy = FALSE //prevent clickspam that allowed people to ~speedrun~ the game.
@@ -430,17 +430,18 @@ GLOBAL_LIST_INIT(arcade_prize_pool, list(
 
 /obj/machinery/computer/arcade/orion_trail/Reset()
 	// Sets up the main trail
-	stops = list("Pluto","Asteroid Belt","Proxima Centauri","Dead Space","Rigel Prime","Tau Ceti Beta","Black Hole","Space Outpost Beta-9","Orion Prime")
+	// Based on the proposed map in the lore forums
+	stops = list("Seta","Indol","Asteroid Belt","Ceti","Thars","Dead Space","Black Hole","Triea Outpost Beta-9","Orion Station")
 	stopblurbs = list(
-		"Pluto, long since occupied with long-range sensors and scanners, stands ready to, and indeed continues to probe the far reaches of the galaxy.",
-		"At the edge of the Sol system lies a treacherous asteroid belt. Many have been crushed by stray asteroids and misguided judgment.",
-		"The nearest star system to Sol, in ages past it stood as a reminder of the boundaries of sub-light travel, now a low-population sanctuary for adventurers and traders.",
-		"This region of space is particularly devoid of matter. Such low-density pockets are known to exist, but the vastness of it is astounding.",
-		"Rigel Prime, the center of the Rigel system, burns hot, basking its planetary bodies in warmth and radiation.",
-		"Tau Ceti Beta has recently become a waypoint for colonists headed towards Orion. There are many ships and makeshift stations in the vicinity.",
-		"Sensors indicate that a black hole's gravitational field is affecting the region of space we were headed through. We could stay of course, but risk of being overcome by its gravity, or we could change course to go around, which will take longer.",
-		"You have come into range of the first man-made structure in this region of space. It has been constructed not by travellers from Sol, but by colonists from Orion. It stands as a monument to the colonists' success.",
-		"You have made it to Orion! Congratulations! Your crew is one of the few to start a new foothold for mankind!"
+		"Seta, our ever dazzling moon, long since occupied with long-range sensors and scanners, stands ready to, and indeed continues to probe the far reaches of the galaxy.",
+		"Indol's orbital passing is uneventful, you look down on the cold, rocky crags and crevices, criss-crossed by colony paths and outposts glimmering in the shadows.",
+		"Between Indol and Ceti lies a treacherous asteroid belt. Many have been crushed by stray asteroids and misguided judgments.",
+		"The biggest body in the Geminae system. Among Ceti's many moons lie countless orbital installations that serve as hubs for mining and extraction operations.",
+		"Thars has recently become a waypoint for colonists headed towards Auri. There are many ships and makeshift stations in the vicinity.",
+		"Past Thars and the outer asteroid belt, there is nothing. You float along empty space, slowly passing the point of no return. When your fuel gauges read 50%, you know there is no way back.",
+		"Sensors read a micro-singularity on the path ahead! You could brave the storm and continue on your course, or try to evade this deadly threat.",
+		"You have come into range of the first man-made structures in the Auri system. It has been constructed not by travelers from Geminae, but by colonists from Orion Station. It stands as a monument to the colonists' success.",
+		"You have made it to Orion Station! Congratulations! Your crew is one of the few to start a new foothold for mankind!"
 		)
 
 /obj/machinery/computer/arcade/orion_trail/proc/newgame()
@@ -501,7 +502,7 @@ GLOBAL_LIST_INIT(arcade_prize_pool, list(
 	var/dat = ""
 	if(gameStatus == ORION_STATUS_GAMEOVER)
 		dat = "<center><h1>Game Over</h1></center>"
-		dat += "Like many before you, your crew never made it to Orion, lost to space. <br><b>Forever</b>."
+		dat += "Like many before you, your crew never made it to Orion Station, lost to space. <br><b>Forever</b>."
 		if(!settlers.len)
 			dat += "<br>Your entire crew died, and your ship joins the fleet of ghost-ships littering the galaxy."
 		else
@@ -525,7 +526,7 @@ GLOBAL_LIST_INIT(arcade_prize_pool, list(
 			obj_flags &= ~EMAGGED //removes the emagged status after you lose
 			gameStatus = ORION_STATUS_START
 			name = "The Orion Trail"
-			desc = "Learn how our ancestors got to Orion, and have fun in the process!"
+			desc = "Learn how our ancestors got to Auri, and have fun in the process!"
 
 		dat += "<P ALIGN=Right><a href='byond://?src=[REF(src)];menu=1'>May They Rest In Peace</a></P>"
 	else if(event)
@@ -1159,7 +1160,7 @@ GLOBAL_LIST_INIT(arcade_prize_pool, list(
 
 /obj/machinery/computer/arcade/orion_trail/proc/win(mob/user)
 	gameStatus = ORION_STATUS_START
-	say("Congratulations, you made it to Orion!")
+	say("Congratulations, you made it to Auri!")
 	if(obj_flags & EMAGGED)
 		prizeselect = /obj/item/orion_ship
 		prizevend(user)
@@ -1170,13 +1171,13 @@ GLOBAL_LIST_INIT(arcade_prize_pool, list(
 		prizevend(user)
 	obj_flags &= ~EMAGGED
 	name = "The Orion Trail"
-	desc = "Learn how our ancestors got to Orion, and have fun in the process!"
+	desc = "Learn how our ancestors got to Auri, and have fun in the process!"
 
 /obj/machinery/computer/arcade/orion_trail/on_emag(mob/user)
 	..()
 	to_chat(user, span_notice("You override the cheat code menu and skip to Cheat #[rand(1, 50)]: Realism Mode."))
 	name = "The Orion Trail: Realism Edition"
-	desc = "Learn how our ancestors got to Orion, and try not to die in the process!"
+	desc = "Learn how our ancestors got to Auri, and try not to die in the process!"
 	newgame()
 
 /obj/machinery/computer/arcade/orion_trail/Destroy()
@@ -1192,7 +1193,7 @@ GLOBAL_LIST_INIT(arcade_prize_pool, list(
 
 /obj/item/orion_ship
 	name = "model settler ship"
-	desc = "A model spaceship, it looks like those used back in the day when travelling to Orion! It even has a miniature FX-293 reactor, which was renowned for its instability and tendency to explode..."
+	desc = "A model spaceship, it looks like those used back in the day when travelling to Auri! It even has a miniature FX-293 reactor, which was renowned for its instability and tendency to explode..."
 	icon = 'icons/obj/toy.dmi'
 	icon_state = "ship"
 	w_class = WEIGHT_CLASS_SMALL
