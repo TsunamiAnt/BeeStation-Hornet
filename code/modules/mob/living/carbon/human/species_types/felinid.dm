@@ -124,16 +124,24 @@
 
 /datum/species/human/felinid/get_species_lore()
 	return list(
-		"Bio-engineering at its felinest, Felinids are the peak example of humanity's mastery of genetic code. \
-			One of many \"Animalid\" variants, Felinids are the most popular and common, as well as one of the \
-			biggest points of contention in genetic-modification.",
+		"During Geminae's early colonization efforts, a team landed on the desert world of Unope and soon lost contact. \
+		When rescue parties returned just a few decades later, they discovered that the settlers had been transformed by \
+		aggressive gene-splicing. Their Scientists harvested DNA from the planet's wildlife and the colonists' pets, \
+		triggering rapid mutations that resulted in shared feline features, such as cat-like eyes, flexible spines, \
+		and pointed ears; all occurring within decades rather than millennia.",
 
-		"Body modders were eager to splice human and feline DNA in search of the holy trifecta: ears, eyes, and tail. \
-			These traits were in high demand, with the corresponding side effects of vocal and neurochemical changes being seen as a minor inconvenience.",
+		"As the hybrid population diversified, numerous spliced genes were tested, and various genome sequences were attempted. \
+		Through a combination of sheer dumb luck, humans' aversion to spider-human hybrids, and a greater tolerance towards heat, \
+		the “felinids,” as they came to be known, quickly outnumbered and outperformed the rest.",
 
-		"Sadly for the Felinids, they were not minor inconveniences. Shunned as subhuman and monstrous by many, Felinids (and other Animalids) \
-			sought their greener pastures out in the colonies, cloistering in communities of their own kind. \
-			As a result, outer Human space has a high Animalid population.",
+		"Following their discovery, Nanotrasen initiated a series of legal battles and propaganda campaigns to secure the recognition \
+		of felinids as a distinct species. This maneuver stripped them of many human labor protections, allowing corporations \
+		to employ them under looser contracts and at lower wages. Although felinid rights have been inching toward parity with \
+		those of humans, a significant gap remains, which continues to be a point of political and ethical contention.",
+
+		"The primary argument for this classification is that birth defects caused by low-generation genetic alterations \
+		make reproduction difficult, especially with unmodified humans. This provided a strong basis for the argument that \
+		the standard definition of a separate species applies."
 	)
 
 // Felinids are subtypes of humans.

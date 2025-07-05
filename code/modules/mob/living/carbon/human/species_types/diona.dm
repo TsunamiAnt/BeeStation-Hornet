@@ -320,18 +320,19 @@
 
 /datum/species/diona/get_species_lore()
 	return list(
-		"Dionae are a space-faring species of intensely curious sapient plant-bug-creatures, formed \
-			by a collective of independent Diona, named 'Nymphs', gathering together to form a collective named a 'Gestalt', commonly \
-			vaugely resembling a humanoid, although older collectives may grow into structures, or even floating asteroids in space.",
+		"Much like their fungal compatriots, Dionae hail from Thetis's bejungled moon. \
+		They are a species of intensely curious sapient plant-bug-creatures, formed by a collective of independent Diona, \
+		named 'Nymphs', gathering together to form a collective named a 'Gestalt', commonly vaguely resembling a humanoid, \
+		although older collectives may grow into structures, or even floating asteroids in space.",
 
-		"Dionae culture, for the most part, is nomadic, with Parent Gestalts splitting off a bud \
-			that then goes off into the world to explore and gain knowledge for itself. Rarely, a handful of Gestalts may link up \
-			in an agreed upon location to share knowledge, or to form a larger structure.",
+		"Dionae culture, for the most part, is nomadic, with Parent Gestalts splitting off a bud that then goes off into \
+		the world to explore and gain knowledge for itself. Rarely, a handful of Gestalts may link up in an agreed upon \
+		location to share knowledge, or to form a larger structure. ",
 
-		"As a collective of various individual nymphs with varying experiences,  \
-			names can become rather tricky, thus, Dionae Gestalts settle upon a single core memory shared between all Nymphs \
-			most commonly something from their younger years and expanding over time as they relook upon their memories, though \
-			it's not unheard of for a Gestalt to fully change their name if they find a fresher memory represents them more."
+		"As a collective of various individual nymphs with varying experiences, names can become rather tricky, \
+		thus, Dionae Gestalts settle upon a single core memory shared between all Nymphs most commonly something \
+		from their younger years and expanding over time as they relook upon their memories, though it's not \
+		unheard of for a Gestalt to fully change their name if they find a fresher memory represents them more."
 	)
 
 /datum/species/diona/create_pref_unique_perks()

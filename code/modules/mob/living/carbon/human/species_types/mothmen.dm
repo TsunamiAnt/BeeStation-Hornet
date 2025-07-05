@@ -201,10 +201,31 @@
 #undef COCOON_NUTRITION_AMOUNT
 
 /datum/species/moth/get_species_description()
-	return "Mothpeople are an intelligent species, known for their affinity to all things moth - lights, cloth, wings, and friendship."
+	return "Humanoid insect people with wings and antennae, mothpeople come in a variety of colors and patterns. \
+	Their physiology allows them to nibble on clothes and maneuver slightly without gravity, \
+	but their striking similarities to old Earth insects make them susceptible to traditional pest removal techniques. "
 
 /datum/species/moth/get_species_lore()
-	return null
+	return list(
+		"Hailing from a now-forgotten homeworld or system, the origins of Lümla are known to no one, save for its whispered name. \
+		The Mothpeople and their kin, the Apids, embarked on the Platshållare without a clear destination, \
+		driven by a long-lost purpose or impending apocalypse. They, along with the Apids, were not the only races aboard; \
+		they were merely the ones that survived. Archaeological projects conducted in sealed decks have uncovered the remains \
+		of entire distinct species that either suffered fatal mass accidents or could not endure long-term stasis.",
+
+		"Centuries of travel later, their fate changed when automated sensors detected faint human transmissions and redirected \
+		the ark toward the Geminae system. Now permanently moored above Thars, their great ark has become home to swarms of Moth \
+		transports, establishing the cheapest method of travel between Geminae and Auri. \
+		Their sudden arrival shocked human civilization, and only after decades of tense standoffs, cautious trade, \
+		and frantic cultural exchange did true integration occur.",
+
+		"Aboard the Platshållare, fragmented logs and half-erased databases hint at lost technologies. \
+		The remnants of the original computers have been cannibalized for in-flight repairs, leaving behind only snippets of \
+		bureaucratic records and star charts. Among the few preserved treasures is the ship's massive supermatter engine, \
+		now the only one of its kind. All attempts to synthesize additional supermatter crystals by both Moth and Human \
+		scientists have thus far been unsuccessful, with only unstable prototype crystals and fragments of the original being \
+		utilized in human facilities."
+	)
 
 /datum/species/moth/create_pref_unique_perks()
 	var/list/to_add = list()

@@ -208,7 +208,15 @@
 	return "Ethereals are a unique species with liquid electricity for blood and a glowing body. They thrive on electricity, and are naturally agender."
 
 /datum/species/ethereal/get_species_lore()
-	return null
+	return list(
+		"Arriving with the moths and apids on the Platshållare, the artificially created species of Etherials has been designed for long-term space habitation. Easily surviving on the near limitless energy of mothish supermatter-fueled vessels, they served as irreplaceable stewards and workers since time immemorial.",
+
+		"Like the apids though, with their arrival in human space comes change, \
+		and even this rock solid pseudo-enslavement has begun to loosen over the years. \
+		Today, Etherials can be found basically anywhere, enjoying an indepentent, normal standard of living.",
+
+		"Some of the more traditionalist moths and apids find this to be rather uncouth, as this is not their 'purpose.'"
+	)
 
 /datum/species/ethereal/create_pref_unique_perks()
 	var/list/to_add = list()

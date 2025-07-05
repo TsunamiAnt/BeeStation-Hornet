@@ -73,23 +73,14 @@
 
 /datum/species/psyphoza/get_species_lore()
 	return list(
-		"A standing testament to the humor of mother nature, Psyphoza have evolved powerful and mystical \
-			psychic abilities, which are almost completely mitigated by the fact they are absolutely \
-			blind, and depend entirely on their psychic abilities to navigate their surroundings.",
+		"Psyphozas hail from the deep caves of 5513-E, a bejungled moon orbiting the gas giant Thetis. \
+			Curiously, Psyphoza have evolved powerful and mystical psychic abilities. \
+			As they are blind, they depend entirely on their psychic abilities to navigate their surroundings.",
 
-		"Psyphoza culture is deeply rooted in superstition, mysticism, and the occult. It is their belief \
+		"Tribal Psyphoza culture is incredibly rich, and deeply rooted in superstition, mysticism, and the occult. It is their belief \
 			that the morphology of their cap deeply impacts the course of their life, with characteristics \
 			such as size, colour, and shape influencing how irrespectively lucky or unlucky they might be in \
-			their experiences.",
-
-		"An unfortunate superstition that Psyphoza 'meat' and 'blood' contain powerful psychedelics has caused \
-			many individuals of the species to be targeted, and hunted, by rich & eccentric individuals who wish \
-			to taste their flesh, and learn the truth for themselves. Unfortunately for Psyphoza, \
-			this superstition is completely true...",
-
-		"Although most Psyphoza have left behind a majority of the especially superstitious ideas of their \
-			progenitors, some lower caste members still cling to these old ideas as strongly as ever. These beliefs \
-			impact their culture deeply, resulting in very different behaviors between the typical and lower castes."
+			their experiences. Their elaborate and frequent rituals often involve a number of incredibly intricate aromatic blends, spores, fungal powders and slimes, and songs."
 	)
 
 /datum/species/psyphoza/create_pref_unique_perks()

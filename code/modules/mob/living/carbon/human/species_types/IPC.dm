@@ -12,7 +12,7 @@
 		MUTCOLORS,
 		REVIVESBYHEALING,
 		NOHUSK,
-		NOMOUTH, 
+		NOMOUTH,
 		MUTCOLORS
 	)
 	inherent_traits = list(
@@ -23,7 +23,7 @@
 		TRAIT_LIMBATTACHMENT,
 		TRAIT_EASYDISMEMBER,
 		TRAIT_POWERHUNGRY,
-		TRAIT_XENO_IMMUNE, 
+		TRAIT_XENO_IMMUNE,
 		TRAIT_TOXIMMUNE
 	)
 	inherent_biotypes = list(MOB_ROBOTIC, MOB_HUMANOID)
@@ -124,7 +124,7 @@
 	C.update_body()
 
 /datum/action/innate/change_screen
-	name = "Change Display"	
+	name = "Change Display"
 	check_flags = AB_CHECK_CONSCIOUS
 	icon_icon = 'icons/hud/actions/actions_silicon.dmi'
 	button_icon_state = "drone_vision"
@@ -279,12 +279,21 @@
 		BP.update_limb()
 
 /datum/species/ipc/get_species_description()
-	return "The newest in artificial life, IPCs are entirely robotic, synthetic life, made of motors, circuits, and wires \
-	- based on newly developed Postronic brain technology."
+	return "IPCs are an advanced form of artificial intelligence designed to replicate human behavior. Their chassis is modular and requires oil to lubricate. Also their brain is in their chest, not in their head."
 
 /datum/species/ipc/get_species_lore()
-	return null
+	return list(
+		"First designed for use during colonization attempts on Indol. While expensive to produce, \
+		they are more expendable than humans, less prone to biological hazards, do not sleep, and do not require food. ",
 
+		"A more advanced model of artificial intelligence is being developed by Nanotrasen to integrate with the station's systems via a common protocol, \
+		but as IPCs have no user-friendly way to integrate binding rules, it was deemed too risky to allow IPCs to access this protocol.",
+
+		"Various models of artificial intelligence programs (particularly those trained with larger, less-filtered data sources) have been known to infrequently go missing. \
+		This has led to a flurry of conspiracy theories, but Nanotrasen makes it clear that all machinery on their stations are regularly swapped or replaced \
+		to maintain the highest levels of safety. This does not stop rumors from swelling about a group of sentient AIs that have secured their freedom, \
+		known only by the acronym: S.E.L.F."
+	)
 /datum/species/ipc/create_pref_unique_perks()
 	var/list/to_add = list()
 

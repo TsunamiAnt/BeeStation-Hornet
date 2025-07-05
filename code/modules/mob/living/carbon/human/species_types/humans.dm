@@ -57,9 +57,13 @@
 
 /datum/species/human/get_species_lore()
 	return list(
-		"These primate-descended creatures, originating from the mostly harmless Earth, \
-		have long-since outgrown their home and semi-benign designation. \
-		The space age has taken humans out of their solar system and into the galaxy-at-large."
+		"A species with humble origins, growing up on their home planet Tellune before eventually advancing into the space-age.",
+
+		"After a significant boom in civilian access to space, the commercial applications of space stations in Auri, \
+		the sister system to Geminae, became readily apparent. ",
+
+		"A series of stations operated by various companies were created, \
+		with the latest and most modern being Space Station 13, operated by Nanotrasen."
 	)
 
 /datum/species/human/create_pref_unique_perks()

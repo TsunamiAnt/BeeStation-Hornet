@@ -87,7 +87,17 @@
 	Lizards often find great pride in their species."
 
 /datum/species/lizard/get_species_lore()
-	return null
+	return list(
+		"With a rich tribal history and culture, the lizardpeople evolved naturally on Cinis(Unofficially called lavaland), \
+			where they maintain numerous tribal holdings to this day. When they were first discovered by tellune scouts \
+			many of the more open minded tribes were interested in joining the greater tellunian government.",
+
+		"After undergoing gene-modification to their lungs to survive in a more conventional oxygen atmosphere, \
+			the descendants of these open tribes now enjoy a widespread population and far better standards of living.",
+
+		"However, the vast majority of tribes were not so amicable, and to this day there are resistance movements and feral, warlike tribes present on Cinis. \
+			These often pose a threat to local mining operations."
+	)
 
 /*
 	Lizard subspecies: ASHWALKERS

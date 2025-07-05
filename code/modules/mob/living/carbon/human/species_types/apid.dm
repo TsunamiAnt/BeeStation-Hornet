@@ -90,10 +90,27 @@
 	return ..()
 
 /datum/species/apid/get_species_description()
-	return "Beepeople, god damn it. It's hip, and alive! Buzz buzz!"
+	return "Humanoid insect people with wings and antennae, apidians come in a variety of colors and patterns. \
+	Their physiology allows them to dash forwards with a beat of their wings, \
+	but their striking similarities to old Earth insects make them susceptible to traditional pest removal techniques."
 
 /datum/species/apid/get_species_lore()
-	return null
+	return list(
+		"The Apids arrived aboard the Platshållare alongside the Mothpeople, awakening from generations of stasis to find themselves \
+		in the Geminae system. Like their kin, their homeworld, known only as Lümla, remains a half-forgotten legend, \
+		its history obscured in corrupted arc-ship archives.",
+
+		"Automated sensors guided the ship to Thars, the planet where both species first ventured into human-dominated space. \
+		Unlike the commerce-driven Moths, Apid society reformed around matriarchal clans. Each clan is centered on a revered \
+		“clan mother,” whose authority arises from age, wisdom, and the shared lineage of the clan. Although informal in practice, \
+		this structure is codified by local law: clan mothers possess veto power in communal councils, and clan crests \
+		embellish everything from trade charters to civic ceremonies.",
+
+		"On Thars, the Apids constructed ecological biodomes to research sustainable agriculture. Their clan compounds function as living laboratories, \
+		where new crops and habitat modules are integrated into the planet's crust. Although they collaborate with \
+		Moth-operated shuttles and human corporations, the Apids remain fiercely loyal to their clan traditions, \
+		ensuring that each generation inherits both matriarchal stewardship and a strong connection to their new home."
+	)
 
 /datum/species/apid/create_pref_unique_perks()
 	var/list/to_add = list()
