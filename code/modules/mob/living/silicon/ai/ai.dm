@@ -671,6 +671,15 @@ CREATION_TEST_IGNORE_SUBTYPES(/mob/living/silicon/ai)
 /mob/living/silicon/ai/proc/toggle_camera_light()
 	camera_light_on = !camera_light_on
 
+
+	//plan:
+	//if the light is on:
+	//proceed as usual
+	//if the light is off:
+	//still have a bit of light, set camera sprite to AI
+
+
+
 	if (!camera_light_on)
 		to_chat(src, "Camera lights deactivated.")
 
