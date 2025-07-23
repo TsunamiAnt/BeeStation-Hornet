@@ -1,0 +1,12 @@
+{
+	"map_name": "Triea mining outpost",
+	"map_link": "trieastation",
+	"map_path": "map_files/TrieaStation",
+	"map_file": "TrieaStation.dmm",
+	"shuttles": {
+		"emergency": "emergency_kilo",
+		"ferry": "ferry_kilo",
+		"cargo": "cargo_kilo",
+		"whiteship": "whiteship_meta"
+	}
+}
