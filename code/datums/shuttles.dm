@@ -598,6 +598,10 @@
 	suffix = "kilo"
 	name = "supply shuttle (Kilo)"
 
+/datum/map_template/shuttle/cargo/triea
+	suffix = "triea"
+	name = "supply shuttle (Triea)"
+
 /datum/map_template/shuttle/cargo/corg
 	suffix = "corg"
 	name = "supply shuttle (Corg)"

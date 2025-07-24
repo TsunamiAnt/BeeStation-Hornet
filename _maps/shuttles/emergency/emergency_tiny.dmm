@@ -162,6 +162,7 @@
 /obj/effect/turf_decal/stripes/line{
 	dir = 8
 	},
+/obj/structure/shuttle/engine/large/chopped/top_left,
 /turf/open/floor/plating/airless,
 /area/shuttle/escape)
 "qq" = (
@@ -174,6 +175,7 @@
 /obj/effect/turf_decal/stripes/line{
 	dir = 6
 	},
+/obj/structure/shuttle/engine/large/chopped/bottom_right,
 /turf/open/floor/plating/airless,
 /area/shuttle/escape)
 "rp" = (
@@ -443,6 +445,7 @@
 /obj/effect/turf_decal/stripes/line{
 	dir = 4
 	},
+/obj/structure/shuttle/engine/large/chopped/top_right,
 /turf/open/floor/plating/airless,
 /area/shuttle/escape)
 "ER" = (
@@ -660,10 +663,10 @@
 /turf/closed/wall/mineral/plastitanium,
 /area/shuttle/escape)
 "Ys" = (
-/obj/structure/shuttle/engine/large,
 /obj/effect/turf_decal/stripes/line{
 	dir = 10
 	},
+/obj/structure/shuttle/engine/large/chopped/bottom_left,
 /turf/open/floor/plating/airless,
 /area/shuttle/escape)
 "Yt" = (

@@ -437,11 +437,27 @@ NOTE: there are two lists of areas in the end of this file: centcom and station 
 	name = "Primary Hallway"
 
 /area/hallway/primary/aft
-	name = "Aft Primary Hallway"
+	name = "Central Aft Primary Hallway"
+	icon_state = "hallA"
+
+/area/hallway/primary/aft/starboard
+	name = "Starboard Aft Primary Hallway"
+	icon_state = "hallA"
+
+/area/hallway/primary/aft/port
+	name = "Port Aft Primary Hallway"
 	icon_state = "hallA"
 
 /area/hallway/primary/fore
-	name = "Fore Primary Hallway"
+	name = "Central Fore Primary Hallway"
+	icon_state = "hallF"
+
+/area/hallway/primary/fore/starboard
+	name = "Starboard Fore Primary Hallway"
+	icon_state = "hallF"
+
+/area/hallway/primary/fore/port
+	name = "Port Fore Primary Hallway"
 	icon_state = "hallF"
 
 /area/hallway/primary/starboard

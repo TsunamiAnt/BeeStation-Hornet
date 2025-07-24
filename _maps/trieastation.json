@@ -1,12 +1,17 @@
 {
-	"map_name": "Triea mining outpost",
+	"map_name": "Triea-121 mining outpost",
 	"map_link": "trieastation",
 	"map_path": "map_files/TrieaStation",
 	"map_file": "TrieaStation.dmm",
+	"planetary_station": "true",
+	"planet_name": "Asteroid 121-IE",
+	"planet_radius": "25",
+	"planet_mass": "5000",
+	
 	"shuttles": {
-		"emergency": "emergency_kilo",
-		"ferry": "ferry_kilo",
-		"cargo": "cargo_kilo",
-		"whiteship": "whiteship_meta"
+		"emergency": "emergency_tiny",
+		"ferry": "ferry_standard",
+		"cargo": "cargo_triea",
+		"whiteship": "whiteship_box"
 	}
 }
