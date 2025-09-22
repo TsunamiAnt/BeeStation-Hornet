@@ -302,6 +302,27 @@
 	list_reagents = list()
 	cap_on = FALSE
 
+// Jugs (Just very big bottles)
+// High volume reagent containers intended to aid bulk purchasing of precursor chemicals
+// Unwieldy, heavy, sort of fragile, cannot be used in chem dispensers, etc.
+
+/obj/item/reagent_containers/cup/glass/waterbottle/reagent_jug
+	name = "jug"
+	desc = "A large plastic jug."
+	icon = 'icons/obj/drinks/bottles.dmi'
+	icon_state = "jug"
+	item_state = "jug"
+	icon_state_preview = "jug"
+	custom_materials = list(/datum/material/plastic=5000)
+	volume = 500
+	amount_per_transfer_from_this = 50
+	possible_transfer_amounts = list(25,50,100)
+	isGlass = FALSE
+	w_class = WEIGHT_CLASS_BULKY
+	cap_icon_state = "jug_cap"
+	flip_chance = 1 // good luck
+	custom_price = PAYCHECK_EASY * 2
+
 // Admin spawn
 /obj/item/reagent_containers/cup/glass/waterbottle/random
 	name = "mysterious bottle"

@@ -77,7 +77,10 @@
 	lube_flags = NONE
 	switch(highest_strength)
 		if(TURF_WET_WATER)
-			intensity = 60
+			intensity = 5
+			lube_flags = NO_SLIP_WHEN_WALKING
+		if(TURF_WET_SOAPY)
+			intensity = 15
 			lube_flags = NO_SLIP_WHEN_WALKING
 		if(TURF_WET_LUBE)
 			intensity = 80

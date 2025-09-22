@@ -181,7 +181,7 @@
 	var/turf/open/open_turf = exposed_turf
 
 	if(reac_volume >= 5)
-		open_turf.MakeSlippery(TURF_WET_WATER, 10 SECONDS, min(reac_volume * 1.5 SECONDS, 60 SECONDS))
+		open_turf.MakeSlippery(TURF_WET_WATER, 10 MINUTES, min(reac_volume * 1.5 SECONDS, 60 SECONDS))
 
 	for(var/mob/living/simple_animal/slime/slime in open_turf)
 		slime.apply_water()
@@ -1158,11 +1158,21 @@
 	if(reac_volume < 1)
 		return
 
+
+	if(!isopenturf(exposed_turf))
+		return
+
+	var/turf/open/open_turf = exposed_turf
+
 	exposed_turf.wash(clean_types)
+
 	for(var/atom/movable/movable_content in exposed_turf)
 		if(ismopable(movable_content)) // Mopables will be cleaned anyways by the turf wash
 			continue
 		movable_content.wash(clean_types)
+
+	// Dries a bit quicker than water.
+	open_turf.MakeSlippery(TURF_WET_WATER, 5 MINUTES, min(reac_volume * 1.5 SECONDS, 60 SECONDS))
 
 	for(var/mob/living/simple_animal/slime/slime in exposed_turf)
 		slime.adjustToxLoss(rand(5,10))
