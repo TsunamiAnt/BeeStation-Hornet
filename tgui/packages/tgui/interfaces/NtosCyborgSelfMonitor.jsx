@@ -52,7 +52,6 @@ export const NtosCyborgSelfMonitorContent = (_) => {
   } = data;
   const borgName = data.name || [];
   const borgType = data.designation || [];
-  const masterAI = data.masterAI || [];
   const laws = data.Laws || [];
   const borgLog = data.borgLog || [];
   const borgUpgrades = data.borgUpgrades || [];
@@ -88,8 +87,14 @@ export const NtosCyborgSelfMonitorContent = (_) => {
                     {borgName.slice(0, 17)}
                   </LabeledList.Item>
                   <LabeledList.Item label="Type">{borgType}</LabeledList.Item>
-                  <LabeledList.Item label="AI">
-                    {masterAI.slice(0, 17)}
+                  <LabeledList.Item
+                    label="LawSync"
+                    color={wireLaw === 'FAULT' ? 'red' : 'green'}
+                  >
+                    {wireLaw}
+                  </LabeledList.Item>
+                  <LabeledList.Item label="Server">
+                    {data.lawsyncAddress || '---'}
                   </LabeledList.Item>
                 </LabeledList>
               </Section>
