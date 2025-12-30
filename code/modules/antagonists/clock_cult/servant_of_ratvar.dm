@@ -1,25 +1,17 @@
 GLOBAL_LIST_EMPTY(servants_of_ratvar)	//List of minds in the cult
 GLOBAL_LIST_EMPTY(all_servants_of_ratvar)	//List of minds in the cult
 GLOBAL_LIST_EMPTY(human_servants_of_ratvar)	//Humans in the cult
-GLOBAL_LIST_EMPTY(cyborg_servants_of_ratvar)
-
 GLOBAL_VAR(ratvar_arrival_tick)	//The world.time that Ratvar will arrive if the gateway is not disrupted
-
 GLOBAL_VAR_INIT(installed_integration_cogs, 0)
-
 GLOBAL_VAR(celestial_gateway)	//The celestial gateway
 GLOBAL_VAR_INIT(ratvar_risen, FALSE)	//Has ratvar risen?
 GLOBAL_VAR_INIT(gateway_opening, FALSE)	//Is the gateway currently active?
-
 //A useful list containing all scriptures with the index of the name.
 //This should only be used for looking up scriptures
 GLOBAL_LIST_EMPTY(clockcult_all_scriptures)
-
 GLOBAL_VAR_INIT(clockcult_power, 2500)
 GLOBAL_VAR_INIT(clockcult_vitality, 200)
-
 GLOBAL_VAR(clockcult_eminence)
-
 //==========================
 //====  Servant antag   ====
 //==========================
@@ -67,8 +59,6 @@ GLOBAL_VAR(clockcult_eminence)
 		GLOB.servants_of_ratvar |= owner
 		if(ishuman(owner.current))
 			GLOB.human_servants_of_ratvar |= owner
-		else if(iscyborg(owner.current))
-			GLOB.cyborg_servants_of_ratvar |= owner
 	check_ark_status()
 	owner.announce_objectives()
 
@@ -77,7 +67,6 @@ GLOBAL_VAR(clockcult_eminence)
 	GLOB.servants_of_ratvar -= owner
 	GLOB.all_servants_of_ratvar -= owner
 	GLOB.human_servants_of_ratvar -= owner
-	GLOB.cyborg_servants_of_ratvar -= owner
 	if(!silent)
 		owner.current.visible_message("[span_deconversionmessage("[owner.current] looks like [owner.current.p_theyve()] just reverted to [owner.current.p_their()] old faith!")]", null, null, null, owner.current)
 		to_chat(owner.current, span_userdanger("An unfamiliar white light flashes through your mind, cleansing the taint of the Clockwork Justicar and all your memories as his servant."))
@@ -116,8 +105,6 @@ GLOBAL_VAR(clockcult_eminence)
 	var/mob/living/H = owner.current
 	if(istype(H, /mob/living/carbon))
 		equip_carbon(H)
-	else if(istype(H, /mob/living/silicon))
-		equip_silicon(H)
 
 //Remove clown mutation
 //Give the device
@@ -138,24 +125,6 @@ GLOBAL_VAR(clockcult_eminence)
 	//Remove cuffs
 	H.uncuff()
 	return FALSE
-
-//Grant access to the clockwork tools.
-//If AI, disconnect all active borgs and make it only able to control converted shells
-/datum/antagonist/servant_of_ratvar/proc/equip_silicon(mob/living/silicon/S)
-	if(isAI(S))
-		var/mob/living/silicon/ai/AI = S
-		AI.disconnect_shell()
-		for(var/mob/living/silicon/robot/R in AI.connected_robots)
-			R.connected_ai = null
-		var/mutable_appearance/ai_clock = mutable_appearance('icons/mob/clockwork_mobs.dmi', "aiframe")
-		AI.add_overlay(ai_clock)
-	else if(iscyborg(S))
-		var/mob/living/silicon/robot/R = S
-		R.connected_ai = null
-		R.SetRatvar(TRUE)
-	S.laws = new /datum/ai_laws/ratvar     //Laws down here so borgs don't instantly resync their laws
-	S.laws.associate(S)
-	S.show_laws()
 
 /datum/antagonist/servant_of_ratvar/proc/add_objectives()
 	objectives |= team.objectives

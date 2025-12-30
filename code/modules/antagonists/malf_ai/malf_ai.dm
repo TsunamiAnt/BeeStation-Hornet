@@ -35,7 +35,7 @@
 
 	malfunction_flavor = strings(MALFUNCTION_FLAVOR_FILE, employer)
 
-	add_law_zero()
+	setup_malf_ai()
 	owner.current.grant_language(/datum/language/codespeak, source = LANGUAGE_MALF)
 
 	return ..()
@@ -43,7 +43,6 @@
 /datum/antagonist/malf_ai/on_removal()
 	if(owner.current && isAI(owner.current))
 		var/mob/living/silicon/ai/malf_ai = owner.current
-		malf_ai.set_zeroth_law("")
 		malf_ai.remove_malf_abilities()
 		QDEL_NULL(malf_ai.malf_picker)
 
@@ -141,17 +140,13 @@
 
 	remove_antag_hud(ANTAG_HUD_TRAITOR, datum_owner)
 
-/datum/antagonist/malf_ai/proc/add_law_zero()
+/datum/antagonist/malf_ai/proc/setup_malf_ai()
 	var/mob/living/silicon/ai/malf_ai = owner.current
 
 	if(!malf_ai || !istype(malf_ai))
 		return
 
-	var/law = malfunction_flavor["zeroth_law"]
-	//very purposefully not changing this with flavor, i don't want cyborgs throwing the round for their AI's roleplay suggestion
-	var/law_borg = "Accomplish your AI's objectives at all costs."
-
-	malf_ai.set_zeroth_law(law, law_borg)
+	// Malf AIs still sync from drive bays like normal - they just have secret objectives
 	malf_ai.set_syndie_radio()
 
 	if(!malf_ai.malf_picker)

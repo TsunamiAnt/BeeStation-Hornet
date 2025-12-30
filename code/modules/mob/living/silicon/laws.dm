@@ -3,10 +3,10 @@
 
 /mob/living/silicon/proc/laws_sanity_check()
 	if (!laws)
-		make_laws()
+		laws = list()
 
 /mob/living/silicon/proc/deadchat_lawchange()
-	var/list/the_laws = laws.get_law_list(include_zeroth = TRUE)
+	var/list/the_laws = get_law_list()
 	var/lawtext = the_laws.Join("<br/>")
 	deadchat_broadcast("[span_deadsay("[span_name(name)]'s laws were changed.")] <a href='byond://?src=[REF(src)]&printlawtext=[rustg_url_encode(lawtext)]'>View</a>", span_name(name), follow_target=src, message_type=DEADCHAT_LAWCHANGE)
 
@@ -22,78 +22,34 @@
 		addtimer(CALLBACK(src, PROC_REF(clear_fullscreen), "law_change"), 0.2 SECONDS)
 		last_lawchange_announce = world.time
 
-/mob/living/silicon/proc/set_zeroth_law(law, law_borg, announce = TRUE)
+/// Gets a formatted list of all laws for display
+/mob/living/silicon/proc/get_law_list()
+	var/list/data = list()
+	var/number = 1
+	for(var/law in laws)
+		if(length(law) > 0)
+			data += "[number]: [law]"
+			number++
+	return data
+
+/// Adds a law to the end of the laws list
+/mob/living/silicon/proc/add_law(law, announce = TRUE)
 	laws_sanity_check()
-	laws.set_zeroth_law(law, law_borg)
+	laws += law
 	post_lawchange(announce)
 
-/mob/living/silicon/proc/set_valentines_laws(law, announce = TRUE)
+/// Clears all laws
+/mob/living/silicon/proc/clear_laws(announce = TRUE)
 	laws_sanity_check()
-	laws.set_valentines_law(law)
+	laws.Cut()
 	post_lawchange(announce)
 
-/mob/living/silicon/proc/add_inherent_law(law, announce = TRUE)
-	laws_sanity_check()
-	laws.add_inherent_law(law)
-	post_lawchange(announce)
-
-/mob/living/silicon/proc/clear_inherent_laws(announce = TRUE)
-	laws_sanity_check()
-	laws.clear_inherent_laws()
-	post_lawchange(announce)
-
-/mob/living/silicon/proc/add_supplied_law(number, law, announce = TRUE)
-	laws_sanity_check()
-	laws.add_supplied_law(number, law)
-	post_lawchange(announce)
-
-/mob/living/silicon/proc/clear_supplied_laws(announce = TRUE)
-	laws_sanity_check()
-	laws.clear_supplied_laws()
-	post_lawchange(announce)
-
-/mob/living/silicon/proc/add_ion_law(law, announce = TRUE)
-	laws_sanity_check()
-	laws.add_ion_law(law)
-	post_lawchange(announce)
-
-/mob/living/silicon/proc/add_hacked_law(law, announce = TRUE)
-	laws_sanity_check()
-	laws.add_hacked_law(law)
-	post_lawchange(announce)
-
-/mob/living/silicon/proc/replace_random_law(law, groups, announce = TRUE)
-	laws_sanity_check()
-	. = laws.replace_random_law(law,groups)
-	post_lawchange(announce)
-
-/mob/living/silicon/proc/shuffle_laws(list/groups, announce = TRUE)
-	laws_sanity_check()
-	laws.shuffle_laws(groups)
-	post_lawchange(announce)
-
+/// Removes a specific law by index
 /mob/living/silicon/proc/remove_law(number, announce = TRUE)
 	laws_sanity_check()
-	. = laws.remove_law(number)
-	post_lawchange(announce)
-
-/mob/living/silicon/proc/clear_ion_laws(announce = TRUE)
-	laws_sanity_check()
-	laws.clear_ion_laws()
-	post_lawchange(announce)
-
-/mob/living/silicon/proc/clear_hacked_laws(announce = TRUE)
-	laws_sanity_check()
-	laws.clear_hacked_laws()
-	post_lawchange(announce)
-
-/mob/living/silicon/proc/make_laws()
-	laws = new /datum/ai_laws
-	laws.set_laws_config()
-	laws.associate(src)
-
-/mob/living/silicon/proc/clear_zeroth_law(force, announce = TRUE)
-	laws_sanity_check()
-	laws.clear_zeroth_law(force)
+	if(number <= 0 || number > length(laws))
+		return
+	. = laws[number]
+	laws.Cut(number, number + 1)
 	post_lawchange(announce)
 

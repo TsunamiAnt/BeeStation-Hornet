@@ -279,11 +279,11 @@
 			if(!O)
 				return
 
-			if(M.laws && M.laws.id != DEFAULT_AI_LAWID)
+			// If the MMI has custom laws, use those instead of syncing from drive bay
+			if(length(M.laws))
 				aisync = 0
 				lawsync = 0
-				O.laws = M.laws
-				M.laws.associate(O)
+				O.laws = M.laws.Copy()
 
 			O.invisibility = 0
 			//Transfer debug settings to new mob
@@ -298,8 +298,8 @@
 					O.connected_ai = forced_ai
 			if(!lawsync)
 				O.lawupdate = FALSE
-				if(M.laws.id == DEFAULT_AI_LAWID)
-					O.make_laws()
+				if(!length(M.laws))
+					O.sync_laws_from_drivebay()
 
 			O.job = JOB_NAME_CYBORG
 
@@ -355,7 +355,7 @@
 				O.notify_ai(AI_SHELL)
 			if(!lawsync)
 				O.lawupdate = FALSE
-				O.make_laws()
+				O.sync_laws_from_drivebay()
 
 
 			O.cell = chest.cell

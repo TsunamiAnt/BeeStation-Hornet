@@ -231,12 +231,8 @@
 #define BB_BASIC_MOB_FLEEING "BB_basic_fleeing"
 
 // AI laws
-#define LAW_VALENTINES "valentines"
-#define LAW_ZEROTH "zeroth"
 #define LAW_INHERENT "inherent"
 #define LAW_SUPPLIED "supplied"
-#define LAW_ION "ion"
-#define LAW_HACKED "hacked"
 
 GLOBAL_LIST_INIT(all_radial_directions, list(
 	"NORTH" = image(icon = 'icons/testing/turf_analysis.dmi', icon_state = "red_arrow", dir = NORTH),

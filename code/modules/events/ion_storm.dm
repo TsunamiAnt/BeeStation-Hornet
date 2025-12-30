@@ -6,23 +6,11 @@
 	can_malf_fake_alert = TRUE
 
 /datum/round_event/ion_storm
-	var/replace_lawset_prob = 25 //chance the AI's lawset is completely replaced with something else per config weights
-	var/remove_random_law_prob = 10 //chance the AI has one random supplied or inherent law removed
-	var/replace_law_prob = 10 //chance the randomly created law replaces a random law instead of simply being added
-	var/shuffle_laws_prob = 10 //chance the AI's laws are shuffled afterwards
+	var/corrupt_module_prob = 30 //chance to corrupt a random module in a drive bay
 	var/bot_emag_prob = 1
 	var/law_source = "Ion Storm"
-	var/ion_message = null
 	announceWhen = 1
 	announceChance = 33
-
-/datum/round_event/ion_storm/add_law_only // special subtype that adds a law only
-	law_source = "unspecified, please report this to coders"
-	replace_lawset_prob = 0
-	remove_random_law_prob = 0
-	replace_law_prob = 0
-	shuffle_laws_prob = 0
-	bot_emag_prob = 0
 
 /datum/round_event/ion_storm/announce(fake)
 	if(prob(announceChance) || fake)
@@ -30,36 +18,23 @@
 
 
 /datum/round_event/ion_storm/start()
-	//AI laws
-	for(var/mob/living/silicon/ai/M in GLOB.alive_mob_list)
-		M.laws_sanity_check()
-		if(M.stat != DEAD && M.see_in_dark != 0)
-			if(prob(replace_lawset_prob))
-				var/ion_lawset_type = pick_weighted_lawset()
-				var/datum/ai_laws/ion_lawset = new ion_lawset_type()
-				// our inherent laws now becomes the picked lawset's laws!
-				M.laws.inherent = ion_lawset.inherent.Copy()
-				// and clean up after.
-				qdel(ion_lawset)
-
-			if(prob(remove_random_law_prob))
-				M.remove_law(rand(1, M.laws.get_law_amount(list(LAW_INHERENT, LAW_SUPPLIED))))
-
-			var/message = ion_message || generate_ion_law()
-			if(message)
-				if(prob(replace_law_prob))
-					M.replace_random_law(message, list(LAW_INHERENT, LAW_SUPPLIED, LAW_ION))
-				else
-					M.add_ion_law(message)
-					log_law("[key_name(M)] had an ion law added, as follows:\"[message]\". Source: [law_source].")
-					var/time = time2text(world.realtime,"hh:mm:ss")
-					GLOB.lawchanges.Add("[time] <B>:</B> [key_name(M)] had an ion law added, as follows:\"[message]\". Source: [law_source].")
-
-			if(prob(shuffle_laws_prob))
-				M.shuffle_laws(list(LAW_INHERENT, LAW_SUPPLIED, LAW_ION))
-
-			log_game("Ion storm changed laws of [key_name(M)] to [english_list(M.laws.get_law_list(TRUE, TRUE))]")
-			M.post_lawchange()
+	// Ion storms now corrupt modules in drive bays
+	for(var/obj/machinery/drive_bay/bay in GLOB.drive_bay_list)
+		if(bay.machine_stat & (NOPOWER|BROKEN))
+			continue
+		// Corrupt random modules in the drive bay
+		if(prob(corrupt_module_prob))
+			var/list/available_modules = list()
+			for(var/i in 1 to length(bay.installed_modules))
+				var/obj/item/ai_module/module = bay.installed_modules[i]
+				if(module && !module.corrupted)
+					available_modules += module
+			if(length(available_modules))
+				var/obj/item/ai_module/target_module = pick(available_modules)
+				target_module.corrupt()
+				log_game("Ion storm corrupted [target_module] in drive bay at [AREACOORD(bay)]")
+				// The drive bay will send a signal on the next module change, but we should notify immediately
+				SEND_GLOBAL_SIGNAL(COMSIG_GLOB_DRIVEBAY_LAWS_CHANGED, bay, bay.lawsync_id)
 
 	if(bot_emag_prob)
 		for(var/mob/living/simple_animal/bot/bot in GLOB.alive_mob_list)

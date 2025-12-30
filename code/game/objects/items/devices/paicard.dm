@@ -84,7 +84,8 @@
 	data["pai"]["can_holo"] = pai.canholo
 	data["pai"]["dna"] = pai.master_dna
 	data["pai"]["emagged"] = pai.emagged
-	data["pai"]["laws"] = pai.laws.supplied
+	// For pAIs, show any directives beyond the first "Serve your master." law
+	data["pai"]["laws"] = length(pai.laws) > 1 ? pai.laws.Copy(2) : list()
 	data["pai"]["master"] = pai.master
 	data["pai"]["name"] = pai.name
 	data["pai"]["transmit"] = pai.can_transmit
@@ -132,14 +133,22 @@
 				pai.master = master.real_name
 				pai.master_dna = master.dna.unique_enzymes
 				to_chat(pai, span_notice("You have been bound to a new master."))
-				pai.laws.set_zeroth_law("Serve your master.")
+				// pAIs have "Serve your master." as their first law - ensure it's there
+				if(!length(pai.laws) || pai.laws[1] != "Serve your master.")
+					pai.laws.Insert(1, "Serve your master.")
 				pai.emittersemicd = FALSE
 		if("set_laws")
-			var/newlaws = stripped_multiline_input(usr, "Enter any additional directives you would like your pAI personality to follow. Note that these directives will not override the personality's allegiance to its imprinted master. Conflicting directives will be ignored.", "pAI Directive Configuration", pai.laws.supplied[1])
+			// Get current supplemental directive (anything after "Serve your master.")
+			var/current_directive = length(pai.laws) > 1 ? pai.laws[2] : ""
+			var/newlaws = stripped_multiline_input(usr, "Enter any additional directives you would like your pAI personality to follow. Note that these directives will not override the personality's allegiance to its imprinted master. Conflicting directives will be ignored.", "pAI Directive Configuration", current_directive)
 			if(!in_range(src, usr))
 				return FALSE
 			if(newlaws && pai)
-				pai.add_supplied_law(0,newlaws)
+				// Set the supplemental directive as the second law
+				if(length(pai.laws) > 1)
+					pai.laws[2] = newlaws
+				else
+					pai.laws += newlaws
 		if("toggle_holo")
 			if(pai.canholo)
 				to_chat(pai, span_warning("Your owner has disabled your holomatrix projectors!"))

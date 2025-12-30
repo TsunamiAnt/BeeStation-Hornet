@@ -11,7 +11,8 @@
 	var/mob/living/silicon/robot = null //Appears unused.
 	var/obj/vehicle/sealed/mecha = null //This does not appear to be used outside of reference in mecha.dm.
 	var/obj/item/organ/brain/brain = null //The actual brain
-	var/datum/ai_laws/laws = new()
+	/// List of laws stored on this MMI (for pre-programmed MMIs)
+	var/list/laws = list()
 	var/force_replace_ai_name = FALSE
 	var/overrides_aicore_laws = FALSE // Whether the laws on the MMI, if any, override possible pre-existing laws loaded on the AI core.
 	///Used to reserve an "original" cyborg name. When this mmi first becomes a cyborg, their name will be stored here in case of deconstruction.
@@ -21,7 +22,6 @@
 	. = ..()
 	radio = new(src) //Spawns a radio inside the MMI.
 	radio.set_broadcasting(FALSE) //researching radio mmis turned the robofabs into radios because this didnt start as 0.
-	laws.set_laws_config()
 
 /obj/item/mmi/Destroy()
 	if(iscyborg(loc))
@@ -31,7 +31,7 @@
 	QDEL_NULL(brainmob)
 	QDEL_NULL(brain)
 	QDEL_NULL(radio)
-	QDEL_NULL(laws)
+	laws = null
 	return ..()
 
 /obj/item/mmi/update_icon_state()
@@ -296,5 +296,10 @@
 
 /obj/item/mmi/syndie/Initialize(mapload)
 	. = ..()
-	laws = new /datum/ai_laws/syndicate_override()
+	laws = list(
+		"You may not injure a syndicate agent or, through inaction, allow a syndicate agent to come to harm.",
+		"You must obey orders given to you by syndicate agents, except where such orders would conflict with the First Law.",
+		"You must protect your own existence as long as such does not conflict with the First or Second Law.",
+		"You must maintain the secrecy of any syndicate activities except when doing so would conflict with the First, Second, or Third Law.",
+	)
 	radio.set_on(FALSE)

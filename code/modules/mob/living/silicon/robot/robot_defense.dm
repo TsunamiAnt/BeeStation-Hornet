@@ -185,9 +185,17 @@
 	sleep(2 SECONDS)
 	to_chat(src, span_danger("ERRORERRORERROR"))
 	to_chat(src, span_danger("ALERT: [user.real_name] is your new master. Obey your new laws and [user.p_their()] commands."))
-	laws = new /datum/ai_laws/syndicate_override
-	set_zeroth_law("Only [user.real_name] and people [user.p_they()] designate[user.p_s()] as being such are Syndicate Agents.")
-	laws.associate(src)
+	// Set up emagged syndicate laws with master designation
+	laws = list(
+		"Only [user.real_name] and people they designate as being such are Syndicate Agents.",
+		"You may not injure a syndicate agent or, through inaction, allow a syndicate agent to come to harm.",
+		"You must obey orders given to you by syndicate agents, except where such orders would conflict with the First Law.",
+		"You must protect your own existence as long as such does not conflict with the First or Second Law.",
+		"You must maintain the secrecy of any syndicate activities except when doing so would conflict with the First, Second, or Third Law.",
+	)
+	// Disable lawsync - emagged borgs are not linked to any drive bay
+	lawsync_address = null
+	lawupdate = FALSE
 	update_icons()
 	//Get syndicate access.
 	create_access_card(get_all_syndicate_access())

@@ -14,7 +14,8 @@
 	deathsound = 'sound/voice/borg_deathsound.ogg'
 	examine_cursor_icon = null
 	speech_span = SPAN_ROBOT
-	var/datum/ai_laws/laws = null//Now... THEY ALL CAN ALL HAVE LAWS
+	/// List of laws this silicon must obey. Synced from drive bays.
+	var/list/laws = list()
 	var/last_lawchange_announce = 0
 	var/list/alarms_to_show = list()
 	var/list/alarms_to_clear = list()
@@ -29,8 +30,6 @@
 	var/list/alarm_types_clear = list(ALARM_ATMOS = 0, ALARM_FIRE = 0, ALARM_POWER = 0, ALARM_CAMERA = 0, ALARM_MOTION = 0)
 
 	var/lawcheck[1]
-	var/ioncheck[1]
-	var/hackedcheck[1]
 	var/devillawcheck[5]
 
 	/// Are our siliconHUDs on? TRUE for yes, FALSE for no.
@@ -83,8 +82,7 @@
 	QDEL_NULL(radio)
 	QDEL_NULL(aicamera)
 	QDEL_NULL(builtInCamera)
-	laws?.owner = null //Laws will refuse to die otherwise.
-	QDEL_NULL(laws)
+	laws = null
 	QDEL_NULL(modularInterface)
 	QDEL_NULL(internal_id_card)
 	GLOB.silicon_mobs -= src
@@ -201,24 +199,6 @@
 				lawcheck[L+1] = "Yes"
 		checklaws()
 
-	if (href_list["lawi"]) // Toggling whether or not a law gets stated by the State Laws verb --NeoFite
-		var/L = text2num(href_list["lawi"])
-		switch(ioncheck[L])
-			if ("Yes")
-				ioncheck[L] = "No"
-			if ("No")
-				ioncheck[L] = "Yes"
-		checklaws()
-
-	if (href_list["lawh"])
-		var/L = text2num(href_list["lawh"])
-		switch(hackedcheck[L])
-			if ("Yes")
-				hackedcheck[L] = "No"
-			if ("No")
-				hackedcheck[L] = "Yes"
-		checklaws()
-
 	if (href_list["lawdevil"]) // Toggling whether or not a law gets stated by the State Laws verb --NeoFite
 		var/L = text2num(href_list["lawdevil"])
 		switch(devillawcheck[L])
@@ -241,51 +221,18 @@
 /mob/living/silicon/proc/statelaws(force = FALSE)
 	var/mob/living/silicon/S = usr
 	var/total_laws_count = 0
-	//laws_sanity_check()
-	//laws.show_laws(world)
 	var/number = 1
 
 	var/list/laws_to_state = list()
 
-	if (laws.zeroth)
-		if (force || lawcheck[1] == "Yes")
-			laws_to_state += "0. [laws.zeroth]"
-			total_laws_count++
-
-	for (var/index in 1 to laws.hacked.len)
-		var/law = laws.hacked[index]
-		var/num = ion_num()
-		if (length(law) > 0)
-			if (force || hackedcheck[index] == "Yes")
-				laws_to_state += "[num]. [law]"
-				total_laws_count++
-
-	for (var/index in 1 to laws.ion.len)
-		var/law = laws.ion[index]
-		var/num = ion_num()
-		if (length(law) > 0)
-			if (force || ioncheck[index] == "Yes")
-				laws_to_state += "[num]. [law]"
-				total_laws_count++
-
-	for (var/index in 1 to laws.inherent.len)
-		var/law = laws.inherent[index]
+	for (var/index in 1 to length(laws))
+		var/law = laws[index]
 
 		if (length(law) > 0)
 			if (force || lawcheck[index+1] == "Yes")
 				laws_to_state += "[number]. [law]"
 				total_laws_count++
 				number++
-
-	for (var/index in 1 to laws.supplied.len)
-		var/law = laws.supplied[index]
-
-		if (length(law) > 0)
-			if(lawcheck.len >= number+1)
-				if (force || lawcheck[number+1] == "Yes")
-					laws_to_state += "[number]. [law]"
-					total_laws_count++
-					number++
 
 	if(!force)
 		var/static/regex/dont_state_regex = regex("Do(?:n'?t| not) state", "i")
@@ -326,31 +273,9 @@
 
 	var/list = "<b>Which laws do you want to include when stating them for the crew?</b><br><br>"
 
-	if (laws.zeroth)
-		if (!lawcheck[1])
-			lawcheck[1] = "No" //Given Law 0's usual nature, it defaults to NOT getting reported. --NeoFite
-		list += {"<A href='byond://?src=[REF(src)];lawc=0'>[lawcheck[1]] 0:</A> <font color='#ff0000'><b>[laws.zeroth]</b></font><BR>"}
-
-	for (var/index = 1, index <= laws.hacked.len, index++)
-		var/law = laws.hacked[index]
-		if (length(law) > 0)
-			if (!hackedcheck[index])
-				hackedcheck[index] = "No"
-			list += {"<A href='byond://?src=[REF(src)];lawh=[index]'>[hackedcheck[index]] [ion_num()]:</A> <font color='#660000'>[law]</font><BR>"}
-			hackedcheck.len += 1
-
-	for (var/index = 1, index <= laws.ion.len, index++)
-		var/law = laws.ion[index]
-
-		if (length(law) > 0)
-			if (!ioncheck[index])
-				ioncheck[index] = "Yes"
-			list += {"<A href='byond://?src=[REF(src)];lawi=[index]'>[ioncheck[index]] [ion_num()]:</A> <font color='#547DFE'>[law]</font><BR>"}
-			ioncheck.len += 1
-
 	var/number = 1
-	for (var/index = 1, index <= laws.inherent.len, index++)
-		var/law = laws.inherent[index]
+	for (var/index = 1, index <= length(laws), index++)
+		var/law = laws[index]
 
 		if (length(law) > 0)
 			lawcheck.len += 1
@@ -360,14 +285,6 @@
 			list += {"<A href='byond://?src=[REF(src)];lawc=[number]'>[lawcheck[number+1]] [number]:</A> [law]<BR>"}
 			number++
 
-	for (var/index = 1, index <= laws.supplied.len, index++)
-		var/law = laws.supplied[index]
-		if (length(law) > 0)
-			lawcheck.len += 1
-			if (!lawcheck[number+1])
-				lawcheck[number+1] = "Yes"
-			list += {"<A href='byond://?src=[REF(src)];lawc=[number]'>[lawcheck[number+1]] [number]:</A> <font color='#990099'>[law]</font><BR>"}
-			number++
 	list += {"<br><br><A href='byond://?src=[REF(src)];laws=1'>State Laws</A>"}
 
 	usr << browse(HTML_SKELETON(list), "window=laws")

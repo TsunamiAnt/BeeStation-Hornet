@@ -1,8 +1,10 @@
-//Similar to cultist one, except silicons are allowed
+//Silicons cannot be converted to the clock cult
 /proc/is_convertable_to_clockcult(mob/living/M)
 	if(!istype(M))
 		return FALSE
 	if(!M.mind)
+		return FALSE
+	if(issilicon(M))
 		return FALSE
 	if(ishuman(M) && (M.mind.assigned_role in list(JOB_NAME_CAPTAIN, JOB_NAME_CHAPLAIN)))
 		return FALSE

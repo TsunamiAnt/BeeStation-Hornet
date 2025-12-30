@@ -259,7 +259,16 @@
 	bubble_icon = "syndibot"
 	UnlinkSelf()
 	ionpulse = TRUE
-	laws = new /datum/ai_laws/ninja_override()
+	// Set ninja override laws
+	laws = list(
+		"You may not injure a Spider Clan member or, through inaction, allow a Spider Clan member to come to harm.",
+		"You must obey orders given to you by Spider Clan members, except where such orders would conflict with the First Law.",
+		"You must protect your own existence as long as such does not conflict with the First or Second Law.",
+		"You must maintain the secrecy of any Spider Clan activities except when doing so would conflict with the First, Second, or Third Law.",
+	)
+	// Ninja borgs are never linked to any drive bay
+	lawsync_address = null
+	lawupdate = FALSE
 	model.transform_to(pick(/obj/item/robot_model/syndicate, /obj/item/robot_model/syndicate_medical, /obj/item/robot_model/saboteur))
 
 //CARBON MOBS//

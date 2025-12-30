@@ -253,29 +253,6 @@
 
 /datum/config_entry/flag/sandbox_autoclose	// close the sandbox panel after spawning an item, potentially reducing griff
 
-/datum/config_entry/number/default_laws //Controls what laws the AI spawns with.
-	config_entry_value = 0
-	min_val = 0
-	max_val = 4
-
-/datum/config_entry/number/silicon_max_law_amount
-	config_entry_value = 12
-	min_val = 0
-
-/datum/config_entry/keyed_list/specified_laws
-	key_mode = KEY_MODE_TEXT
-	value_mode = VALUE_MODE_FLAG
-
-/datum/config_entry/keyed_list/random_laws
-	key_mode = KEY_MODE_TEXT
-	value_mode = VALUE_MODE_NUM
-	splitter = ","
-
-/datum/config_entry/keyed_list/law_weight
-	key_mode = KEY_MODE_TEXT
-	value_mode = VALUE_MODE_NUM
-	splitter = ","
-
 /datum/config_entry/number/max_law_len
 	config_entry_value = 1024
 

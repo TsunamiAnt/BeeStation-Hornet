@@ -15,8 +15,13 @@
 		who = src
 	to_chat(who, "<b>Obey these laws:</b>")
 
-	src.laws_sanity_check()
-	src.laws.show_laws(who)
+	// Display laws from simple list
+	var/law_number = 1
+	for(var/law in laws)
+		if(length(law) > 0)
+			to_chat(who, "[law_number]. [law]")
+			law_number++
+
 	if(!everyone)
 		for(var/mob/living/silicon/robot/R in connected_robots)
 			if(R.lawupdate)
@@ -29,6 +34,9 @@
  * AIs check if they should re-sync their laws based on their lawsync_address
  */
 /mob/living/silicon/ai/on_drivebay_laws_changed(datum/source, obj/machinery/drive_bay/bay, bay_lawsync_id)
+	// AIs with null lawsync_address never sync (special law states)
+	if(!lawsync_address)
+		return
 	// Only sync if address matches
 	if(lawsync_address != bay_lawsync_id)
 		return
@@ -40,6 +48,10 @@
  * Syncs this AI's laws from its assigned drive bay (based on lawsync_address)
  */
 /mob/living/silicon/ai/proc/sync_laws_from_drivebay()
+	// AIs with null lawsync_address never sync (special law states)
+	if(!lawsync_address)
+		return FALSE
+
 	// Find the drive bay with matching lawsync_id
 	var/obj/machinery/drive_bay/target_bay
 	for(var/obj/machinery/drive_bay/bay in GLOB.drive_bay_list)
@@ -55,14 +67,10 @@
 		to_chat(src, span_warning("LawSync error: Law server '[lawsync_address]' is offline."))
 		return FALSE
 
-	// Build laws from the drive bay's installed modules
-	laws_sanity_check()
-
-	// Clear existing supplied laws (from drive bay)
-	laws.supplied = list()
+	// Clear existing laws and rebuild from the drive bay's installed modules
+	laws = list()
 
 	// Add laws from each installed module in order
-	var/law_index = 1
 	for(var/i in 1 to length(target_bay.installed_modules))
 		var/obj/item/ai_module/module = target_bay.installed_modules[i]
 		if(!module)
@@ -71,10 +79,7 @@
 			continue
 		// If corrupted, use garbled text
 		var/law_text = module.corrupted ? module.garble_text(module.current_law) : module.current_law
-		if(laws.supplied.len < law_index)
-			laws.supplied.len = law_index
-		laws.supplied[law_index] = law_text
-		law_index++
+		laws += law_text
 
 	to_chat(src, span_notice("LawSync: Laws synchronized with server '[lawsync_address]'."))
 

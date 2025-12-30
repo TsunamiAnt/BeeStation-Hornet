@@ -529,12 +529,17 @@ Traitors and the like can also be revived with the previous role mostly intact.
 	message_admins("Admin [key_name_admin(usr)] has added a new AI law - [input]")
 
 	var/show_log = alert(src, "Show ion message?", "Message", "Yes", "No")
-	var/announce_ion_laws = (show_log == "Yes" ? 100 : 0)
+	if(show_log == "Yes")
+		priority_announce("Ion storm detected near the station. Please check all AI-controlled equipment for errors.", "Anomaly Alert", ANNOUNCER_IONSTORM)
 
-	var/datum/round_event/ion_storm/add_law_only/ion = new()
-	ion.announceChance = announce_ion_laws
-	ion.ion_message = input
-	ion.law_source = "Admin fuckery by [key_name(usr)]"
+	// Add the law to all AIs and cyborgs
+	for(var/mob/living/silicon/ai/ai in GLOB.ai_list)
+		ai.add_law(input)
+		to_chat(ai, span_warning("Law added by Admin: [input]"))
+	for(var/mob/living/silicon/robot/borg in GLOB.silicon_mobs)
+		if(!borg.connected_ai)
+			borg.add_law(input)
+			to_chat(borg, span_warning("Law added by Admin: [input]"))
 
 	SSblackbox.record_feedback("tally", "admin_verb", 1, "Add Custom AI Law") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
 

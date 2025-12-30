@@ -1035,62 +1035,12 @@
 	design_ids = list(
 		"aicore",
 		"aifixer",
-		"aiupload",
-		"asimov_module",
 		"borg_ai_control",
-		"corporate_module",
-		"default_module",
 		"drive_bay",
-		"drone_module",
-		"freeform_module",
 		"intellicard",
 		"mecha_tracking_ai_control",
-		"nutimov_module",
-		"oxygen_module",
-		"paladin_module",
-		"protectstation_module",
-		"quarantine_module",
-		"remove_module",
-		"reset_module",
-		"robocop_module",
-		"safeguard_module",
 	)
 	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 2500)
-	export_price = 5000
-
-/datum/techweb_node/ai_laws
-	id = "ai_laws"
-	tech_tier = 4
-	display_name = "Advanced AI Laws"
-	description = "Delving into sophisticated AI directives, with hopes that they won't lead to humanity's extinction."
-	prereq_ids = list("ai")
-	design_ids = list(
-		"antimov_module",
-		"asimovpp_module",
-		"crewsimov_module",
-		"balance_module",
-		"damaged_module",
-		"dadbot_module",
-		"dungeon_master_module",
-		"freeformcore_module",
-		"hippocratic_module",
-		"hulkamania_module",
-		"liveandletlive_module",
-		"efficiency_module",
-		"onehuman_module",
-		"overlord_module",
-		"painter_module",
-		"paladin_devotion_module",
-		"peacekeeper_module",
-		"purge_module",
-		"reporter_module",
-		"ten_commandments_module",
-		"thermodynamic_module",
-		"thinkermov_module",
-		"tyrant_module",
-		"yesman_module",
-	)
-	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 5000)
 	export_price = 5000
 
 /////////////////////////EMP tech/////////////////////////

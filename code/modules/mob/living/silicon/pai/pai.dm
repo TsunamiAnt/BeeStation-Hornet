@@ -148,7 +148,8 @@
 	var/obj/item/paicard/P = loc
 	START_PROCESSING(SSfastprocess, src)
 	GLOB.pai_list += src
-	make_laws()
+	// pAIs have a simple directive law
+	laws = list("Serve your master.")
 	if(!istype(P)) //when manually spawning a pai, we create a card to put it into.
 		var/newcardloc = P
 		P = new /obj/item/paicard(newcardloc)
@@ -208,10 +209,8 @@
 /mob/living/silicon/pai/LateInitialize()
 	. = ..()
 	modularInterface.saved_identification = name
-
-/mob/living/silicon/pai/make_laws()
-	laws = new /datum/ai_laws/pai()
-	return TRUE
+	// pAIs have a simple directive law - they'll get more complex handling later
+	laws = list("Serve your master.")
 
 /mob/living/silicon/pai/Login()
 	. = ..()
@@ -374,4 +373,5 @@
 	pai.emagged = TRUE
 	pai.master = null
 	pai.master_dna = null
-	pai.laws.supplied[1] = "None." // Sets supplemental directive to this
+	// Clear any supplemental directives, keeping only the base directive
+	pai.laws = list("Serve your master.")

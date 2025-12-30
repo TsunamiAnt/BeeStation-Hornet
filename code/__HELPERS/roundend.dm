@@ -489,7 +489,7 @@ GLOBAL_VAR(survivor_report) //! Contains shared survivor report for roundend rep
 	for (var/mob/living/silicon/ai/aiPlayer as anything in GLOB.ai_list)
 		if(aiPlayer.mind)
 			parts += "<b>[aiPlayer.name]</b>'s laws [aiPlayer.stat != DEAD ? "at the end of the round" : "when it was [span_redtext("deactivated")]"] were:"
-			parts += aiPlayer.laws.get_law_list(include_zeroth=TRUE)
+			parts += aiPlayer.get_law_list()
 
 		parts += "<b>Total law changes: [aiPlayer.law_change_counter]</b>"
 
@@ -513,7 +513,7 @@ GLOBAL_VAR(survivor_report) //! Contains shared survivor report for roundend rep
 			parts += "[borg_spacer?"<br>":""]<b>[robo.name]</b> [(robo.stat != DEAD)? "[span_greentext("survived")] as an AI-less borg!" : "was [span_redtext("unable to survive")] the rigors of being a cyborg without an AI."] Its laws were:"
 
 			if(robo) //How the hell do we lose robo between here and the world messages directly above this?
-				parts += robo.laws.get_law_list(include_zeroth=TRUE)
+				parts += robo.get_law_list()
 
 			if(!borg_spacer)
 				borg_spacer = TRUE

@@ -8,15 +8,14 @@
 	max_integrity = 500
 	z_flags = Z_BLOCK_IN_DOWN | Z_BLOCK_IN_UP
 	var/state = EMPTY_CORE
-	var/datum/ai_laws/laws
+	/// List of laws to give to the AI when created (usually empty - AI syncs from drive bay)
+	var/list/laws = list()
 	var/obj/item/circuitboard/aicore/circuit
 	var/obj/item/mmi/brain
 	var/can_deconstruct = TRUE
 
 /obj/structure/AIcore/Initialize(mapload)
 	. = ..()
-	laws = new
-	laws.set_laws_config()
 
 /obj/structure/AIcore/handle_atom_del(atom/A)
 	if(A == circuit)
@@ -32,7 +31,7 @@
 /obj/structure/AIcore/Destroy()
 	QDEL_NULL(circuit)
 	QDEL_NULL(brain)
-	QDEL_NULL(laws)
+	laws = null
 	return ..()
 
 /obj/structure/AIcore/latejoin_inactive
@@ -174,7 +173,7 @@
 					return
 
 				if(istype(P, /obj/item/ai_module))
-					if(brain && brain.laws.id != DEFAULT_AI_LAWID)
+					if(brain && length(brain.laws))
 						to_chat(user, span_warning("The installed [brain.name] already has set laws!"))
 						return
 					//var/obj/item/ai_module/module = P

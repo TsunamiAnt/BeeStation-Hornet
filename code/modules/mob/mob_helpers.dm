@@ -309,7 +309,8 @@
 		return FALSE
 	if(isAI(M))
 		var/mob/living/silicon/ai/A = M
-		return (A.laws?.zeroth && (A.mind?.special_role || !isnull(M.mind?.antag_datums)))
+		// AIs are antagonists if they have a special role or antag datum
+		return (A.mind?.special_role || !isnull(M.mind?.antag_datums))
 	if(M.mind?.special_role || !isnull(M.mind?.antag_datums)) //they have an antag datum!
 		return TRUE
 	return FALSE
