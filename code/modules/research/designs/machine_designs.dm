@@ -452,6 +452,14 @@
 	category = list ("Misc. Machinery")
 	departmental_flags = DEPARTMENTAL_FLAG_ALL
 
+/datum/design/board/drive_bay
+	name = "Machine Design (AI Law Upload Drive Bay)"
+	desc = "The circuit board for an AI law upload drive bay."
+	id = "drive_bay"
+	build_path = /obj/item/circuitboard/machine/drive_bay
+	category = list ("Misc. Machinery")
+	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE
+
 /datum/design/board/autolathe
 	name = "Machine Design (Autolathe Board)"
 	desc = "The circuit board for an autolathe."

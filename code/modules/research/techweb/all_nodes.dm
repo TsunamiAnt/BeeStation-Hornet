@@ -1040,6 +1040,7 @@
 		"borg_ai_control",
 		"corporate_module",
 		"default_module",
+		"drive_bay",
 		"drone_module",
 		"freeform_module",
 		"intellicard",
