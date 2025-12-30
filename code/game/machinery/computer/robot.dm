@@ -101,17 +101,17 @@
 
 
 	data["uploads"] = list()
-	for(var/obj/machinery/computer/upload/upload as() in GLOB.uploads_list)
-		if(machine_stat & (NOPOWER|BROKEN))
+	for(var/obj/machinery/drive_bay/law_server as() in GLOB.drive_bay_list)
+		if(law_server.machine_stat & (NOPOWER|BROKEN))
 			continue
-		if(!(is_station_level(src.z) && is_station_level(upload.z)))
+		if(!(is_station_level(src.z) && is_station_level(law_server.z)))
 			continue
-		var/turf/loc = get_turf(upload)
+		var/turf/loc = get_turf(law_server)
 		var/list/upload_data = list(
-			name = upload.name,
+			name = law_server.name,
 			area = "[get_area_name(loc, TRUE)]",
 			coords = "[loc.x], [loc.y], [loc.get_virtual_z_level()]",
-			ref = REF(upload)
+			ref = REF(law_server)
 		)
 		data["uploads"] += list(upload_data)
 

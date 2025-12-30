@@ -360,56 +360,6 @@
 		/obj/item/clothing/mask/gas/cyborg = 25,
 		"" = 75)
 
-/obj/effect/spawner/lootdrop/aimodule_harmless // These shouldn't allow the AI to start butchering people
-	icon_state = "random_board"
-	name = "harmless AI module spawner"
-	loot = list(
-			/obj/item/ai_module/core/full/asimovpp,
-			/obj/item/ai_module/core/full/hippocratic,
-			/obj/item/ai_module/core/full/paladin_devotion,
-			/obj/item/ai_module/core/full/paladin,
-			/obj/item/ai_module/core/full/corp,
-			/obj/item/ai_module/core/full/robocop,
-			/obj/item/ai_module/core/full/efficiency,
-			/obj/item/ai_module/core/full/liveandletlive,
-			/obj/item/ai_module/core/full/peacekeeper,
-			/obj/item/ai_module/core/full/ten_commandments,
-			/obj/item/ai_module/core/full/nutimov,
-			/obj/item/ai_module/core/full/drone,
-			/obj/item/ai_module/core/full/custom
-			)
-
-/obj/effect/spawner/lootdrop/aimodule_neutral // These shouldn't allow the AI to start butchering people without reason
-	icon_state = "random_board"
-	name = "neutral AI module spawner"
-	loot = list(
-			/obj/item/ai_module/core/full/reporter,
-			/obj/item/ai_module/core/full/thinkermov,
-			/obj/item/ai_module/core/full/hulkamania,
-			/obj/item/ai_module/core/full/overlord,
-			/obj/item/ai_module/core/full/tyrant,
-			/obj/item/ai_module/core/full/painter,
-			/obj/item/ai_module/core/full/dungeon_master,
-			/obj/item/ai_module/core/full/yesman,
-			/obj/item/ai_module/supplied/safeguard,
-			/obj/item/ai_module/supplied/protect_station,
-			/obj/item/ai_module/supplied/quarantine,
-			/obj/item/ai_module/remove
-			)
-
-/obj/effect/spawner/lootdrop/aimodule_harmful // These will get the shuttle called
-	icon_state = "random_board"
-	name = "harmful AI module spawner"
-	loot = list(
-			/obj/item/ai_module/core/full/antimov,
-			/obj/item/ai_module/core/full/balance,
-			/obj/item/ai_module/core/full/thermodynamic,
-			/obj/item/ai_module/core/full/damaged,
-			/obj/item/ai_module/zeroth/onehuman,
-			/obj/item/ai_module/supplied/oxygen,
-			/obj/item/ai_module/core/freeformcore
-			)
-
 // Tech storage circuit board spawners
 
 /obj/effect/spawner/lootdrop/techstorage
@@ -502,8 +452,7 @@
 /obj/effect/spawner/lootdrop/techstorage/AI
 	name = "secure AI circuit board spawner"
 	loot = list(
-				/obj/item/circuitboard/computer/aiupload,
-				/obj/item/circuitboard/computer/borgupload,
+				/obj/item/circuitboard/machine/drive_bay,
 				/obj/item/circuitboard/aicore
 				)
 

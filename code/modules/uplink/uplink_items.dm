@@ -1835,13 +1835,6 @@ GLOBAL_LIST_INIT(illegal_tech_blacklist, typecacheof(list(
 	item = /obj/item/syndie_glue
 	cost = 2
 
-/datum/uplink_item/device_tools/hacked_module
-	name = "Hacked AI Law Upload Module"
-	desc = "When used with an upload console, this module allows you to upload priority laws to an artificial intelligence. \
-			Be careful with wording, as artificial intelligences may look for loopholes to exploit."
-	item = /obj/item/ai_module/syndicate
-	cost = 3
-
 /datum/uplink_item/device_tools/hypnotic_flash
 	name = "Hypnotic Flash"
 	desc = "A modified flash able to hypnotize targets. If the target is not in a mentally vulnerable state, it will only confuse and pacify them temporarily."

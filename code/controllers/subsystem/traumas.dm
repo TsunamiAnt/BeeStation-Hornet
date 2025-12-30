@@ -174,7 +174,7 @@ SUBSYSTEM_DEF(traumas)
 		)),
 
 		"robots" = typecacheof(list(
-			/obj/machinery/computer/upload,
+			/obj/machinery/drive_bay,
 			/obj/item/ai_module/,
 			/obj/machinery/recharge_station,
 			/obj/item/aicard,

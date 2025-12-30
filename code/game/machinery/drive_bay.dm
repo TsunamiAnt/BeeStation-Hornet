@@ -15,11 +15,15 @@
 	desc = "A sophisticated machine used for uploading and managing laws for silicon units."
 	icon = 'icons/obj/machines/drive_bay.dmi'
 	icon_state = "drivebay"
+	max_integrity = 1000
 	density = TRUE
 	use_power = IDLE_POWER_USE
 	idle_power_usage = DRIVE_BAY_BASE_POWER
 	active_power_usage = DRIVE_BAY_BASE_POWER
 	circuit = /obj/item/circuitboard/machine/drive_bay
+
+	/// This is randomized per drive bay for network identification, except for the first one in a round. That one's always the default.
+	var/lawsync_id = ""
 
 	/// Boilerplate for now, just a single var
 	var/drives_inserted = 0
@@ -28,6 +32,14 @@
 	. = ..()
 	update_power_draw()
 	update_appearance()
+	/// Register in global list. If we are the first, set lawsync_id to default.
+	if(!GLOB.drive_bay_list.len)
+		lawsync_id = "DEFAULT_DRIVE_BAY_ID"
+	GLOB.drive_bay_list += src
+
+/obj/machinery/drive_bay/Destroy()
+	GLOB.drive_bay_list -= src
+	return ..()
 
 /obj/machinery/drive_bay/examine(mob/user)
 	. = ..()
