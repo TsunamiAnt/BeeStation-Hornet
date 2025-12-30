@@ -47,3 +47,6 @@
 #define COMSIG_GLOB_UPDATE_DYNAMICPANEL_DATA "!update_dynamicpanel_data"
 /// Call this to update the dynamic panel's static data
 #define COMSIG_GLOB_UPDATE_DYNAMICPANEL_DATA_STATIC "!update_dynamicpanel_data_static"
+
+/// Called when a drive bay's law modules change (inserted/removed/corrupted): (obj/machinery/drive_bay/source, lawsync_id)
+#define COMSIG_GLOB_DRIVEBAY_LAWS_CHANGED "!drivebay_laws_changed"

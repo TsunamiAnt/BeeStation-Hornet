@@ -3306,9 +3306,6 @@
 /area/maintenance/port)
 "aGq" = (
 /obj/structure/table,
-/obj/item/ai_module/core/full/asimov,
-/obj/effect/spawner/lootdrop/aimodule_harmless,
-/obj/item/ai_module/core/freeformcore,
 /obj/machinery/door/window{
 	base_state = "right";
 	dir = 4;
@@ -3317,8 +3314,6 @@
 	req_access_txt = "20"
 	},
 /obj/structure/window/reinforced/spawner/directional/south,
-/obj/effect/spawner/lootdrop/aimodule_neutral,
-/obj/item/ai_module/core/full/custom,
 /obj/machinery/flasher{
 	id = "AI";
 	pixel_y = 24
@@ -4283,33 +4278,10 @@
 /turf/open/floor/iron/dark,
 /area/ai_monitored/turret_protected/ai_upload)
 "aOb" = (
-/obj/machinery/computer/upload/borg,
-/obj/structure/window/reinforced/spawner/directional/north,
-/obj/structure/window/reinforced/spawner/directional/east,
-/obj/structure/window/reinforced/spawner/directional/west,
-/obj/machinery/door/window/westleft{
-	dir = 2;
-	name = "Cyborg Upload Console Window";
-	req_access_txt = "16"
-	},
 /turf/open/floor/iron/dark,
 /area/ai_monitored/turret_protected/ai_upload)
 "aOc" = (
 /obj/machinery/holopad,
-/turf/open/floor/iron/dark,
-/area/ai_monitored/turret_protected/ai_upload)
-"aOd" = (
-/obj/machinery/computer/upload/ai,
-/obj/structure/window/reinforced/spawner/directional/north,
-/obj/structure/window/reinforced/spawner/directional/east,
-/obj/structure/window/reinforced/spawner/directional/west,
-/obj/machinery/door/window/westleft{
-	base_state = "right";
-	dir = 2;
-	icon_state = "right";
-	name = "Upload Console Window";
-	req_access_txt = "16"
-	},
 /turf/open/floor/iron/dark,
 /area/ai_monitored/turret_protected/ai_upload)
 "aOe" = (
@@ -23806,7 +23778,6 @@
 /area/maintenance/department/science)
 "flH" = (
 /obj/structure/table,
-/obj/item/ai_module/reset,
 /obj/machinery/light{
 	dir = 8
 	},
@@ -26770,11 +26741,6 @@
 	id = "AI";
 	pixel_y = 24
 	},
-/obj/effect/spawner/lootdrop/aimodule_harmful,
-/obj/item/ai_module/supplied/oxygen,
-/obj/item/ai_module/supplied/protect_station,
-/obj/item/ai_module/zeroth/onehuman,
-/obj/item/ai_module/reset/purge,
 /turf/open/floor/iron/dark,
 /area/ai_monitored/turret_protected/ai_upload)
 "gon" = (
@@ -35794,7 +35760,6 @@
 /obj/structure/cable/yellow{
 	icon_state = "4-8"
 	},
-/obj/item/ai_module/supplied/quarantine,
 /turf/open/floor/iron/dark,
 /area/ai_monitored/turret_protected/ai_upload)
 "jAi" = (
@@ -38648,13 +38613,10 @@
 /obj/structure/sign/plaques/kiddie{
 	pixel_y = 32
 	},
-/obj/structure/table,
 /obj/machinery/camera/directional/north{
 	c_tag = "AI Upload Chamber - Fore"
 	},
-/obj/item/kirbyplants/photosynthetic{
-	pixel_y = 10
-	},
+/obj/machinery/drive_bay,
 /turf/open/floor/iron/dark,
 /area/ai_monitored/turret_protected/ai_upload)
 "kBZ" = (
@@ -42829,14 +42791,6 @@
 	},
 /turf/open/floor/iron/dark,
 /area/ai_monitored/turret_protected/aisat_interior)
-"miA" = (
-/obj/structure/table,
-/obj/structure/cable/yellow{
-	icon_state = "4-8"
-	},
-/obj/item/ai_module/supplied/freeform,
-/turf/open/floor/iron/dark,
-/area/ai_monitored/turret_protected/ai_upload)
 "miK" = (
 /obj/structure/closet/radiation,
 /obj/effect/turf_decal/trimline/purple/filled/line{
@@ -70522,7 +70476,6 @@
 "wcL" = (
 /obj/structure/table,
 /obj/item/aicard,
-/obj/item/ai_module/reset,
 /turf/open/floor/iron/dark,
 /area/storage/tech)
 "wcV" = (
@@ -102567,7 +102520,7 @@ aaa
 aJS
 mIk
 aMH
-aOd
+aOb
 pNT
 aMH
 aRV
@@ -103082,7 +103035,7 @@ aJS
 aJS
 goc
 aOe
-miA
+jzZ
 aQD
 aJS
 aaa

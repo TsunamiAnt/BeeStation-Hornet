@@ -22,6 +22,7 @@
 	var/mob/living/silicon/robot/robot = holder
 	var/list/status = list()
 	status += "The law sync module is [robot.lawupdate ? "on" : "off"]."
+	status += "The lawsync address display shows [robot.lawsync_address ? robot.lawsync_address : "NULL"]."
 	status += "The intelligence link display shows [robot.connected_ai ? robot.connected_ai.name : "NULL"]."
 	status += "The camera light is [!isnull(robot.builtInCamera) && robot.builtInCamera.status ? "on" : "off"]."
 	status += "The lockdown indicator is [robot.lockcharge ? "on" : "off"]."
@@ -52,7 +53,17 @@
 				robot.builtInCamera.toggle_cam(usr, FALSE)
 				robot.visible_message("[robot]'s camera lens focuses loudly.", "Your camera lens focuses loudly.")
 				log_combat(usr, robot, "toggled cyborg camera to [robot.builtInCamera.status ? "on" : "off"] via pulse", important = FALSE)
-		if(WIRE_LAWSYNC) // Forces a law update if possible.
+		if(WIRE_LAWSYNC) // Pulse to change lawsync address and force a law update.
+			if(robot.emagged)
+				robot.visible_message("[robot] buzzes angrily.", "LawSync protocol rejected - system compromised.")
+				return
+			var/new_address = tgui_input_text(user, "Enter a new lawsync address for this unit:", "LawSync Address", robot.lawsync_address, max_length = 32)
+			if(new_address && new_address != robot.lawsync_address)
+				var/old_address = robot.lawsync_address
+				robot.lawsync_address = new_address
+				robot.visible_message("[robot] beeps as its lawsync address is updated.", "LawSync address updated from '[old_address]' to '[new_address]'.")
+				log_combat(usr, robot, "changed cyborg lawsync address from '[old_address]' to '[new_address]' via wire pulse")
+				robot.logevent("LawSync address changed from '[old_address]' to '[new_address]'")
 			if(robot.lawupdate)
 				robot.visible_message("[robot] gently chimes.", "LawSync protocol engaged.")
 				log_combat(usr, robot, "forcibly synced cyborg laws via pulse", important = FALSE)

@@ -70,6 +70,8 @@
 	data["wireAI"] = "[borgo.wires.is_cut(WIRE_AI)?"FAULT":"[borgo.connected_ai?"CONNECTED":"READY"]"]"
 	//Law sync wire. FAULT if cut, NOMINAL otherwise
 	data["wireLaw"] = "[borgo.wires.is_cut(WIRE_LAWSYNC)?"FAULT":"NOMINAL"]"
+	//Lawsync address - the drive bay address we're syncing from
+	data["lawsyncAddress"] = borgo.lawsync_address
 
 	return data
 

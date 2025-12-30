@@ -383,7 +383,7 @@
 				deconstruct()
 
 	else if(istype(attacking_item, /obj/item/ai_module))
-		var/obj/item/ai_module/MOD = attacking_item
+		//var/obj/item/ai_module/MOD = attacking_item
 		if(!opened)
 			to_chat(user, span_warning("You need access to the robot's insides to do that!"))
 			return
@@ -402,7 +402,7 @@
 		if(!mind) //A player mind is required for law procs to run antag checks.
 			to_chat(user, span_warning("[src] is entirely unresponsive!"))
 			return
-		MOD.install(laws, user) //Proc includes a success mesage so we don't need another one
+		// TODO: MOD.install(laws, user) //Proc includes a success mesage so we don't need another one
 		return
 
 	else if(istype(attacking_item, /obj/item/encryptionkey/) && opened)

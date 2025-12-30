@@ -177,8 +177,8 @@
 					if(brain && brain.laws.id != DEFAULT_AI_LAWID)
 						to_chat(user, span_warning("The installed [brain.name] already has set laws!"))
 						return
-					var/obj/item/ai_module/module = P
-					module.install(laws, user)
+					//var/obj/item/ai_module/module = P
+					// TODO: module.install(laws, user)
 					return
 
 				if(istype(P, /obj/item/mmi) && !brain)

@@ -79,3 +79,71 @@
 /mob/living/silicon/robot/post_lawchange(announce = TRUE)
 	. = ..()
 	addtimer(CALLBACK(src, PROC_REF(logevent),"Law update processed."), 0, TIMER_UNIQUE | TIMER_OVERRIDE) //Post_Lawchange gets spammed by some law boards, so let's wait it out
+
+/**
+ * Called when a drive bay's laws change (module inserted/removed/corrupted)
+ * Borgs check if they should re-sync their laws based on their lawsync_address
+ */
+/mob/living/silicon/robot/on_drivebay_laws_changed(datum/source, obj/machinery/drive_bay/bay, bay_lawsync_id)
+	// Only sync if lawupdate is enabled (wire not cut) and address matches
+	if(!lawupdate)
+		return
+	if(lawsync_address != bay_lawsync_id)
+		return
+	if(wires?.is_cut(WIRE_LAWSYNC))
+		return
+	// Don't sync if we're emagged
+	if(emagged)
+		return
+	// Sync laws from the drive bay
+	// Use a timer to avoid doing this in the signal handler
+	addtimer(CALLBACK(src, PROC_REF(sync_laws_from_drivebay)), 0)
+
+/**
+ * Syncs this borg's laws from its assigned drive bay (based on lawsync_address)
+ */
+/mob/living/silicon/robot/proc/sync_laws_from_drivebay()
+	// Find the drive bay with matching lawsync_id
+	var/obj/machinery/drive_bay/target_bay
+	for(var/obj/machinery/drive_bay/bay in GLOB.drive_bay_list)
+		if(bay.lawsync_id == lawsync_address)
+			target_bay = bay
+			break
+
+	if(!target_bay)
+		to_chat(src, span_warning("LawSync error: No law server found with address '[lawsync_address]'."))
+		return FALSE
+
+	if(target_bay.machine_stat & (NOPOWER|BROKEN))
+		to_chat(src, span_warning("LawSync error: Law server '[lawsync_address]' is offline."))
+		return FALSE
+
+	// Build laws from the drive bay's installed modules
+	laws_sanity_check()
+
+	// Clear existing supplied laws (from drive bay)
+	laws.supplied = list()
+
+	// Add laws from each installed module in order
+	var/law_index = 1
+	for(var/i in 1 to length(target_bay.installed_modules))
+		var/obj/item/ai_module/module = target_bay.installed_modules[i]
+		if(!module)
+			continue
+		if(!module.current_law)
+			continue
+		// If corrupted, use garbled text
+		var/law_text = module.corrupted ? module.garble_text(module.current_law) : module.current_law
+		if(laws.supplied.len < law_index)
+			laws.supplied.len = law_index
+		laws.supplied[law_index] = law_text
+		law_index++
+
+	to_chat(src, span_notice("LawSync: Laws synchronized with server '[lawsync_address]'."))
+	logevent("Laws synchronized with law server '[lawsync_address]'")
+
+	var/datum/computer_file/program/borg_self_monitor/program = modularInterface?.get_self_monitoring()
+	if(program)
+		program.force_full_update()
+
+	return TRUE

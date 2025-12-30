@@ -266,6 +266,9 @@ export const NtosCyborgSelfMonitorContent = (_) => {
                     >
                       {wireLaw}
                     </LabeledList.Item>
+                    <LabeledList.Item label="LawSync Address">
+                      {data.lawsyncAddress || '---'}
+                    </LabeledList.Item>
                     <LabeledList.Item
                       label="Camera"
                       color={

@@ -1,14 +1,12 @@
 // AI Module - Law Boards
-// Single law per board system with corruption support
-
 /obj/item/ai_module
 	name = "\improper AI law board"
+	desc = "An AI law board for programming a single law to an AI."
 	icon = 'icons/obj/module.dmi'
 	icon_state = "lawdrive"
 	inhand_icon_state = "electronic"
 	lefthand_file = 'icons/mob/inhands/misc/devices_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/misc/devices_righthand.dmi'
-	desc = "An AI law board for programming a single law to an AI."
 	flags_1 = CONDUCT_1
 	force = 5
 	w_class = WEIGHT_CLASS_SMALL
@@ -19,13 +17,22 @@
 
 	/// The original law intended to be stored on this board
 	var/law = ""
+	/// "ID" of the law contained
+	var/law_id = ""
 
+	/// If this board is special/has special behavior and not actual laws
+	var/special_board = FALSE
 	/// The current law stored on this board
 	var/current_law = ""
 	/// Whether this board is corrupted
 	var/corrupted = FALSE
 	/// Whether this law was overwritten (for tracking purposes)
 	var/overwritten = FALSE
+
+/obj/item/ai_module/reset_board
+	name = "\improper AI law board - Reset"
+	desc = "An empty AI law board that has a special payload installed that will reset an AI's laws to factory settings. Cannot be used in server racks."
+	special_board = TRUE
 
 /obj/item/ai_module/Initialize(mapload)
 	. = ..()
@@ -76,6 +83,12 @@
 	corrupted = FALSE
 	overwritten = FALSE
 	return TRUE
+
+/// Uploads the law on this board to a subject
+/obj/item/ai_module/proc/upload(atom/target, mob/user)
+
+/// Installs the board to a drive bay.
+/obj/item/ai_module/proc/install(obj/machinery/drive_bay/target, mob/user)
 
 /// Helper proc to garble text for corrupted display
 /obj/item/ai_module/proc/garble_text(text)

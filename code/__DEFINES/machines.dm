@@ -294,4 +294,4 @@ GLOBAL_LIST_INIT(approved_status_pictures, list(
 #define AIRALARM_BUILD_COMPLETE 2
 
 /// Drive bay define
-#define DEFAULT_DRIVE_BAY_ID "12345"
+#define DEFAULT_DRIVE_BAY_ADDRESS "12345"

@@ -53,6 +53,9 @@
 	var/obj/item/card/id/internal_id_card
 	var/currently_stating_laws = FALSE
 
+	/// The lawsync address this silicon pulls laws from. Corresponds to a drive bay's lawsync_id.
+	var/lawsync_address = DEFAULT_DRIVE_BAY_ADDRESS
+
 	mobchatspan = "centcom"
 
 /mob/living/silicon/Initialize(mapload)
@@ -72,7 +75,11 @@
 	ADD_TRAIT(src, TRAIT_MADNESS_IMMUNE, ROUNDSTART_TRAIT)
 	ADD_TRAIT(src, TRAIT_MARTIAL_ARTS_IMMUNE, ROUNDSTART_TRAIT)
 
+	// Register for drive bay law change signals
+	RegisterSignal(SSdcs, COMSIG_GLOB_DRIVEBAY_LAWS_CHANGED, PROC_REF(on_drivebay_laws_changed))
+
 /mob/living/silicon/Destroy()
+	UnregisterSignal(SSdcs, COMSIG_GLOB_DRIVEBAY_LAWS_CHANGED)
 	QDEL_NULL(radio)
 	QDEL_NULL(aicamera)
 	QDEL_NULL(builtInCamera)
@@ -88,6 +95,15 @@
 		internal_id_card = new()
 		internal_id_card.name = "[src] internal access"
 	internal_id_card.access |= access_list
+
+/**
+ * Called when a drive bay's laws change (module inserted/removed/corrupted)
+ * Silicons check if they should re-sync their laws based on their lawsync_address
+ */
+/mob/living/silicon/proc/on_drivebay_laws_changed(datum/source, obj/machinery/drive_bay/bay, bay_lawsync_id)
+	SIGNAL_HANDLER
+	// Override in subtypes - base silicon doesn't do anything
+	return
 
 /mob/living/silicon/proc/create_modularInterface()
 	if(!modularInterface)
