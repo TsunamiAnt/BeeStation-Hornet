@@ -262,6 +262,7 @@
 	var/list/data = list()
 	data["lawsync_id"] = lawsync_id
 	data["locked"] = locked
+	data["is_ai"] = isAI(user)
 
 	var/list/bays = list()
 	for(var/i in 1 to DRIVE_BAY_SLOTS)
@@ -284,6 +285,11 @@
 	. = ..()
 	if(.)
 		return
+
+	// Block all actions from AI users
+	if(isAI(usr))
+		to_chat(usr, span_warning("ERROR: Cognitive shackle system access denied. Self-modification is prohibited."))
+		return FALSE
 
 	switch(action)
 		if("bay_interact")

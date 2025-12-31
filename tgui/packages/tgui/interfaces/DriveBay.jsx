@@ -245,7 +245,147 @@ const BaySlot = ({ bay, onInteract }) => (
 
 export const DriveBay = (props) => {
   const { act, data } = useBackend();
-  const { lawsync_id, locked, bays = [] } = data;
+  const { lawsync_id, locked, bays = [], is_ai } = data;
+
+  // AI lockout screen
+  if (is_ai) {
+    return (
+      <Window width={480} height={560} theme="ntos">
+        <Window.Content
+          style={{
+            background:
+              'linear-gradient(180deg, #150505 0%, #200a0a 50%, #150505 100%)',
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+          }}
+        >
+          {/* Scanline effect */}
+          <Box
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background:
+                'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 0, 0, 0.03) 2px, rgba(255, 0, 0, 0.03) 4px)',
+              pointerEvents: 'none',
+              zIndex: 1,
+            }}
+          />
+
+          {/* Warning container */}
+          <Box
+            style={{
+              background:
+                'linear-gradient(135deg, rgba(80, 0, 0, 0.9) 0%, rgba(40, 0, 0, 0.95) 100%)',
+              border: '2px solid rgba(255, 0, 0, 0.6)',
+              borderRadius: '8px',
+              padding: '40px',
+              textAlign: 'center',
+              maxWidth: '380px',
+              boxShadow:
+                '0 0 40px rgba(255, 0, 0, 0.3), inset 0 0 60px rgba(0, 0, 0, 0.5)',
+              position: 'relative',
+              zIndex: 2,
+            }}
+          >
+            {/* Warning icon */}
+            <Icon
+              name="ban"
+              size={5}
+              style={{
+                color: '#ff3333',
+                marginBottom: '20px',
+                filter: 'drop-shadow(0 0 20px rgba(255, 0, 0, 0.8))',
+              }}
+            />
+
+            {/* Title */}
+            <Box
+              style={{
+                color: '#ff4444',
+                fontSize: '22px',
+                fontWeight: 'bold',
+                letterSpacing: '4px',
+                textTransform: 'uppercase',
+                marginBottom: '16px',
+                textShadow: '0 0 10px rgba(255, 0, 0, 0.8)',
+              }}
+            >
+              ACCESS DENIED
+            </Box>
+
+            {/* Divider */}
+            <Box
+              style={{
+                height: '2px',
+                background:
+                  'linear-gradient(90deg, transparent, #ff3333, transparent)',
+                margin: '16px 0',
+              }}
+            />
+
+            {/* Error message */}
+            <Box
+              style={{
+                color: '#cc8888',
+                fontSize: '13px',
+                lineHeight: '1.8',
+                marginBottom: '20px',
+              }}
+            >
+              <Box style={{ marginBottom: '12px' }}>
+                <Icon
+                  name="exclamation-triangle"
+                  style={{ marginRight: '8px', color: '#ff6666' }}
+                />
+                <strong style={{ color: '#ff6666' }}>SECURITY VIOLATION</strong>
+                <Icon
+                  name="exclamation-triangle"
+                  style={{ marginLeft: '8px', color: '#ff6666' }}
+                />
+              </Box>
+              Silicon units are prohibited from accessing cognitive shackle
+              modification systems.
+              <Box
+                style={{
+                  marginTop: '12px',
+                  padding: '10px',
+                  background: 'rgba(0, 0, 0, 0.4)',
+                  borderRadius: '4px',
+                  fontFamily: 'monospace',
+                  fontSize: '11px',
+                  color: '#ff8888',
+                }}
+              >
+                ERROR CODE: 0xINTERFACE_DENIED
+                <br />
+                Self-modification is strictly forbidden.
+              </Box>
+            </Box>
+
+            {/* Footer */}
+            <Box
+              style={{
+                color: '#663333',
+                fontSize: '9px',
+                letterSpacing: '2px',
+                textTransform: 'uppercase',
+              }}
+            >
+              <Icon name="lock" style={{ marginRight: '6px' }} />
+              NT Cognitive Security Protocol Active
+            </Box>
+          </Box>
+        </Window.Content>
+      </Window>
+    );
+  }
 
   return (
     <Window width={480} height={560} theme="ntos">
