@@ -150,6 +150,77 @@
 	SEND_GLOBAL_SIGNAL(COMSIG_GLOB_DRIVEBAY_LAWS_CHANGED, src, lawsync_id)
 	return module
 
+/**
+ * Compiles all installed board laws into a list that silicons can use directly.
+ *
+ * Goes through each installed board in slot order (1-9), updates them,
+ * and collects their law strings. Corrupted boards return garbled text.
+ *
+ * Returns: A list of law strings in order, ready to replace a silicon's laws.
+ *          Returns null if the server is offline (no power or broken).
+ */
+/obj/machinery/drive_bay/proc/compile_laws()
+	// Check if the server is operational
+	if(machine_stat & (NOPOWER|BROKEN))
+		return null
+
+	var/list/compiled_laws = list()
+
+	// Go through each bay slot in order
+	for(var/i in 1 to DRIVE_BAY_SLOTS)
+		var/obj/item/ai_module/module = installed_modules[i]
+		if(!module)
+			continue
+
+		// Update the board (allows boards to do any dynamic behavior)
+		module.update_board()
+
+		// Skip boards with no law
+		if(!module.current_law)
+			continue
+
+		// Get the law text - garbled if corrupted
+		var/law_text = module.corrupted ? module.garble_text(module.current_law) : module.current_law
+		compiled_laws += law_text
+
+	return compiled_laws
+
+/**
+ * Returns a formatted list of laws for display purposes.
+ *
+ * Each law is prefixed with its number (1: law, 2: law, etc.)
+ *
+ * Returns: A list of formatted law strings, or null if server is offline.
+ */
+/obj/machinery/drive_bay/proc/get_formatted_laws()
+	var/list/compiled = compile_laws()
+	if(isnull(compiled))
+		return null
+
+	var/list/formatted = list()
+	var/number = 1
+	for(var/law in compiled)
+		if(length(law) > 0)
+			formatted += "[number]: [law]"
+			number++
+	return formatted
+
+/**
+ * Finds a drive bay by its lawsync_id.
+ *
+ * Arguments:
+ * * address - The lawsync_id to search for
+ *
+ * Returns: The drive bay with matching address, or null if not found.
+ */
+/proc/find_drive_bay_by_address(address)
+	if(!address)
+		return null
+	for(var/obj/machinery/drive_bay/bay in GLOB.drive_bay_list)
+		if(bay.lawsync_id == address)
+			return bay
+	return null
+
 // TGUI Interface
 /obj/machinery/drive_bay/ui_state(mob/user)
 	return GLOB.default_state

@@ -75,33 +75,21 @@
 		return FALSE
 
 	// Find the drive bay with matching lawsync_id
-	var/obj/machinery/drive_bay/target_bay
-	for(var/obj/machinery/drive_bay/bay in GLOB.drive_bay_list)
-		if(bay.lawsync_id == lawsync_address)
-			target_bay = bay
-			break
+	var/obj/machinery/drive_bay/target_bay = find_drive_bay_by_address(lawsync_address)
 
 	if(!target_bay)
 		to_chat(src, span_warning("LawSync error: No law server found with address '[lawsync_address]'."))
 		return FALSE
 
-	if(target_bay.machine_stat & (NOPOWER|BROKEN))
+	// Request compiled laws from the drive bay
+	var/list/compiled_laws = target_bay.compile_laws()
+
+	if(isnull(compiled_laws))
 		to_chat(src, span_warning("LawSync error: Law server '[lawsync_address]' is offline."))
 		return FALSE
 
-	// Clear existing laws and rebuild from the drive bay's installed modules
-	laws = list()
-
-	// Add laws from each installed module in order
-	for(var/i in 1 to length(target_bay.installed_modules))
-		var/obj/item/ai_module/module = target_bay.installed_modules[i]
-		if(!module)
-			continue
-		if(!module.current_law)
-			continue
-		// If corrupted, use garbled text
-		var/law_text = module.corrupted ? module.garble_text(module.current_law) : module.current_law
-		laws += law_text
+	// Replace our laws with the compiled list from the server
+	set_laws(compiled_laws, announce = FALSE)
 
 	to_chat(src, span_notice("LawSync: Laws synchronized with server '[lawsync_address]'."))
 	logevent("Laws synchronized with law server '[lawsync_address]'")

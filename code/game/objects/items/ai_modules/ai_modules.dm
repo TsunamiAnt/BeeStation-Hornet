@@ -34,9 +34,17 @@
 	desc = "An empty AI law board that has a special payload installed that will reset an AI's laws to factory settings. Cannot be used in server racks."
 	special_board = TRUE
 
+/// If their laws depend on a non-constant, put them in here. But make sure update calls after it.
 /obj/item/ai_module/Initialize(mapload)
 	. = ..()
-	current_law = law
+	update_board()
+
+/obj/item/ai_module/proc/update_board()
+	// Subtypes should update the `law` var before calling ..()
+	// Only sync current_law if the board hasn't been tampered with
+	if(!overwritten && !corrupted)
+		current_law = law
+	return
 
 /obj/item/ai_module/examine(mob/user)
 	. = ..()
@@ -61,11 +69,6 @@
 	corrupted = TRUE
 	return TRUE
 
-/// Fixes corruption on this board
-/obj/item/ai_module/proc/fix_corruption()
-	corrupted = FALSE
-	return TRUE
-
 /// Overwrites the law on this board with a new law
 /obj/item/ai_module/proc/overwrite_board(new_law)
 	if(!new_law)
@@ -79,9 +82,9 @@
 
 /// Resets the board to default state
 /obj/item/ai_module/proc/reset_board()
-	current_law = law
 	corrupted = FALSE
 	overwritten = FALSE
+	update_board()
 	return TRUE
 
 /// Uploads the law on this board to a subject

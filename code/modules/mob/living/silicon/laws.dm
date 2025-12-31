@@ -22,7 +22,9 @@
 		addtimer(CALLBACK(src, PROC_REF(clear_fullscreen), "law_change"), 0.2 SECONDS)
 		last_lawchange_announce = world.time
 
-/// Gets a formatted list of all laws for display
+/// Gets a formatted list of all laws for display.
+/// This returns the silicon's internal law list formatted with numbers.
+/// For synced silicons, this should match what the server has (since sync replaces laws).
 /mob/living/silicon/proc/get_law_list()
 	var/list/data = list()
 	var/number = 1
@@ -32,24 +34,34 @@
 			number++
 	return data
 
-/// Adds a law to the end of the laws list
+/// Adds a law to the end of the internal laws list.
+/// This is only used for borgs with lawupdate disabled (unsynced borgs).
 /mob/living/silicon/proc/add_law(law, announce = TRUE)
 	laws_sanity_check()
 	laws += law
 	post_lawchange(announce)
 
-/// Clears all laws
+/// Clears all internal laws.
+/// This is only used for borgs with lawupdate disabled (unsynced borgs).
 /mob/living/silicon/proc/clear_laws(announce = TRUE)
 	laws_sanity_check()
 	laws.Cut()
 	post_lawchange(announce)
 
-/// Removes a specific law by index
+/// Removes a specific law by index from the internal laws list.
+/// This is only used for borgs with lawupdate disabled (unsynced borgs).
 /mob/living/silicon/proc/remove_law(number, announce = TRUE)
 	laws_sanity_check()
 	if(number <= 0 || number > length(laws))
 		return
 	. = laws[number]
 	laws.Cut(number, number + 1)
+	post_lawchange(announce)
+
+/// Sets the silicon's laws to a specific list (used by sync operations).
+/// This replaces all existing laws with the provided list.
+/mob/living/silicon/proc/set_laws(list/new_laws, announce = TRUE)
+	laws_sanity_check()
+	laws = new_laws.Copy()
 	post_lawchange(announce)
 
