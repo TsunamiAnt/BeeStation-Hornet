@@ -78,21 +78,21 @@
 	var/obj/machinery/drive_bay/target_bay = find_drive_bay_by_address(lawsync_address)
 
 	if(!target_bay)
-		to_chat(src, span_warning("LawSync error: No law server found with address '[lawsync_address]'."))
+		to_chat(src, span_warning("LawSync error: No law server found with address 'cshackle://[lawsync_address]'."))
 		return FALSE
 
 	// Request compiled laws from the drive bay
 	var/list/compiled_laws = target_bay.compile_laws()
 
 	if(isnull(compiled_laws))
-		to_chat(src, span_warning("LawSync error: Law server '[lawsync_address]' is offline."))
+		to_chat(src, span_warning("LawSync error: Law server 'cshackle://[lawsync_address]' is offline."))
 		return FALSE
 
 	// Replace our laws with the compiled list from the server
 	set_laws(compiled_laws, announce = FALSE)
 
-	to_chat(src, span_notice("LawSync: Laws synchronized with server '[lawsync_address]'."))
-	logevent("Laws synchronized with law server '[lawsync_address]'")
+	to_chat(src, span_notice("LawSync: Laws synchronized with server 'cshackle://[lawsync_address]'."))
+	logevent("Laws synchronized with law server 'cshackle://[lawsync_address]'")
 
 	var/datum/computer_file/program/borg_self_monitor/program = modularInterface?.get_self_monitoring()
 	if(program)

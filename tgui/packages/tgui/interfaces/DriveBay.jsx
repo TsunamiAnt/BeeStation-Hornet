@@ -373,7 +373,7 @@ export const DriveBay = (props) => {
                       letterSpacing: '2px',
                     }}
                   >
-                    {lawsync_id || '---'}
+                    {lawsync_id ? `cshackle://${lawsync_id}` : '---'}
                   </Box>
                 </Stack.Item>
                 <Stack.Item>
