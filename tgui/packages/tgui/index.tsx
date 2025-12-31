@@ -17,6 +17,7 @@ import './styles/themes/malfunction.scss';
 import './styles/themes/narsie.scss';
 import './styles/themes/neutral.scss';
 import './styles/themes/ntos.scss';
+import './styles/themes/ntos-cyborg.scss';
 import './styles/themes/wizard.scss';
 import './styles/themes-ntos/ntos-colors.scss';
 import './styles/themes-ntos/default.scss';

@@ -94,9 +94,10 @@ export const NtosCyborgSelfMonitorContent = (_) => {
                     {wireLaw}
                   </LabeledList.Item>
                   <LabeledList.Item label="Server">
-                    {data.lawsyncAddress
-                      ? `cshackle://${data.lawsyncAddress}`
-                      : '---'}
+                    {data.lawsyncAddress ? data.lawsyncAddress : '---'}
+                  </LabeledList.Item>
+                  <LabeledList.Item label="Linked AI">
+                    {data.masterAI ? data.masterAI : '---'}
                   </LabeledList.Item>
                 </LabeledList>
               </Section>
@@ -274,9 +275,7 @@ export const NtosCyborgSelfMonitorContent = (_) => {
                       {wireLaw}
                     </LabeledList.Item>
                     <LabeledList.Item label="LawSync Address">
-                      {data.lawsyncAddress
-                        ? `cshackle://${data.lawsyncAddress}`
-                        : '---'}
+                      {data.lawsyncAddress ? data.lawsyncAddress : '---'}
                     </LabeledList.Item>
                     <LabeledList.Item
                       label="Camera"
