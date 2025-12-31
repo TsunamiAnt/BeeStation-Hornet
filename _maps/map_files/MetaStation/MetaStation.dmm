@@ -36078,6 +36078,13 @@
 	},
 /turf/open/floor/iron,
 /area/security/prison)
+"jFB" = (
+/obj/machinery/porta_turret/ai,
+/obj/structure/sign/plaques/kiddie{
+	pixel_y = 32
+	},
+/turf/open/floor/iron/dark,
+/area/ai_monitored/turret_protected/ai_upload)
 "jFI" = (
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer4,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer2,
@@ -38610,12 +38617,6 @@
 /turf/open/floor/iron/white,
 /area/medical/chemistry)
 "kBV" = (
-/obj/structure/sign/plaques/kiddie{
-	pixel_y = 32
-	},
-/obj/machinery/camera/directional/north{
-	c_tag = "AI Upload Chamber - Fore"
-	},
 /obj/machinery/drive_bay,
 /turf/open/floor/iron/dark,
 /area/ai_monitored/turret_protected/ai_upload)
@@ -44345,6 +44346,9 @@
 "mIk" = (
 /obj/machinery/airalarm/directional/north{
 	pixel_y = 23
+	},
+/obj/machinery/camera/directional/north{
+	c_tag = "AI Upload Chamber - Fore"
 	},
 /turf/open/floor/iron/dark,
 /area/ai_monitored/turret_protected/ai_upload)
@@ -102775,7 +102779,7 @@ xcE
 aHx
 aaf
 aJS
-aLu
+jFB
 aMH
 aMH
 aPu

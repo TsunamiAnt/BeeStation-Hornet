@@ -14,14 +14,16 @@
 /obj/machinery/drive_bay
 	name = "AI law server"
 	desc = "A sophisticated machine used for uploading and managing laws for silicon units."
-	icon = 'icons/obj/machines/drive_bay.dmi'
-	icon_state = "drivebay"
+	icon = 'icons/obj/machines/law_server.dmi'
+	icon_state = "law_server"
 	max_integrity = 1000
 	density = TRUE
 	use_power = IDLE_POWER_USE
 	idle_power_usage = DRIVE_BAY_BASE_POWER
 	active_power_usage = DRIVE_BAY_BASE_POWER
 	circuit = /obj/item/circuitboard/machine/drive_bay
+	light_color = LIGHT_COLOR_CYAN
+	light_range = MINIMUM_USEFUL_LIGHT_RANGE
 
 	/// This is randomized per drive bay for network identification, except for the first one in a round. That one's always the default.
 	var/lawsync_id = ""
@@ -63,17 +65,54 @@
 	if(panel_open)
 		. += span_notice("The maintenance panel is open.")
 
-/obj/machinery/drive_bay/update_icon_state()
+/obj/machinery/drive_bay/update_appearance(updates=ALL)
 	. = ..()
 	if(machine_stat & (NOPOWER|BROKEN))
-		icon_state = "drivebay-off"
+		set_light(0)
 	else
-		icon_state = "drivebay"
+		set_light(light_range)
 
 /obj/machinery/drive_bay/update_overlays()
 	. = ..()
+	// Panel overlay (independent of power state)
 	if(panel_open)
-		. += "drivebay-panel"
+		. += "[icon_state]-panel"
+
+	// Power-dependent overlays
+	if(!(machine_stat & (NOPOWER|BROKEN)))
+		// Monitor overlay with emissive glow
+		. += "[icon_state]-monitor"
+		. += emissive_appearance(icon, "[icon_state]-monitor", layer)
+		ADD_LUM_SOURCE(src, LUM_SOURCE_MANAGED_OVERLAY)
+		// Spools overlay (non-emissive)
+		. += "[icon_state]-spools"
+
+		// Bay slot indicators - each slot moves down 3 pixels
+		for(var/i in 1 to DRIVE_BAY_SLOTS)
+			var/obj/item/ai_module/module = installed_modules[i]
+			if(!module)
+				continue
+
+			// Calculate Y offset - slot 1 is at top, each subsequent slot moves down 3 pixels
+			var/y_offset = -3 * (i - 1)
+
+			// Add the bay indicator overlay
+			var/mutable_appearance/bay_overlay = mutable_appearance(icon, "bay")
+			bay_overlay.pixel_y = y_offset
+			. += bay_overlay
+
+			// Add status light overlay (emissive) - happy if fine, angry if corrupted/overridden
+			var/has_error = module.corrupted
+			var/light_state = has_error ? "bay-angry" : "bay-happy"
+
+			var/mutable_appearance/light_overlay = mutable_appearance(icon, light_state)
+			light_overlay.pixel_y = y_offset
+			. += light_overlay
+
+			// Add emissive for the status light
+			var/mutable_appearance/light_emissive = emissive_appearance(icon, light_state, layer)
+			light_emissive.pixel_y = y_offset
+			. += light_emissive
 
 /obj/machinery/drive_bay/screwdriver_act(mob/living/user, obj/item/tool)
 	if(default_deconstruction_screwdriver(user, icon_state, icon_state, tool))

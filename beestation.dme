@@ -468,8 +468,8 @@
 #include "code\controllers\configuration\configuration.dm"
 #include "code\controllers\configuration\entries\comms.dm"
 #include "code\controllers\configuration\entries\dbconfig.dm"
-#include "code\controllers\configuration\entries\game_tweaks.dm"
 #include "code\controllers\configuration\entries\game_options.dm"
+#include "code\controllers\configuration\entries\game_tweaks.dm"
 #include "code\controllers\configuration\entries\general.dm"
 #include "code\controllers\configuration\entries\interview.dm"
 #include "code\controllers\configuration\entries\performance.dm"
@@ -2196,7 +2196,6 @@
 #include "code\modules\antagonists\clock_cult\clockwork_outfits.dm"
 #include "code\modules\antagonists\clock_cult\clockwork_turfs.dm"
 #include "code\modules\antagonists\clock_cult\hierophant_message.dm"
-
 #include "code\modules\antagonists\clock_cult\ratvarian_language.dm"
 #include "code\modules\antagonists\clock_cult\servant_of_ratvar.dm"
 #include "code\modules\antagonists\clock_cult\enchantments\_enchantment.dm"
