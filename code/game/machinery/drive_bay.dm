@@ -38,10 +38,15 @@
 	installed_modules = new /list(DRIVE_BAY_SLOTS)
 	update_power_draw()
 	update_appearance()
-	/// Register in global list. If we are the first, set lawsync_id to default.
-	if(!GLOB.drive_bay_list.len)
+
+	/// Register in global list. If we are the first, set lawsync_id to default and load default laws.
+	var/is_first = !GLOB.drive_bay_list.len
+	if(is_first)
 		lawsync_id = DEFAULT_DRIVE_BAY_ADDRESS
 	GLOB.drive_bay_list += src
+	// Load default lawset if this is the first drive bay
+	if(is_first)
+		load_default_lawset()
 
 /obj/machinery/drive_bay/Destroy()
 	GLOB.drive_bay_list -= src
@@ -97,6 +102,28 @@
 		if(installed_modules[i])
 			count++
 	return count
+
+/**
+ * Loads the default lawset (Asimov) into bays 1-3.
+ *
+ * This is called during initialization for the first drive bay.
+ * Creates and installs the three Asimov law modules in order.
+ */
+/obj/machinery/drive_bay/proc/load_default_lawset()
+	// Create and install Asimov first law in bay 1
+	var/obj/item/ai_module/asimov/first_law/law1 = new(src)
+	installed_modules[1] = law1
+
+	// Create and install Asimov second law in bay 2
+	var/obj/item/ai_module/asimov/second_law/law2 = new(src)
+	installed_modules[2] = law2
+
+	// Create and install Asimov third law in bay 3
+	var/obj/item/ai_module/asimov/third_law/law3 = new(src)
+	installed_modules[3] = law3
+
+	update_power_draw()
+	update_appearance()
 
 /// Install a module into a specific bay slot
 /obj/machinery/drive_bay/proc/install_module(obj/item/ai_module/module, bay_slot, mob/user)
