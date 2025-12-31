@@ -21,6 +21,7 @@
 	var/lawsync = 1
 	var/aisync = 1
 	var/panel_locked = TRUE
+	var/lawsync_address = DEFAULT_DRIVE_BAY_ADDRESS
 
 /obj/item/robot_suit/Initialize(mapload)
 	. = ..()
@@ -289,6 +290,7 @@
 			//Transfer debug settings to new mob
 			O.custom_name = created_name
 			O.locked = panel_locked
+			O.lawsync_address = lawsync_address
 			if(!aisync)
 				lawsync = 0
 				O.connected_ai = null
@@ -346,6 +348,7 @@
 			qdel(M)
 			var/mob/living/silicon/robot/O = new /mob/living/silicon/robot/shell(get_turf(src))
 
+			O.lawsync_address = lawsync_address
 			if(!aisync)
 				lawsync = FALSE
 				O.connected_ai = null
@@ -378,10 +381,11 @@
 			t1 += "Master AI: <A href='byond://?src=[REF(src)];Master=1'>[(forced_ai ? "[forced_ai.name]" : "Automatic")]</a><br><br>\n"
 
 			t1 += "LawSync Port: <A href='byond://?src=[REF(src)];Law=1'>[(lawsync ? "Open" : "Closed")]</a><br>\n"
+			t1 += "LawSync Address: <A href='byond://?src=[REF(src)];LawAddress=1'>[lawsync_address]</a><br>\n"
 			t1 += "AI Connection Port: <A href='byond://?src=[REF(src)];AI=1'>[(aisync ? "Open" : "Closed")]</a><br>\n"
 			t1 += "Servo Motor Functions: <A href='byond://?src=[REF(src)];Loco=1'>[(locomotion ? "Unlocked" : "Locked")]</a><br>\n"
 			t1 += "Panel Lock: <A href='byond://?src=[REF(src)];Panel=1'>[(panel_locked ? "Engaged" : "Disengaged")]</a><br>\n"
-			var/datum/browser/popup = new(user, "robotdebug", "Cyborg Boot Debug", 310, 220)
+			var/datum/browser/popup = new(user, "robotdebug", "Cyborg Boot Debug", 310, 240)
 			popup.set_content(t1)
 			popup.open()
 
@@ -412,6 +416,13 @@
 
 	else if(href_list["Law"])
 		lawsync = !lawsync
+	else if(href_list["LawAddress"])
+		var/new_address = input(usr, "Enter law sync address. This determines which drive bay this cyborg syncs laws from.", "LawSync Address", lawsync_address) as text|null
+		if(!in_range(src, usr) && src.loc != usr)
+			return
+		if(new_address)
+			lawsync_address = new_address
+			log_game("[key_name(usr)] have set lawsync address \"[new_address]\" on a cyborg shell at [loc_name(usr)]")
 	else if(href_list["AI"])
 		aisync = !aisync
 	else if(href_list["Loco"])
