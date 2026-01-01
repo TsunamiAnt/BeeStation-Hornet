@@ -5,12 +5,6 @@
 /// Variable power draw per inserted drive (0-9)
 #define DRIVE_BAY_VARIABLE_POWER (25 WATT)
 
-/**
- * AI Law Upload Drive Bay
- *
- * A machine used for uploading laws to silicon units.
- * Part of the new AI lawset system.
- */
 /obj/machinery/drive_bay
 	name = "AI law server"
 	desc = "A sophisticated machine used for uploading and managing laws for silicon units."
@@ -197,10 +191,6 @@
 			bay_overlay.pixel_y = y_offset
 			. += bay_overlay
 
-			// Can't blink if we don't have power
-			if(machine_stat & (NOPOWER|BROKEN))
-				continue
-
 			// Add status light overlay (emissive) - happy if fine, angry if corrupted/overwritten
 			var/has_error = module.corrupted || module.overwritten
 			var/light_state = has_error ? "bay-angry" : "bay-happy"
@@ -214,56 +204,26 @@
 			light_emissive.pixel_y = y_offset
 			. += light_emissive
 
-/obj/machinery/drive_bay/screwdriver_act(mob/living/user, obj/item/tool)
-	if(default_deconstruction_screwdriver(user, icon_state, icon_state, tool))
-		update_appearance()
-		return TOOL_ACT_TOOLTYPE_SUCCESS
-	return FALSE
-
-/obj/machinery/drive_bay/crowbar_act(mob/living/user, obj/item/tool)
-	if(default_deconstruction_crowbar(tool))
-		update_appearance()
-		return TOOL_ACT_TOOLTYPE_SUCCESS
-	return FALSE
-
-/// Updates the power draw based on the amount of inserted drives
-/obj/machinery/drive_bay/proc/update_power_draw()
-	var/drives_inserted = get_drives_count()
-	if(drives_inserted > 0)
-		update_mode_power_usage(ACTIVE_POWER_USE, DRIVE_BAY_BASE_POWER + drives_inserted * DRIVE_BAY_VARIABLE_POWER)
-	else
-		update_mode_power_usage(IDLE_POWER_USE, DRIVE_BAY_BASE_POWER)
-	update_appearance()
-
-/// Returns the number of drives currently installed
-/obj/machinery/drive_bay/proc/get_drives_count()
-	var/count = 0
-	for(var/i in 1 to DRIVE_BAY_SLOTS)
-		if(installed_modules[i])
-			count++
-	return count
+/obj/machinery/drive_bay/examine(mob/user)
+	. = ..()
+	if(panel_open)
+		. += span_notice("The maintenance panel is open.")
 
 /**
  * Loads the default lawset (Asimov) into bays 1-3.
- *
- * This is called during initialization for the first drive bay.
- * Creates and installs the three Asimov law modules in order.
+ * Called during initialization for the first drive bay.
  */
 /obj/machinery/drive_bay/proc/load_default_lawset()
-	// Create and install Asimov first law in bay 1
 	var/obj/item/ai_module/asimov/first_law/law1 = new(src)
 	installed_modules[1] = law1
 
-	// Create and install Asimov second law in bay 2
 	var/obj/item/ai_module/asimov/second_law/law2 = new(src)
 	installed_modules[2] = law2
 
-	// Create and install Asimov third law in bay 3
 	var/obj/item/ai_module/asimov/third_law/law3 = new(src)
 	installed_modules[3] = law3
 
-	update_power_draw()
-	update_appearance()
+	refresh()
 
 /// Install a module into a specific bay slot
 /obj/machinery/drive_bay/proc/install_module(obj/item/ai_module/module, bay_slot, mob/user)
@@ -345,7 +305,6 @@
 			return bay
 	return null
 
-// TGUI Interface
 /obj/machinery/drive_bay/ui_state(mob/user)
 	return GLOB.default_state
 
