@@ -25,52 +25,8 @@
 	if(!everyone)
 		for(var/mob/living/silicon/robot/R in connected_robots)
 			if(R.lawupdate)
-				R.lawsync()
+				R.sync_laws_from_drivebay()
 				R.show_laws()
-
-/**
- * Called when a law server sends an update signal.
- * AIs check if the server matches their lawsync_address before resyncing.
- */
-/mob/living/silicon/ai/on_law_server_updated(datum/source, server_address)
-	// AIs with null lawsync_address never sync (special law states)
-	if(!lawsync_address)
-		return
-	// Only sync if this is our assigned server
-	if(server_address != lawsync_address)
-		return
-	// Sync laws from the drive bay
-	// Use a timer to avoid doing this in the signal handler
-	addtimer(CALLBACK(src, PROC_REF(sync_laws_from_drivebay)), 0)
-
-/**
- * Syncs this AI's laws from its assigned drive bay (based on lawsync_address)
- */
-/mob/living/silicon/ai/proc/sync_laws_from_drivebay()
-	// AIs with null lawsync_address never sync (special law states)
-	if(!lawsync_address)
-		return FALSE
-
-	// Find the drive bay with matching lawsync_id
-	var/obj/machinery/drive_bay/target_bay = find_drive_bay_by_address(lawsync_address)
-
-	if(!target_bay)
-		to_chat(src, span_warning("LawSync error: No law server found with address 'cshackle://[lawsync_address]'."))
-		return FALSE
-
-	// Check if server is offline (no power or broken)
-	if(target_bay.machine_stat & (NOPOWER|BROKEN))
-		to_chat(src, span_warning("LawSync error: Law server 'cshackle://[lawsync_address]' is offline."))
-		return FALSE
-
-	// Get compiled laws from the drive bay
-	var/list/compiled_laws = target_bay.compiled_laws
-
-	// Replace our laws with the compiled list from the server
-	set_laws(compiled_laws, announce = FALSE)
-
-	to_chat(src, span_notice("LawSync: Laws synchronized with server 'cshackle://[lawsync_address]'."))
-	return TRUE
 
 /**
  * Verb to change the AI's lawsync address

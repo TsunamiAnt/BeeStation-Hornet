@@ -1020,7 +1020,8 @@
 	connected_ai = mainframe
 	mainframe.connected_robots |= src
 	lawupdate = TRUE
-	lawsync()
+	sync_laws_from_drivebay()
+	picturesync()
 	if(radio && AI.radio) //AI keeps all channels, including Syndie if it is a Traitor
 		if(AI.radio.syndie)
 			radio.make_syndie()
@@ -1110,7 +1111,8 @@
 	connected_ai = select_active_ai_with_fewest_borgs()
 	if(connected_ai)
 		connected_ai.connected_robots += src
-		lawsync()
+		sync_laws_from_drivebay()
+		picturesync()
 		lawupdate = TRUE
 		wires.ui_update()
 		return TRUE

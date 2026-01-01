@@ -114,7 +114,6 @@
 	overwritten = FALSE
 	update_board()
 	notify_parent_server()
-	return TRUE
 
 /// Helper proc to garble text for corrupted display
 /obj/item/ai_module/proc/garble_text(text, intensity = 10)

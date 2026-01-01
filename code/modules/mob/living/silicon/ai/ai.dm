@@ -109,7 +109,7 @@
 
 CREATION_TEST_IGNORE_SUBTYPES(/mob/living/silicon/ai)
 
-/mob/living/silicon/ai/Initialize(mapload, list/starting_laws, mob/target_ai)
+/mob/living/silicon/ai/Initialize(mapload, list/starting_laws, mob/target_ai, starting_lawsync_address)
 	default_access_list = get_all_accesses()
 	. = ..()
 	add_sensors()
@@ -117,7 +117,11 @@ CREATION_TEST_IGNORE_SUBTYPES(/mob/living/silicon/ai)
 		new/obj/structure/AIcore/deactivated(loc) //New empty terminal.
 		return INITIALIZE_HINT_QDEL //Delete AI.
 
-	if(starting_laws && islist(starting_laws))
+	// Set lawsync address if provided
+	if(starting_lawsync_address)
+		lawsync_address = starting_lawsync_address
+
+	if(starting_laws && islist(starting_laws) && length(starting_laws))
 		laws = starting_laws.Copy()
 	else
 		// Sync laws from drive bay

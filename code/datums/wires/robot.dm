@@ -68,7 +68,7 @@
 				robot.visible_message("[robot] gently chimes.", "LawSync protocol engaged.")
 				log_combat(usr, robot, "forcibly synced cyborg laws via pulse", important = FALSE)
 				// TODO, log the laws they gained here
-				robot.lawsync()
+				robot.sync_laws_from_drivebay()
 				robot.show_laws()
 		if(WIRE_LOCKDOWN)
 			robot.SetLockdown(!robot.lockcharge) // Toggle

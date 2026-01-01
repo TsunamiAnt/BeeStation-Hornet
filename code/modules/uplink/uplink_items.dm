@@ -1905,7 +1905,7 @@ GLOBAL_LIST_INIT(illegal_tech_blacklist, typecacheof(list(
 /datum/uplink_item/device_tools/surgerybag
 	name = "Syndicate Surgery Duffel Bag"
 	desc = "The Syndicate surgery duffel bag is a toolkit containing all surgery tools, surgical drapes, \
-			a Syndicate brand MMI, a straitjacket, and a muzzle."
+			an MMI, a straitjacket, and a muzzle."
 	item = /obj/item/storage/backpack/duffelbag/syndie/surgery
 	cost = 3
 
@@ -2175,13 +2175,6 @@ GLOBAL_LIST_INIT(illegal_tech_blacklist, typecacheof(list(
 	item = /obj/item/healthanalyzer/rad_laser
 	restricted_roles = list(JOB_NAME_MEDICALDOCTOR, JOB_NAME_CHIEFMEDICALOFFICER, JOB_NAME_ROBOTICIST, JOB_NAME_PARAMEDIC, JOB_NAME_BRIGPHYSICIAN)
 	cost = 3
-
-/datum/uplink_item/role_restricted/syndicate_mmi
-	name = "Syndicate MMI"
-	desc = "An MMI which autmatically applies the Syndimov laws to any borg it is placed in. Great for adding known allies to assist you with a little more stealth than a fully emagged borg."
-	item = /obj/item/mmi/syndie
-	restricted_roles = list(JOB_NAME_ROBOTICIST, JOB_NAME_RESEARCHDIRECTOR)
-	cost = 2
 
 /datum/uplink_item/role_restricted/upgrade_wand
 	name = "Upgrade Wand"

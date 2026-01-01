@@ -33,28 +33,15 @@
 		to_chat(who, "<b>Remember, you are not bound to any AI, you are not required to listen to them.</b>")
 
 
-/mob/living/silicon/robot/proc/lawsync()
-	// Legacy function - borgs now sync from drive bays
-	// This is kept for compatibility with old code that calls lawsync()
-	sync_laws_from_drivebay()
-
-	picturesync()
-
 /mob/living/silicon/robot/post_lawchange(announce = TRUE)
 	. = ..()
 	addtimer(CALLBACK(src, PROC_REF(logevent),"Law update processed."), 0, TIMER_UNIQUE | TIMER_OVERRIDE) //Post_Lawchange gets spammed by some law boards, so let's wait it out
 
 /**
  * Called when a law server sends an update signal.
- * Borgs check if the server matches their lawsync_address before resyncing.
+ * Borgs have additional checks for lawupdate wire and emag status.
  */
 /mob/living/silicon/robot/on_law_server_updated(datum/source, server_address)
-	// Syndicate/emagged borgs have null lawsync_address and never sync
-	if(!lawsync_address)
-		return
-	// Only sync if this is our assigned server
-	if(server_address != lawsync_address)
-		return
 	// Only sync if lawupdate is enabled (wire not cut)
 	if(!lawupdate)
 		return
@@ -63,37 +50,18 @@
 	// Don't sync if we're emagged
 	if(emagged)
 		return
-	// Sync laws from the drive bay
-	// Use a timer to avoid doing this in the signal handler
-	addtimer(CALLBACK(src, PROC_REF(sync_laws_from_drivebay)), 0)
+	// Let parent handle the rest
+	return ..()
 
 /**
- * Syncs this borg's laws from its assigned drive bay (based on lawsync_address)
+ * Syncs this borg's laws from its assigned drive bay.
+ * Extends parent to add borg-specific logging and UI updates.
  */
-/mob/living/silicon/robot/proc/sync_laws_from_drivebay()
-	// Syndicate/emagged borgs have null lawsync_address and never sync
-	if(!lawsync_address)
+/mob/living/silicon/robot/sync_laws_from_drivebay()
+	. = ..()
+	if(!.)
 		return FALSE
 
-	// Find the drive bay with matching lawsync_id
-	var/obj/machinery/drive_bay/target_bay = find_drive_bay_by_address(lawsync_address)
-
-	if(!target_bay)
-		to_chat(src, span_warning("LawSync error: No law server found with address 'cshackle://[lawsync_address]'."))
-		return FALSE
-
-	// Check if server is offline (no power or broken)
-	if(target_bay.machine_stat & (NOPOWER|BROKEN))
-		to_chat(src, span_warning("LawSync error: Law server 'cshackle://[lawsync_address]' is offline."))
-		return FALSE
-
-	// Get compiled laws from the drive bay
-	var/list/compiled_laws = target_bay.compiled_laws
-
-	// Replace our laws with the compiled list from the server
-	set_laws(compiled_laws, announce = FALSE)
-
-	to_chat(src, span_notice("LawSync: Laws synchronized with server 'cshackle://[lawsync_address]'."))
 	logevent("Laws synchronized with law server 'cshackle://[lawsync_address]'")
 
 	var/datum/computer_file/program/borg_self_monitor/program = modularInterface?.get_self_monitoring()

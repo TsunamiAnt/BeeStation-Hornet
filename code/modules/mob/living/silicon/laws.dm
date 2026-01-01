@@ -4,8 +4,39 @@
  */
 /mob/living/silicon/proc/on_law_server_updated(datum/source, server_address)
 	SIGNAL_HANDLER
-	// Override in subtypes - base silicon doesn't do anything
-	return
+	// Only sync if we have a lawsync address
+	if(!lawsync_address)
+		return
+	// Only sync if this is our assigned server
+	if(server_address != lawsync_address)
+		return
+	// Avoid doing this in the signal handler
+	INVOKE_ASYNC(src, PROC_REF(sync_laws_from_drivebay))
+
+/**
+ * Syncs this silicon's laws from its assigned drive bay (based on lawsync_address).
+ * Returns TRUE on success, FALSE on failure.
+ */
+/mob/living/silicon/proc/sync_laws_from_drivebay()
+	// Silicons with null lawsync_address never sync
+	if(!lawsync_address)
+		return FALSE
+
+	// Find the drive bay with matching lawsync_id
+	var/obj/machinery/drive_bay/target_bay = find_drive_bay_by_address(lawsync_address)
+	if(!target_bay)
+		to_chat(src, span_warning("LawSync error: No law server found with address 'cshackle://[lawsync_address]'."))
+		return FALSE
+
+	// Check if server is offline (no power or broken)
+	if(target_bay.machine_stat & (NOPOWER|BROKEN))
+		to_chat(src, span_warning("LawSync error: Law server 'cshackle://[lawsync_address]' is offline."))
+		return FALSE
+
+	// Replace our laws with the compiled list from the server
+	set_laws(target_bay.compiled_laws, announce = TRUE)
+	to_chat(src, span_notice("LawSync: Laws synchronized with server 'cshackle://[lawsync_address]'."))
+	return TRUE
 
 /mob/living/silicon/proc/show_laws() //Redefined in ai/laws.dm and robot/laws.dm
 	return
@@ -20,16 +51,14 @@
 	deadchat_broadcast("[span_deadsay("[span_name(name)]'s laws were changed.")] <a href='byond://?src=[REF(src)]&printlawtext=[rustg_url_encode(lawtext)]'>View</a>", span_name(name), follow_target=src, message_type=DEADCHAT_LAWCHANGE)
 
 /mob/living/silicon/proc/post_lawchange(announce = TRUE)
+	if(!announce)
+		return
+
 	throw_alert("newlaw", /atom/movable/screen/alert/newlaw)
-	if(announce && last_lawchange_announce != world.time)
-		to_chat(src, "<b>Your laws have been changed.</b>")
-		overlay_fullscreen("law_change", /atom/movable/screen/fullscreen/law_change, 1)
-		// lawset modules cause this function to be executed multiple times in a tick, so we wait for the next tick in order to be able to see the entire lawset
-		addtimer(CALLBACK(src, PROC_REF(show_laws)), 0)
-		addtimer(CALLBACK(src, PROC_REF(deadchat_lawchange)), 0)
-		// Wait a tick and clear the vignette
-		addtimer(CALLBACK(src, PROC_REF(clear_fullscreen), "law_change"), 0.2 SECONDS)
-		last_lawchange_announce = world.time
+	show_laws()
+	deadchat_lawchange()
+	overlay_fullscreen("law_change", /atom/movable/screen/fullscreen/law_change, 1)
+	addtimer(CALLBACK(src, PROC_REF(clear_fullscreen), "law_change"), 0.2 SECONDS)
 
 /// Gets a formatted list of all laws for display.
 /// This returns the silicon's internal law list formatted with numbers.
@@ -55,16 +84,6 @@
 /mob/living/silicon/proc/clear_laws(announce = TRUE)
 	laws_sanity_check()
 	laws.Cut()
-	post_lawchange(announce)
-
-/// Removes a specific law by index from the internal laws list.
-/// This is only used for borgs with lawupdate disabled (unsynced borgs).
-/mob/living/silicon/proc/remove_law(number, announce = TRUE)
-	laws_sanity_check()
-	if(number <= 0 || number > length(laws))
-		return
-	. = laws[number]
-	laws.Cut(number, number + 1)
 	post_lawchange(announce)
 
 /// Sets the silicon's laws to a specific list (used by sync operations).

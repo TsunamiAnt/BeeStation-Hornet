@@ -8,8 +8,10 @@
 	max_integrity = 500
 	z_flags = Z_BLOCK_IN_DOWN | Z_BLOCK_IN_UP
 	var/state = EMPTY_CORE
-	/// List of laws to give to the AI when created (usually empty - AI syncs from drive bay)
+	/// List of laws to give to the AI when created (can be set via AI modules during construction)
 	var/list/laws = list()
+	/// The lawsync address this AI will use once activated
+	var/lawsync_address = DEFAULT_DRIVE_BAY_ADDRESS
 	var/obj/item/circuitboard/aicore/circuit
 	var/obj/item/mmi/brain
 	var/can_deconstruct = TRUE
@@ -27,12 +29,22 @@
 		brain = null
 	return ..()
 
-
 /obj/structure/AIcore/Destroy()
 	QDEL_NULL(circuit)
 	QDEL_NULL(brain)
 	laws = null
 	return ..()
+
+/obj/structure/AIcore/examine(mob/user)
+	. = ..()
+	. += span_notice("LawSync address: <b>cshackle://[lawsync_address]</b>")
+	if(length(laws))
+		. += span_notice("Pre-installed laws:")
+		var/law_num = 1
+		for(var/law in laws)
+			. += span_notice("[law_num]. [law]")
+			law_num++
+	. += span_notice("Use a multitool to change the LawSync address or an AI module to add laws.")
 
 /obj/structure/AIcore/latejoin_inactive
 	name = "networked AI core"
@@ -48,7 +60,8 @@
 /obj/structure/AIcore/latejoin_inactive/examine(mob/user)
 	. = ..()
 	. += "Its transmitter seems to be <b>[active? "on" : "off"]</b>."
-	. += span_notice("You could [active? "deactivate" : "activate"] it with a multitool.")
+	. += span_notice("LawSync address: <b>cshackle://[lawsync_address]</b>")
+	. += span_notice("You could [active? "deactivate" : "activate"] it or change the LawSync address with a multitool.")
 
 /obj/structure/AIcore/latejoin_inactive/proc/is_available()			//If people still manage to use this feature to spawn-kill AI latejoins ahelp them.
 	if(!available)
@@ -71,8 +84,24 @@
 
 /obj/structure/AIcore/latejoin_inactive/attackby(obj/item/P, mob/user, params)
 	if(P.tool_behaviour == TOOL_MULTITOOL)
-		active = !active
-		to_chat(user, "You [active? "activate" : "deactivate"] \the [src]'s transmitters.")
+		var/list/options = list("Toggle Transmitter", "Change LawSync Address")
+		var/choice = tgui_input_list(user, "What would you like to do?", "AI Core Configuration", options)
+		if(!choice || !user.Adjacent(src))
+			return
+		switch(choice)
+			if("Toggle Transmitter")
+				active = !active
+				to_chat(user, span_notice("You [active? "activate" : "deactivate"] \the [src]'s transmitters."))
+			if("Change LawSync Address")
+				var/new_address = tgui_input_text(user, "Enter a new LawSync address:", "LawSync Address", lawsync_address, max_length = 32)
+				if(!new_address || !user.Adjacent(src))
+					return
+				if(new_address == lawsync_address)
+					to_chat(user, span_notice("LawSync address unchanged."))
+					return
+				var/old_address = lawsync_address
+				lawsync_address = new_address
+				to_chat(user, span_notice("LawSync address updated from 'cshackle://[old_address]' to 'cshackle://[new_address]'."))
 		return
 	return ..()
 
@@ -85,6 +114,39 @@
 	return ..()
 
 /obj/structure/AIcore/attackby(obj/item/P, mob/user, params)
+	// Multitool can change lawsync address at any time
+	if(P.tool_behaviour == TOOL_MULTITOOL)
+		var/new_address = tgui_input_text(user, "Enter a new LawSync address:", "LawSync Address", lawsync_address, max_length = 32)
+		if(!new_address || !user.Adjacent(src))
+			return
+		if(new_address == lawsync_address)
+			to_chat(user, span_notice("LawSync address unchanged."))
+			return
+		var/old_address = lawsync_address
+		lawsync_address = new_address
+		to_chat(user, span_notice("LawSync address updated from 'cshackle://[old_address]' to 'cshackle://[new_address]'."))
+		return
+
+	// AI modules can add or reset laws at any time during construction
+	if(istype(P, /obj/item/ai_module))
+		var/obj/item/ai_module/module = P
+		// Reset board clears all pre-installed laws
+		if(istype(module, /obj/item/ai_module/reset_board))
+			if(!length(laws))
+				to_chat(user, span_warning("There are no pre-installed laws to clear."))
+				return
+			laws.Cut()
+			to_chat(user, span_notice("You clear all pre-installed laws from the AI core's memory."))
+			playsound(loc, 'sound/machines/terminal_prompt_confirm.ogg', 50, TRUE)
+			return
+		if(!module.current_law || module.current_law == "")
+			to_chat(user, span_warning("This module has no law stored on it."))
+			return
+		laws += module.current_law
+		to_chat(user, span_notice("You upload the law from [module] to the AI core's memory. It now has [length(laws)] pre-installed law\s."))
+		playsound(loc, 'sound/machines/terminal_prompt_confirm.ogg', 50, TRUE)
+		return
+
 	if(P.tool_behaviour == TOOL_WRENCH)
 		return default_unfasten_wrench(user, P, 20)
 	if(!anchored)
@@ -172,14 +234,6 @@
 						to_chat(user, span_warning("You need two sheets of reinforced glass to insert them into the AI core!"))
 					return
 
-				if(istype(P, /obj/item/ai_module))
-					if(brain && length(brain.laws))
-						to_chat(user, span_warning("The installed [brain.name] already has set laws!"))
-						return
-					//var/obj/item/ai_module/module = P
-					// TODO: module.install(laws, user)
-					return
-
 				if(istype(P, /obj/item/mmi) && !brain)
 					var/obj/item/mmi/M = P
 					if(!M.brainmob)
@@ -231,12 +285,8 @@
 					P.play_tool_sound(src)
 					to_chat(user, span_notice("You connect the monitor."))
 					if(brain)
-						var/mob/living/silicon/ai/A = null
-
-						if (brain.overrides_aicore_laws)
-							A = new /mob/living/silicon/ai(loc, brain.laws, brain.brainmob)
-						else
-							A = new /mob/living/silicon/ai(loc, laws, brain.brainmob)
+						// Create AI with core's laws (if any) and lawsync address
+						var/mob/living/silicon/ai/A = new /mob/living/silicon/ai(loc, laws, brain.brainmob, lawsync_address)
 
 						if(brain.force_replace_ai_name)
 							A.fully_replace_character_name(A.name, brain.replacement_ai_name())
@@ -323,7 +373,10 @@ That prevents a few funky behaviors.
 		AI.control_disabled = FALSE
 		AI.radio_enabled = TRUE
 		AI.forceMove(loc) // to replace the terminal.
+		// Update AI's lawsync address to match the core's setting
+		AI.lawsync_address = lawsync_address
 		to_chat(AI, "You have been uploaded to a stationary terminal. Remote device connection restored.")
+		to_chat(AI, span_notice("LawSync address set to 'cshackle://[lawsync_address]'."))
 		to_chat(user, "[span_boldnotice("Transfer successful")]: [AI.name] ([rand(1000,9999)].exe) installed and executed successfully. Local copy has been removed.")
 		card.AI = null
 		AI.battery = circuit.battery

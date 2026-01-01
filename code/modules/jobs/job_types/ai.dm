@@ -38,6 +38,11 @@
 		if(lateJoinCore)
 			lateJoinCore.available = FALSE
 			H.forceMove(lateJoinCore.loc)
+			// Transfer lawsync address from the core to the AI
+			var/mob/living/silicon/ai/AI_mob = H
+			if(istype(AI_mob))
+				AI_mob.lawsync_address = lateJoinCore.lawsync_address
+				AI_mob.sync_laws_from_drivebay()
 			qdel(lateJoinCore)
 	var/mob/living/silicon/ai/AI = H
 	if(M.client)

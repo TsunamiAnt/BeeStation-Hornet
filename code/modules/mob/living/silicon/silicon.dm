@@ -16,7 +16,6 @@
 	speech_span = SPAN_ROBOT
 	/// List of laws this silicon must obey. Synced from drive bays.
 	var/list/laws = list()
-	var/last_lawchange_announce = 0
 	var/list/alarms_to_show = list()
 	var/list/alarms_to_clear = list()
 	var/designation = ""

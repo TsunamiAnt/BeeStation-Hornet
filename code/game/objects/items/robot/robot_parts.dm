@@ -280,12 +280,6 @@
 			if(!O)
 				return
 
-			// If the MMI has custom laws, use those instead of syncing from drive bay
-			if(length(M.laws))
-				aisync = 0
-				lawsync = 0
-				O.laws = M.laws.Copy()
-
 			O.invisibility = 0
 			//Transfer debug settings to new mob
 			O.custom_name = created_name
@@ -300,8 +294,7 @@
 					O.connected_ai = forced_ai
 			if(!lawsync)
 				O.lawupdate = FALSE
-				if(!length(M.laws))
-					O.sync_laws_from_drivebay()
+				O.sync_laws_from_drivebay()
 
 			O.job = JOB_NAME_CYBORG
 

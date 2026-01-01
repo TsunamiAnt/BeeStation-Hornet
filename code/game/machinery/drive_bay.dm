@@ -46,6 +46,9 @@
 
 	if(is_first)
 		load_default_lawset()
+		// Ensure roundstart/default laws are propagated immediately instead of waiting for the delayed timer.
+		// load_default_lawset() calls refresh() which compiles the laws, so we can send the notification now.
+		notify_silicons()
 	else
 		refresh()
 
@@ -97,8 +100,7 @@
 			if(!module.current_law)
 				continue
 
-			// Get the law text - garbled if corrupted
-			var/law_text = module.corrupted ? module.garble_text(module.current_law) : module.current_law
+			var/law_text = module.current_law
 			if(length(law_text) > 0)
 				compiled_laws += law_text
 
@@ -113,8 +115,8 @@
 		// Set pending sync status
 		pending_sync = TRUE
 
-		// Schedule notification for 2 minutes from now
-		notify_timer_id = addtimer(CALLBACK(src, PROC_REF(notify_silicons)), 2 MINUTES, TIMER_STOPPABLE)
+		// Schedule notification for 10 seconds from now
+		notify_timer_id = addtimer(CALLBACK(src, PROC_REF(notify_silicons)), 10 SECONDS, TIMER_STOPPABLE)
 
 /**
  * Notifies connected silicons about law changes.
@@ -122,18 +124,17 @@
  * Called automatically after a delay by refresh(), or manually via UI.
  */
 /obj/machinery/drive_bay/proc/notify_silicons()
-	// Clear the timer ID and pending status
-	notify_timer_id = null
+	// Cancel any pending timer first to avoid duplicate notifications later.
+	if(notify_timer_id)
+		deltimer(notify_timer_id)
+		notify_timer_id = null
+
+	// Clear pending status
 	pending_sync = FALSE
 
 	// Don't notify if we have no address
 	if(!lawsync_id)
 		return
-
-	// Cancel any pending timer
-	if(notify_timer_id)
-		deltimer(notify_timer_id)
-		notify_timer_id = null
 
 	// Check if laws actually changed
 	if(list_equals(compiled_laws, last_synced_laws))
@@ -290,7 +291,7 @@
 	return FALSE
 
 /**
- * Finds a drive bay by its lawsync_id.
+ * GLOBAL Finds a drive bay by its lawsync_id.
  *
  * Arguments:
  * * address - The lawsync_id to search for
