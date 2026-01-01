@@ -71,6 +71,17 @@
 	to_chat(user, "You reset the AI module to its factory settings.")
 	return TRUE
 
+/**
+ * Notifies the parent drive bay (if any) that this module's state has changed.
+ * This triggers a full refresh of the drive bay.
+ */
+/obj/item/ai_module/proc/notify_parent_server()
+	var/obj/machinery/drive_bay/bay = loc
+	if(!istype(bay))
+		return FALSE
+	bay.refresh()
+	return TRUE
+
 /// Corrupts the law on this board into gibberish
 /// We have a chance for the law to be replaced with an ion law instead.
 /obj/item/ai_module/proc/corrupt(chance = 0)
@@ -83,7 +94,7 @@
 		current_law = garble_text(current_law, 80)
 
 	corrupted = TRUE
-	SEND_GLOBAL_SIGNAL(COMSIG_GLOB_PROMPT_LAW_RESYNC)
+	notify_parent_server()
 	return TRUE
 
 /// Overwrites the law on this board with a new law
@@ -94,7 +105,7 @@
 	current_law = new_law
 
 	overwritten = TRUE
-	SEND_GLOBAL_SIGNAL(COMSIG_GLOB_PROMPT_LAW_RESYNC)
+	notify_parent_server()
 	return TRUE
 
 /// Resets the board to default state
@@ -102,6 +113,7 @@
 	corrupted = FALSE
 	overwritten = FALSE
 	update_board()
+	notify_parent_server()
 	return TRUE
 
 /// Helper proc to garble text for corrupted display
