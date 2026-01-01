@@ -48,5 +48,6 @@
 /// Call this to update the dynamic panel's static data
 #define COMSIG_GLOB_UPDATE_DYNAMICPANEL_DATA_STATIC "!update_dynamicpanel_data_static"
 
-/// Prompts silicons to re-sync their laws from their assigned drive bay
-#define COMSIG_GLOB_PROMPT_LAW_RESYNC "!prompt_law_resync"
+/// Sent by a law server when its laws have changed (lawsync_id)
+/// Silicons should check if this matches their lawsync_address before resyncing
+#define COMSIG_GLOB_LAW_SERVER_UPDATED "!law_server_updated"

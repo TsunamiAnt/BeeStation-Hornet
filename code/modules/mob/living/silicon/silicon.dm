@@ -74,11 +74,11 @@
 	ADD_TRAIT(src, TRAIT_MADNESS_IMMUNE, ROUNDSTART_TRAIT)
 	ADD_TRAIT(src, TRAIT_MARTIAL_ARTS_IMMUNE, ROUNDSTART_TRAIT)
 
-	// Register for law resync signals
-	RegisterSignal(SSdcs, COMSIG_GLOB_PROMPT_LAW_RESYNC, PROC_REF(on_law_resync_prompt))
+	// Register for law server update signals
+	RegisterSignal(SSdcs, COMSIG_GLOB_LAW_SERVER_UPDATED, PROC_REF(on_law_server_updated))
 
 /mob/living/silicon/Destroy()
-	UnregisterSignal(SSdcs, COMSIG_GLOB_PROMPT_LAW_RESYNC)
+	UnregisterSignal(SSdcs, COMSIG_GLOB_LAW_SERVER_UPDATED)
 	laws = null
 	QDEL_NULL(radio)
 	QDEL_NULL(aicamera)

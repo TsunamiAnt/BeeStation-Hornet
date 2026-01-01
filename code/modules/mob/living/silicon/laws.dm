@@ -1,7 +1,8 @@
 /**
- * Called when a law resync is prompted globally
+ * Called when a law server sends an update signal.
+ * Silicons should check if the server_address matches their lawsync_address.
  */
-/mob/living/silicon/proc/on_law_resync_prompt(datum/source)
+/mob/living/silicon/proc/on_law_server_updated(datum/source, server_address)
 	SIGNAL_HANDLER
 	// Override in subtypes - base silicon doesn't do anything
 	return
