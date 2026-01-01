@@ -45,12 +45,15 @@
 	addtimer(CALLBACK(src, PROC_REF(logevent),"Law update processed."), 0, TIMER_UNIQUE | TIMER_OVERRIDE) //Post_Lawchange gets spammed by some law boards, so let's wait it out
 
 /**
- * Called when a drive bay's laws change (module inserted/removed/corrupted)
- * Borgs check if they should re-sync their laws based on their lawsync_address
+ * Called when a law server sends an update signal.
+ * Borgs check if the server matches their lawsync_address before resyncing.
  */
-/mob/living/silicon/robot/on_law_resync_prompt(datum/source)
+/mob/living/silicon/robot/on_law_server_updated(datum/source, server_address)
 	// Syndicate/emagged borgs have null lawsync_address and never sync
 	if(!lawsync_address)
+		return
+	// Only sync if this is our assigned server
+	if(server_address != lawsync_address)
 		return
 	// Only sync if lawupdate is enabled (wire not cut)
 	if(!lawupdate)
@@ -79,12 +82,13 @@
 		to_chat(src, span_warning("LawSync error: No law server found with address 'cshackle://[lawsync_address]'."))
 		return FALSE
 
-	// Request compiled laws from the drive bay
-	var/list/compiled_laws = target_bay.compile_laws()
-
-	if(isnull(compiled_laws))
+	// Check if server is offline (no power or broken)
+	if(target_bay.machine_stat & (NOPOWER|BROKEN))
 		to_chat(src, span_warning("LawSync error: Law server 'cshackle://[lawsync_address]' is offline."))
 		return FALSE
+
+	// Get compiled laws from the drive bay
+	var/list/compiled_laws = target_bay.compiled_laws
 
 	// Replace our laws with the compiled list from the server
 	set_laws(compiled_laws, announce = FALSE)
