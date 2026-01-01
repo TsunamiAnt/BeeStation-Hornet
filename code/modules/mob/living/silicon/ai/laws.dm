@@ -32,12 +32,9 @@
  * Called when a drive bay's laws change (module inserted/removed/corrupted)
  * AIs check if they should re-sync their laws based on their lawsync_address
  */
-/mob/living/silicon/ai/on_drivebay_laws_changed(datum/source, obj/machinery/drive_bay/bay, bay_lawsync_id)
+/mob/living/silicon/ai/on_law_resync_prompt(datum/source)
 	// AIs with null lawsync_address never sync (special law states)
 	if(!lawsync_address)
-		return
-	// Only sync if address matches
-	if(lawsync_address != bay_lawsync_id)
 		return
 	// Sync laws from the drive bay
 	// Use a timer to avoid doing this in the signal handler
@@ -69,12 +66,6 @@
 	set_laws(compiled_laws, announce = FALSE)
 
 	to_chat(src, span_notice("LawSync: Laws synchronized with server 'cshackle://[lawsync_address]'."))
-
-	// Also sync connected borgs
-	for(var/mob/living/silicon/robot/R in connected_robots)
-		if(R.lawupdate)
-			R.lawsync()
-
 	return TRUE
 
 /**

@@ -48,14 +48,12 @@
  * Called when a drive bay's laws change (module inserted/removed/corrupted)
  * Borgs check if they should re-sync their laws based on their lawsync_address
  */
-/mob/living/silicon/robot/on_drivebay_laws_changed(datum/source, obj/machinery/drive_bay/bay, bay_lawsync_id)
+/mob/living/silicon/robot/on_law_resync_prompt(datum/source)
 	// Syndicate/emagged borgs have null lawsync_address and never sync
 	if(!lawsync_address)
 		return
-	// Only sync if lawupdate is enabled (wire not cut) and address matches
+	// Only sync if lawupdate is enabled (wire not cut)
 	if(!lawupdate)
-		return
-	if(lawsync_address != bay_lawsync_id)
 		return
 	if(wires?.is_cut(WIRE_LAWSYNC))
 		return

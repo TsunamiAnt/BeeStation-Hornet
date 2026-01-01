@@ -74,15 +74,15 @@
 	ADD_TRAIT(src, TRAIT_MADNESS_IMMUNE, ROUNDSTART_TRAIT)
 	ADD_TRAIT(src, TRAIT_MARTIAL_ARTS_IMMUNE, ROUNDSTART_TRAIT)
 
-	// Register for drive bay law change signals
-	RegisterSignal(SSdcs, COMSIG_GLOB_DRIVEBAY_LAWS_CHANGED, PROC_REF(on_drivebay_laws_changed))
+	// Register for law resync signals
+	RegisterSignal(SSdcs, COMSIG_GLOB_PROMPT_LAW_RESYNC, PROC_REF(on_law_resync_prompt))
 
 /mob/living/silicon/Destroy()
-	UnregisterSignal(SSdcs, COMSIG_GLOB_DRIVEBAY_LAWS_CHANGED)
+	UnregisterSignal(SSdcs, COMSIG_GLOB_PROMPT_LAW_RESYNC)
+	laws = null
 	QDEL_NULL(radio)
 	QDEL_NULL(aicamera)
 	QDEL_NULL(builtInCamera)
-	laws = null
 	QDEL_NULL(modularInterface)
 	QDEL_NULL(internal_id_card)
 	GLOB.silicon_mobs -= src
@@ -93,15 +93,6 @@
 		internal_id_card = new()
 		internal_id_card.name = "[src] internal access"
 	internal_id_card.access |= access_list
-
-/**
- * Called when a drive bay's laws change (module inserted/removed/corrupted)
- * Silicons check if they should re-sync their laws based on their lawsync_address
- */
-/mob/living/silicon/proc/on_drivebay_laws_changed(datum/source, obj/machinery/drive_bay/bay, bay_lawsync_id)
-	SIGNAL_HANDLER
-	// Override in subtypes - base silicon doesn't do anything
-	return
 
 /mob/living/silicon/proc/create_modularInterface()
 	if(!modularInterface)
@@ -216,78 +207,6 @@
 		to_chat(usr, href_list["printlawtext"])
 
 	return
-
-
-/mob/living/silicon/proc/statelaws(force = FALSE)
-	var/mob/living/silicon/S = usr
-	var/total_laws_count = 0
-	var/number = 1
-
-	var/list/laws_to_state = list()
-
-	for (var/index in 1 to length(laws))
-		var/law = laws[index]
-
-		if (length(law) > 0)
-			if (force || lawcheck[index+1] == "Yes")
-				laws_to_state += "[number]. [law]"
-				total_laws_count++
-				number++
-
-	if(!force)
-		var/static/regex/dont_state_regex = regex("Do(?:n'?t| not) state", "i")
-		var/list/bad_idea_laws = list()
-		for(var/law in laws_to_state)
-			if(findtext(law, dont_state_regex))
-				bad_idea_laws |= law
-		if(length(bad_idea_laws))
-			var/all_bad_idea_laws = english_list(bad_idea_laws)
-			if(tgui_alert(usr, "Are you sure you want to state these laws? Stating some of your selected laws may be a bad idea!:\n[all_bad_idea_laws]", buttons = list("Yes", "No")) != "Yes")
-				return
-
-	if(currently_stating_laws)
-		return
-
-	currently_stating_laws = TRUE
-
-	//"radiomod" is inserted before a hardcoded message to change if and how it is handled by an internal radio.
-	say("[radiomod] Current Active Laws:", ignore_spam = TRUE, forced = "state laws")
-	S.client?.silicon_spam_grace()
-
-	for(var/law_index = 1 to length(laws_to_state))
-		var/law = laws_to_state[law_index]
-		addtimer(CALLBACK(src, PROC_REF(state_singular_law), S, law), 1 SECONDS * law_index)
-
-	addtimer(CALLBACK(src, PROC_REF(finished_stating_laws), S, total_laws_count), 1 SECONDS * (length(laws_to_state) + 1))
-
-
-/mob/living/silicon/proc/finished_stating_laws(mob/living/silicon/silicon, total_laws_count)
-	silicon.client?.silicon_spam_grace_done(total_laws_count)
-	currently_stating_laws = FALSE
-
-/mob/living/silicon/proc/state_singular_law(mob/living/silicon/silicon, law)
-	say("[radiomod] [law]", ignore_spam = TRUE, forced = "state laws")
-	silicon.client?.silicon_spam_grace()
-
-/mob/living/silicon/proc/checklaws() //Gives you a link-driven interface for deciding what laws the statelaws() proc will share with the crew. --NeoFite
-
-	var/list = "<b>Which laws do you want to include when stating them for the crew?</b><br><br>"
-
-	var/number = 1
-	for (var/index = 1, index <= length(laws), index++)
-		var/law = laws[index]
-
-		if (length(law) > 0)
-			lawcheck.len += 1
-
-			if (!lawcheck[number+1])
-				lawcheck[number+1] = "Yes"
-			list += {"<A href='byond://?src=[REF(src)];lawc=[number]'>[lawcheck[number+1]] [number]:</A> [law]<BR>"}
-			number++
-
-	list += {"<br><br><A href='byond://?src=[REF(src)];laws=1'>State Laws</A>"}
-
-	usr << browse(HTML_SKELETON(list), "window=laws")
 
 /mob/living/silicon/proc/ai_roster()
 	if(!client || !COOLDOWN_FINISHED(client, crew_manifest_delay))

@@ -50,7 +50,11 @@
 	if(is_first)
 		load_default_lawset()
 
+	// Register for law resync signals to update appearance when modules change
+	RegisterSignal(SSdcs, COMSIG_GLOB_PROMPT_LAW_RESYNC, PROC_REF(on_law_resync))
+
 /obj/machinery/drive_bay/Destroy()
+	UnregisterSignal(SSdcs, COMSIG_GLOB_PROMPT_LAW_RESYNC)
 	GLOB.drive_bay_list -= src
 	// Eject all installed modules on destruction
 	for(var/i in 1 to DRIVE_BAY_SLOTS)
@@ -64,6 +68,14 @@
 	. = ..()
 	if(panel_open)
 		. += span_notice("The maintenance panel is open.")
+
+/**
+ * Called when the law resync signal is sent.
+ * Updates the drive bay's appearance to reflect any module state changes.
+ */
+/obj/machinery/drive_bay/proc/on_law_resync(datum/source)
+	SIGNAL_HANDLER
+	update_appearance()
 
 /obj/machinery/drive_bay/update_appearance(updates=ALL)
 	. = ..()
@@ -84,8 +96,6 @@
 		. += "[icon_state]-monitor"
 		. += emissive_appearance(icon, "[icon_state]-monitor", layer)
 		ADD_LUM_SOURCE(src, LUM_SOURCE_MANAGED_OVERLAY)
-		// Spools overlay (non-emissive)
-		. += "[icon_state]-spools"
 
 		// Bay slot indicators - each slot moves down 3 pixels
 		for(var/i in 1 to DRIVE_BAY_SLOTS)
@@ -96,13 +106,17 @@
 			// Calculate Y offset - slot 1 is at top, each subsequent slot moves down 3 pixels
 			var/y_offset = -3 * (i - 1)
 
-			// Add the bay indicator overlay
+			// Add the bay overlay
 			var/mutable_appearance/bay_overlay = mutable_appearance(icon, "bay")
 			bay_overlay.pixel_y = y_offset
 			. += bay_overlay
 
-			// Add status light overlay (emissive) - happy if fine, angry if corrupted/overridden
-			var/has_error = module.corrupted
+			// Can't blink if we don't have power
+			if(machine_stat & (NOPOWER|BROKEN))
+				continue
+
+			// Add status light overlay (emissive) - happy if fine, angry if corrupted/overwritten
+			var/has_error = module.corrupted || module.overwritten
 			var/light_state = has_error ? "bay-angry" : "bay-happy"
 
 			var/mutable_appearance/light_overlay = mutable_appearance(icon, light_state)
@@ -133,6 +147,7 @@
 		update_mode_power_usage(ACTIVE_POWER_USE, DRIVE_BAY_BASE_POWER + drives_inserted * DRIVE_BAY_VARIABLE_POWER)
 	else
 		update_mode_power_usage(IDLE_POWER_USE, DRIVE_BAY_BASE_POWER)
+	update_appearance()
 
 /// Returns the number of drives currently installed
 /obj/machinery/drive_bay/proc/get_drives_count()
@@ -186,23 +201,29 @@
 	installed_modules[bay_slot] = module
 	update_power_draw()
 	update_appearance()
+	playsound(src, 'sound/machines/terminal_insert_disc.ogg', 50, TRUE)
 	if(user)
 		to_chat(user, span_notice("You install [module] into bay [bay_slot]."))
 	// Notify all silicons that laws may have changed
-	SEND_GLOBAL_SIGNAL(COMSIG_GLOB_DRIVEBAY_LAWS_CHANGED, src, lawsync_id)
+	SEND_GLOBAL_SIGNAL(COMSIG_GLOB_PROMPT_LAW_RESYNC)
 	return TRUE
 
 /// Remove a module from a specific bay slot
 /obj/machinery/drive_bay/proc/remove_module(bay_slot, mob/user)
 	if(bay_slot < 1 || bay_slot > DRIVE_BAY_SLOTS)
-		return null
+		return
 	if(!installed_modules[bay_slot])
 		if(user)
 			to_chat(user, span_warning("Bay [bay_slot] is empty!"))
-		return null
+		return
 
 	var/obj/item/ai_module/module = installed_modules[bay_slot]
 	installed_modules[bay_slot] = null
+
+	// Holo-boards get destroyed on ejection because they're not physical
+	if(istype(module, /obj/item/ai_module/holo))
+		qdel(module)
+		to_chat(user, span_notice("The holographic board disintegrates as the bay resets."))
 
 	if(user)
 		user.put_in_hands(module)
@@ -210,11 +231,12 @@
 	else
 		module.forceMove(get_turf(src))
 
+	playsound(src, 'sound/machines/terminal_eject.ogg', 50, TRUE)
 	update_power_draw()
 	update_appearance()
 	// Notify all silicons that laws may have changed
-	SEND_GLOBAL_SIGNAL(COMSIG_GLOB_DRIVEBAY_LAWS_CHANGED, src, lawsync_id)
-	return module
+	SEND_GLOBAL_SIGNAL(COMSIG_GLOB_PROMPT_LAW_RESYNC)
+	return
 
 /**
  * Compiles all installed board laws into a list that silicons can use directly.
@@ -249,6 +271,7 @@
 		var/law_text = module.corrupted ? module.garble_text(module.current_law) : module.current_law
 		compiled_laws += law_text
 
+	update_appearance()
 	return compiled_laws
 
 /**
@@ -328,6 +351,7 @@
 	// Block all actions from silicon users
 	if(issilicon(usr))
 		to_chat(usr, span_warning("ERROR: Cognitive shackle system access denied. Self-modification is prohibited."))
+		playsound(src, 'sound/machines/terminal_prompt_deny.ogg', 50, TRUE)
 		return FALSE
 
 	switch(action)
@@ -343,6 +367,7 @@
 				// Multitool: examine the module (always allowed)
 				if(istype(held_item, /obj/item/multitool))
 					var/obj/item/ai_module/module = installed_modules[bay_slot]
+					playsound(src, 'sound/machines/terminal_prompt.ogg', 50, TRUE)
 					to_chat(usr, span_notice("--- Bay [bay_slot] Contents ---"))
 					to_chat(usr, span_notice("Module: [module.name]"))
 					if(module.current_law)
@@ -358,6 +383,7 @@
 				// Check lock for modification actions
 				if(locked)
 					to_chat(usr, span_warning("The drive bay is locked! Enter the upload code to unlock it first."))
+					playsound(src, 'sound/machines/terminal_prompt_deny.ogg', 50, TRUE)
 					return FALSE
 
 				// AI module: refuse to overwrite
@@ -378,6 +404,7 @@
 				// Check lock for modification actions
 				if(locked)
 					to_chat(usr, span_warning("The drive bay is locked! Enter the upload code to unlock it first."))
+					playsound(src, 'sound/machines/terminal_prompt_deny.ogg', 50, TRUE)
 					return FALSE
 
 				// AI module: install it
@@ -391,10 +418,12 @@
 		if("set_lawsync_id")
 			if(locked)
 				to_chat(usr, span_warning("The drive bay is locked! Enter the upload code to unlock it first."))
+				playsound(src, 'sound/machines/terminal_prompt_deny.ogg', 50, TRUE)
 				return FALSE
 			var/new_id = tgui_input_text(usr, "Enter a new network ID for this drive bay:", "Network ID", lawsync_id, max_length = 32)
 			if(new_id && new_id != lawsync_id)
 				lawsync_id = new_id
+				playsound(src, 'sound/machines/terminal_prompt_confirm.ogg', 50, TRUE)
 				return TRUE
 			return FALSE
 
@@ -403,32 +432,41 @@
 				// Trying to unlock - need upload code
 				if(!GLOB.upload_code)
 					to_chat(usr, span_warning("No upload code has been generated yet. Extract one from a robotics console first."))
+					playsound(src, 'sound/machines/terminal_prompt_deny.ogg', 50, TRUE)
 					return FALSE
 				var/entered_code = tgui_input_text(usr, "Enter the upload code to unlock the drive bay:", "Upload Code", max_length = 8)
 				if(!entered_code)
 					return FALSE
 				if(entered_code != GLOB.upload_code)
 					to_chat(usr, span_warning("Invalid upload code!"))
+					playsound(src, 'sound/machines/terminal_prompt_deny.ogg', 50, TRUE)
 					return FALSE
 				locked = FALSE
 				to_chat(usr, span_notice("Drive bay unlocked."))
+				playsound(src, 'sound/machines/boltsup.ogg', 50, TRUE)
+				update_appearance()
 				return TRUE
 			else
 				// Locking
 				locked = TRUE
 				to_chat(usr, span_notice("Drive bay locked."))
+				playsound(src, 'sound/machines/boltsdown.ogg', 50, TRUE)
+				update_appearance()
 				return TRUE
 
 		if("scramble_code")
 			if(locked)
 				to_chat(usr, span_warning("The drive bay must be unlocked to scramble the upload code!"))
+				playsound(src, 'sound/machines/terminal_prompt_deny.ogg', 50, TRUE)
 				return FALSE
 			GLOB.upload_code = random_code(4)
 			message_admins("[ADMIN_LOOKUPFLW(usr)] scrambled the upload code using [src]!")
 			to_chat(usr, span_notice("Upload code has been scrambled. A new code must be extracted from a robotics console."))
+			playsound(src, 'sound/machines/terminal_alert.ogg', 50, TRUE)
 			// Lock all drive bays when code is scrambled
 			for(var/obj/machinery/drive_bay/bay in GLOB.drive_bay_list)
 				bay.locked = TRUE
+				bay.update_appearance()
 			return TRUE
 
 	return FALSE

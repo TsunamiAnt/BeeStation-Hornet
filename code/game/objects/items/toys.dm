@@ -827,7 +827,7 @@
 	icon_state = "AI"
 
 /obj/item/toy/talking/AI/generate_messages()
-	return list(generate_ion_law())
+	return list(generate_corrupted_law())
 
 /obj/item/toy/talking/codex_gigas
 	name = "Toy Codex Gigas"

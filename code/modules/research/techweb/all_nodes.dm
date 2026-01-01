@@ -88,7 +88,6 @@
 		"borg_suit",
 		"borg_upgrade_rename",
 		"borg_upgrade_restart",
-		"borgupload",
 		"cyborgrecharger",
 		"robocontrol",
 		"sflash",
@@ -1039,6 +1038,7 @@
 		"drive_bay",
 		"intellicard",
 		"mecha_tracking_ai_control",
+		"reset_module",
 	)
 	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 2500)
 	export_price = 5000
