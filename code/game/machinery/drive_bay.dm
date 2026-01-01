@@ -25,36 +25,42 @@
 	light_color = LIGHT_COLOR_CYAN
 	light_range = MINIMUM_USEFUL_LIGHT_RANGE
 
-	/// This is randomized per drive bay for network identification, except for the first one in a round. That one's always the default.
+	/// Network ID for silicon law synchronization. First drive bay in a round gets the default address.
 	var/lawsync_id = ""
-
 	/// List of installed AI modules. Index 1-9 corresponds to bay slots 1-9. Null entries mean empty slots.
 	var/list/installed_modules = list()
-
+	/// Compiled list of law strings from installed modules (used by silicons for law sync)
+	var/list/compiled_laws = list()
 	/// Whether the drive bay is locked with the upload code
 	var/locked = TRUE
+	/// Last compiled laws that were synced to silicons (used to detect actual changes)
+	var/list/last_synced_laws = list()
+	/// Timer ID for delayed silicon notification
+	var/notify_timer_id = null
+	/// Whether we're waiting to sync laws to silicons
+	var/pending_sync = FALSE
 
 /obj/machinery/drive_bay/Initialize(mapload)
 	. = ..()
-	// Initialize all bay slots to null (empty)
 	installed_modules = new /list(DRIVE_BAY_SLOTS)
-	update_power_draw()
-	update_appearance()
 
-	/// Register in global list. If we are the first, set lawsync_id to default and load default laws.
+	// Register in global list. First drive bay gets default address and laws.
 	var/is_first = !GLOB.drive_bay_list.len
 	if(is_first)
 		lawsync_id = DEFAULT_DRIVE_BAY_ADDRESS
 	GLOB.drive_bay_list += src
-	// Load default lawset if this is the first drive bay
+
 	if(is_first)
 		load_default_lawset()
-
-	// Register for law resync signals to update appearance when modules change
-	RegisterSignal(SSdcs, COMSIG_GLOB_PROMPT_LAW_RESYNC, PROC_REF(on_law_resync))
+	else
+		refresh()
 
 /obj/machinery/drive_bay/Destroy()
-	UnregisterSignal(SSdcs, COMSIG_GLOB_PROMPT_LAW_RESYNC)
+	// Cancel any pending notification timer
+	if(notify_timer_id)
+		deltimer(notify_timer_id)
+		notify_timer_id = null
+
 	GLOB.drive_bay_list -= src
 	// Eject all installed modules on destruction
 	for(var/i in 1 to DRIVE_BAY_SLOTS)
@@ -64,18 +70,98 @@
 			installed_modules[i] = null
 	return ..()
 
-/obj/machinery/drive_bay/examine(mob/user)
-	. = ..()
-	if(panel_open)
-		. += span_notice("The maintenance panel is open.")
+/**
+ * Master refresh proc - call this whenever something changes that might need law-recomputing.
+ *
+ * Updates power draw, compiles laws, and refreshes appearance.
+ * This is the ONLY proc that should be called when the drive bay state changes.
+ */
+/obj/machinery/drive_bay/proc/refresh()
+	// Update power draw based on drive count
+	var/drives_inserted = 0
+	for(var/i in 1 to DRIVE_BAY_SLOTS)
+		if(installed_modules[i])
+			drives_inserted++
+
+	if(drives_inserted > 0)
+		update_mode_power_usage(ACTIVE_POWER_USE, DRIVE_BAY_BASE_POWER + drives_inserted * DRIVE_BAY_VARIABLE_POWER)
+	else
+		update_mode_power_usage(IDLE_POWER_USE, DRIVE_BAY_BASE_POWER)
+
+	// Compile laws from installed modules
+	compiled_laws = list()
+
+	if(!(machine_stat & (NOPOWER|BROKEN)))
+		for(var/i in 1 to DRIVE_BAY_SLOTS)
+			var/obj/item/ai_module/module = installed_modules[i]
+			if(!module)
+				continue
+
+			// Update the board (allows boards to do any dynamic behavior)
+			module.update_board()
+
+			if(!module.current_law)
+				continue
+
+			// Get the law text - garbled if corrupted
+			var/law_text = module.corrupted ? module.garble_text(module.current_law) : module.current_law
+			if(length(law_text) > 0)
+				compiled_laws += law_text
+
+	update_appearance()
+
+	// Schedule notification to connected silicons if requested
+	if(lawsync_id)
+		// Cancel any existing timer
+		if(notify_timer_id)
+			deltimer(notify_timer_id)
+
+		// Set pending sync status
+		pending_sync = TRUE
+
+		// Schedule notification for 2 minutes from now
+		notify_timer_id = addtimer(CALLBACK(src, PROC_REF(notify_silicons)), 2 MINUTES, TIMER_STOPPABLE)
 
 /**
- * Called when the law resync signal is sent.
- * Updates the drive bay's appearance to reflect any module state changes.
+ * Notifies connected silicons about law changes.
+ * Only sends the signal if laws have actually changed since last sync.
+ * Called automatically after a delay by refresh(), or manually via UI.
  */
-/obj/machinery/drive_bay/proc/on_law_resync(datum/source)
-	SIGNAL_HANDLER
-	update_appearance()
+/obj/machinery/drive_bay/proc/notify_silicons()
+	// Clear the timer ID and pending status
+	notify_timer_id = null
+	pending_sync = FALSE
+
+	// Don't notify if we have no address
+	if(!lawsync_id)
+		return
+
+	// Cancel any pending timer
+	if(notify_timer_id)
+		deltimer(notify_timer_id)
+		notify_timer_id = null
+
+	// Check if laws actually changed
+	if(list_equals(compiled_laws, last_synced_laws))
+		// Laws haven't changed, no need to notify
+		return
+
+	// Laws changed - update last synced and send signal
+	last_synced_laws = compiled_laws.Copy()
+	SEND_GLOBAL_SIGNAL(COMSIG_GLOB_LAW_SERVER_UPDATED, lawsync_id)
+
+/**
+ * Helper proc to compare two lists for equality.
+ */
+/obj/machinery/drive_bay/proc/list_equals(list/list1, list/list2)
+	if(list1.len != list2.len)
+		return FALSE
+
+	for(var/i in 1 to list1.len)
+		if(list1[i] != list2[i])
+			return FALSE
+
+	return TRUE
 
 /obj/machinery/drive_bay/update_appearance(updates=ALL)
 	. = ..()
@@ -199,13 +285,11 @@
 		module.forceMove(src)
 
 	installed_modules[bay_slot] = module
-	update_power_draw()
-	update_appearance()
 	playsound(src, 'sound/machines/terminal_insert_disc.ogg', 50, TRUE)
 	if(user)
 		to_chat(user, span_notice("You install [module] into bay [bay_slot]."))
-	// Notify all silicons that laws may have changed
-	SEND_GLOBAL_SIGNAL(COMSIG_GLOB_PROMPT_LAW_RESYNC)
+
+	refresh()
 	return TRUE
 
 /// Remove a module from a specific bay slot
@@ -224,75 +308,26 @@
 	if(istype(module, /obj/item/ai_module/holo))
 		qdel(module)
 		to_chat(user, span_notice("The holographic board disintegrates as the bay resets."))
-
-	if(user)
+	else if(user)
 		user.put_in_hands(module)
 		to_chat(user, span_notice("You remove [module] from bay [bay_slot]."))
 	else
 		module.forceMove(get_turf(src))
 
 	playsound(src, 'sound/machines/terminal_eject.ogg', 50, TRUE)
-	update_power_draw()
-	update_appearance()
-	// Notify all silicons that laws may have changed
-	SEND_GLOBAL_SIGNAL(COMSIG_GLOB_PROMPT_LAW_RESYNC)
-	return
+	refresh()
 
-/**
- * Compiles all installed board laws into a list that silicons can use directly.
- *
- * Goes through each installed board in slot order (1-9), updates them,
- * and collects their law strings. Corrupted boards return garbled text.
- *
- * Returns: A list of law strings in order, ready to replace a silicon's laws.
- *          Returns null if the server is offline (no power or broken).
- */
-/obj/machinery/drive_bay/proc/compile_laws()
-	// Check if the server is operational
-	if(machine_stat & (NOPOWER|BROKEN))
-		return null
+/obj/machinery/drive_bay/screwdriver_act(mob/living/user, obj/item/tool)
+	if(default_deconstruction_screwdriver(user, icon_state, icon_state, tool))
+		update_appearance()
+		return TOOL_ACT_TOOLTYPE_SUCCESS
+	return FALSE
 
-	var/list/compiled_laws = list()
-
-	// Go through each bay slot in order
-	for(var/i in 1 to DRIVE_BAY_SLOTS)
-		var/obj/item/ai_module/module = installed_modules[i]
-		if(!module)
-			continue
-
-		// Update the board (allows boards to do any dynamic behavior)
-		module.update_board()
-
-		// Skip boards with no law
-		if(!module.current_law)
-			continue
-
-		// Get the law text - garbled if corrupted
-		var/law_text = module.corrupted ? module.garble_text(module.current_law) : module.current_law
-		compiled_laws += law_text
-
-	update_appearance()
-	return compiled_laws
-
-/**
- * Returns a formatted list of laws for display purposes.
- *
- * Each law is prefixed with its number (1: law, 2: law, etc.)
- *
- * Returns: A list of formatted law strings, or null if server is offline.
- */
-/obj/machinery/drive_bay/proc/get_formatted_laws()
-	var/list/compiled = compile_laws()
-	if(isnull(compiled))
-		return null
-
-	var/list/formatted = list()
-	var/number = 1
-	for(var/law in compiled)
-		if(length(law) > 0)
-			formatted += "[number]: [law]"
-			number++
-	return formatted
+/obj/machinery/drive_bay/crowbar_act(mob/living/user, obj/item/tool)
+	if(default_deconstruction_crowbar(tool))
+		update_appearance()
+		return TOOL_ACT_TOOLTYPE_SUCCESS
+	return FALSE
 
 /**
  * Finds a drive bay by its lawsync_id.
