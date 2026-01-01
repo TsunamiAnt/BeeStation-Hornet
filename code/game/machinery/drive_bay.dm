@@ -360,6 +360,7 @@
 	data["lawsync_id"] = lawsync_id
 	data["locked"] = locked
 	data["is_silicon"] = issilicon(user)
+	data["pending_sync"] = pending_sync
 
 	var/list/bays = list()
 	for(var/i in 1 to DRIVE_BAY_SLOTS)
@@ -504,9 +505,21 @@
 				bay.update_appearance()
 			return TRUE
 
+		if("sync_now")
+			// Allow manual sync only if not a silicon
+			if(issilicon(usr))
+				to_chat(usr, span_warning("ERROR: Cognitive shackle system access denied. Self-modification is prohibited."))
+				playsound(src, 'sound/machines/terminal_prompt_deny.ogg', 50, TRUE)
+				return FALSE
+
+			notify_silicons()
+
+			to_chat(usr, span_notice("Law synchronization triggered manually."))
+			playsound(src, 'sound/machines/terminal_prompt_confirm.ogg', 50, TRUE)
+			return TRUE
+
 	return FALSE
 
 #undef DRIVE_BAY_SLOTS
-
 #undef DRIVE_BAY_BASE_POWER
 #undef DRIVE_BAY_VARIABLE_POWER

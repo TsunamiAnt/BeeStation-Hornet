@@ -149,14 +149,14 @@ const AccessDeniedScreen = () => (
 
 export const DriveBay = () => {
   const { act, data } = useBackend();
-  const { lawsync_id, locked, bays = [], is_silicon } = data;
+  const { lawsync_id, locked, bays = [], is_silicon, pending_sync } = data;
 
   if (is_silicon) {
     return <AccessDeniedScreen />;
   }
 
   return (
-    <Window width={480} height={560} theme="ntos-cyborg">
+    <Window width={600} height={560} theme="ntos-cyborg">
       <Window.Content scrollable>
         {/* System Control Section */}
         <Section
@@ -235,8 +235,52 @@ export const DriveBay = () => {
                 <Stack.Item>
                   <Button
                     icon="pen"
-                    color="transparent"
+                    color={locked ? 'disabled' : 'transparent'}
+                    disabled={locked}
                     onClick={() => act('set_lawsync_id')}
+                  />
+                </Stack.Item>
+              </Stack>
+            </Stack.Item>
+            <Stack.Item
+              style={{
+                borderLeft: '1px solid rgba(0, 200, 255, 0.2)',
+                paddingLeft: '16px',
+                marginLeft: '16px',
+              }}
+            >
+              <Box color="label" fontSize="10px">
+                Sync Status
+              </Box>
+              <Stack align="center">
+                <Stack.Item>
+                  <Box
+                    className={classes([
+                      'DriveBay__syncStatus',
+                      pending_sync && 'DriveBay__syncStatus--pending',
+                    ])}
+                  >
+                    {pending_sync ? (
+                      <>
+                        <Icon name="clock" color="yellow" mr={1} />
+                        PENDING
+                      </>
+                    ) : (
+                      <>
+                        <Icon name="check" color="green" mr={1} />
+                        SYNCED
+                      </>
+                    )}
+                  </Box>
+                </Stack.Item>
+                <Stack.Item>
+                  <Button
+                    icon="sync"
+                    color={pending_sync ? 'caution' : 'good'}
+                    disabled={locked}
+                    tooltip="Manually synchronize laws to silicons"
+                    tooltipPosition="bottom-end"
+                    onClick={() => act('sync_now')}
                   />
                 </Stack.Item>
               </Stack>

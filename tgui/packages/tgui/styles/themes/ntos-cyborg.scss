@@ -267,4 +267,26 @@ $danger: hsl(0, 70%, 50%);
       color: $success;
     }
   }
+
+  .DriveBay__syncStatus {
+    font-size: 12px;
+    font-weight: bold;
+    color: $success;
+    letter-spacing: 1px;
+
+    &--pending {
+      color: $warning;
+      animation: pulse-sync 1.5s ease-in-out infinite;
+    }
+  }
+
+  @keyframes pulse-sync {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.6;
+    }
+  }
 }
