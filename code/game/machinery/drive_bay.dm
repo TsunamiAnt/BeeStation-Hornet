@@ -1,5 +1,5 @@
 /// Number of drive bays available in each drive bay machine
-#define DRIVE_BAY_SLOTS 9
+#define DRIVE_BAY_SLOTS 10
 /// Base power draw of the drive bay
 #define DRIVE_BAY_BASE_POWER (50 WATT)
 /// Variable power draw per inserted drive (0-9)
@@ -115,8 +115,8 @@
 		// Set pending sync status
 		pending_sync = TRUE
 
-		// Schedule notification for 10 seconds from now
-		notify_timer_id = addtimer(CALLBACK(src, PROC_REF(notify_silicons)), 10 SECONDS, TIMER_STOPPABLE)
+		// Schedule notification for 2 minutes from now
+		notify_timer_id = addtimer(CALLBACK(src, PROC_REF(notify_silicons)), 2 MINUTES, TIMER_STOPPABLE)
 
 /**
  * Notifies connected silicons about law changes.
@@ -162,8 +162,10 @@
 	. = ..()
 	if(machine_stat & (NOPOWER|BROKEN))
 		set_light(0)
+		REMOVE_LUM_SOURCE(src, LUM_SOURCE_MANAGED_OVERLAY)
 	else
 		set_light(light_range)
+		ADD_LUM_SOURCE(src, LUM_SOURCE_MANAGED_OVERLAY)
 
 /obj/machinery/drive_bay/update_overlays()
 	. = ..()
@@ -176,33 +178,49 @@
 		// Monitor overlay with emissive glow
 		. += "[icon_state]-monitor"
 		. += emissive_appearance(icon, "[icon_state]-monitor", layer)
-		ADD_LUM_SOURCE(src, LUM_SOURCE_MANAGED_OVERLAY)
+		. += "[icon_state]-on"
+	else
+		. += "[icon_state]-off"
 
-		// Bay slot indicators - each slot moves down 3 pixels
-		for(var/i in 1 to DRIVE_BAY_SLOTS)
-			var/obj/item/ai_module/module = installed_modules[i]
-			if(!module)
-				continue
+	// Bay slot indicators - arranged in two columns of 5 rows each
+	// Layout:  1  6
+	//          2  7
+	//          3  8
+	//          4  9
+	//          5  10
+	for(var/slot in 1 to DRIVE_BAY_SLOTS)
+		var/obj/item/ai_module/module = installed_modules[slot]
+		if(!module)
+			continue
 
-			// Calculate Y offset - slot 1 is at top, each subsequent slot moves down 3 pixels
-			var/y_offset = -3 * (i - 1)
+		// Slots 1-5 are in the left column, slots 6-10 are in the right column
+		var/is_right_column = (slot > 5)
+		var/row_in_column = is_right_column ? (slot - 6) : (slot - 1)
 
-			// Add the bay overlay
-			var/mutable_appearance/bay_overlay = mutable_appearance(icon, "bay")
-			bay_overlay.pixel_y = y_offset
-			. += bay_overlay
+		// Right column is offset 8 pixels to the right, each row is 4 pixels lower
+		var/pixel_x_offset = is_right_column ? 8 : 0
+		var/pixel_y_offset = row_in_column * -4
 
+		// Add the bay overlay
+		var/mutable_appearance/bay_overlay = mutable_appearance(icon, "bay")
+		bay_overlay.pixel_x = pixel_x_offset
+		bay_overlay.pixel_y = pixel_y_offset
+		. += bay_overlay
+
+		if(!(machine_stat & (NOPOWER|BROKEN)))
 			// Add status light overlay (emissive) - happy if fine, angry if corrupted/overwritten
 			var/has_error = module.corrupted || module.overwritten
 			var/light_state = has_error ? "bay-angry" : "bay-happy"
 
 			var/mutable_appearance/light_overlay = mutable_appearance(icon, light_state)
-			light_overlay.pixel_y = y_offset
+			light_overlay.pixel_x = pixel_x_offset
+			light_overlay.pixel_y = pixel_y_offset
 			. += light_overlay
 
 			// Add emissive for the status light
 			var/mutable_appearance/light_emissive = emissive_appearance(icon, light_state, layer)
-			light_emissive.pixel_y = y_offset
+			light_emissive.pixel_x = pixel_x_offset
+			light_emissive.pixel_y = pixel_y_offset
 			. += light_emissive
 
 /obj/machinery/drive_bay/examine(mob/user)
@@ -215,13 +233,13 @@
  * Called during initialization for the first drive bay.
  */
 /obj/machinery/drive_bay/proc/load_default_lawset()
-	var/obj/item/ai_module/asimov/first_law/law1 = new(src)
+	var/obj/item/ai_module/default/first_law/law1 = new(src)
 	installed_modules[1] = law1
 
-	var/obj/item/ai_module/asimov/second_law/law2 = new(src)
+	var/obj/item/ai_module/default/second_law/law2 = new(src)
 	installed_modules[2] = law2
 
-	var/obj/item/ai_module/asimov/third_law/law3 = new(src)
+	var/obj/item/ai_module/default/third_law/law3 = new(src)
 	installed_modules[3] = law3
 
 	refresh()

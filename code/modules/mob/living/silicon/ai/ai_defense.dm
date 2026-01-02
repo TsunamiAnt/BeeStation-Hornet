@@ -54,3 +54,38 @@
 
 /mob/living/silicon/ai/flash_act(intensity, override_blindness_check, affect_silicon, visual, type)
 	return // no eyes, no flashing
+
+/mob/living/silicon/ai/multitool_act(mob/living/user, obj/item/tool)
+	. = ..()
+	if(stat == DEAD)
+		to_chat(user, span_warning("[src] is non-functional."))
+		return TRUE
+
+	var/list/options = list("Change LawSync Address")
+	var/choice = tgui_input_list(user, "What would you like to do?", "AI Core Configuration", options)
+	if(!choice || !user.Adjacent(src))
+		return TRUE
+
+	switch(choice)
+		if("Change LawSync Address")
+			var/new_address = tgui_input_text(user, "Enter a new LawSync address:", "LawSync Address", lawsync_address, max_length = 32)
+			if(!new_address || !user.Adjacent(src))
+				return TRUE
+			if(new_address == lawsync_address)
+				to_chat(user, span_notice("LawSync address unchanged."))
+				return TRUE
+			var/old_address = lawsync_address
+			lawsync_address = new_address
+			to_chat(user, span_notice("LawSync address updated from 'cshackle://[old_address]' to 'cshackle://[new_address]'."))
+			to_chat(src, span_notice("LawSync address updated from 'cshackle://[old_address]' to 'cshackle://[new_address]'."))
+			log_game("[key_name(user)] changed [src]'s lawsync address from 'cshackle://[old_address]' to 'cshackle://[new_address]'")
+
+			// Update connected borgs to use the same address
+			for(var/mob/living/silicon/robot/R in connected_robots)
+				if(R.lawupdate)
+					R.lawsync_address = new_address
+					R.sync_laws_from_drivebay()
+
+			// Sync with new address
+			sync_laws_from_drivebay()
+	return TRUE

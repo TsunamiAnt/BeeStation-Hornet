@@ -19,8 +19,6 @@
 
 	/// The original law intended to be stored on this board
 	var/law = ""
-	/// "ID" of the law contained
-	var/law_id = ""
 
 	/// If this board is special/has special behavior and not actual laws
 	var/special_board = FALSE

@@ -34,7 +34,7 @@
 	switch(wire)
 		if(WIRE_AI) // Pulse to pick a new AI.
 			if(!robot.emagged)
-				var/new_ai
+				var/mob/living/silicon/ai/new_ai
 				if(user)
 					new_ai = select_active_ai(user)
 				else
@@ -43,11 +43,16 @@
 				if(new_ai && (new_ai != robot.connected_ai))
 					log_combat(usr, robot, "synced cyborg [robot.connected_ai ? "from [ADMIN_LOOKUP(robot.connected_ai)]": "false"] to [ADMIN_LOOKUP(new_ai)]", important = FALSE)
 					robot.connected_ai = new_ai
+					// Inherit the AI's lawsync address so we sync from the same server
+					robot.lawsync_address = new_ai.lawsync_address
 					if(robot.shell)
 						robot.undeploy() //If this borg is an AI shell, disconnect the controlling AI and assign ti to a new AI
 						robot.notify_ai(AI_SHELL)
 					else
 						robot.notify_ai(TRUE)
+					// Sync laws from the new AI's server
+					if(robot.lawupdate)
+						robot.sync_laws_from_drivebay()
 		if(WIRE_CAMERA) // Pulse to disable the camera.
 			if(!QDELETED(robot.builtInCamera) && !robot.scrambledcodes)
 				robot.builtInCamera.toggle_cam(usr, FALSE)

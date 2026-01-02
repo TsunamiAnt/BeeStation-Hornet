@@ -211,6 +211,8 @@
 				if(borg.shell)
 					borg.undeploy()
 				borg.connected_ai = newai
+				// Inherit the AI's lawsync address so we sync from the same server
+				borg.lawsync_address = newai.lawsync_address
 				borg.notify_ai(TRUE)
 				message_admins("[key_name_admin(user)] slaved [ADMIN_LOOKUPFLW(borg)] to the AI [ADMIN_LOOKUPFLW(newai)].")
 				log_admin("[key_name(user)] slaved [key_name(borg)] to the AI [key_name(newai)].")

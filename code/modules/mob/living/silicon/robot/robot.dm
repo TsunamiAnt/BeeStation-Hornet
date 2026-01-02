@@ -34,11 +34,12 @@
 	create_modularInterface()
 
 	if(lawupdate)
-		// Sync laws from drive bay
-		sync_laws_from_drivebay()
+		// Try to connect to an AI first (this will also set our lawsync_address to match theirs)
 		if(!TryConnectToAI())
 			lawupdate = FALSE
 			wires.ui_update()
+			// If no AI found, just sync from our default address
+			sync_laws_from_drivebay()
 
 	if(!scrambledcodes && !builtInCamera)
 		builtInCamera = new (src)
@@ -1020,6 +1021,8 @@
 	connected_ai = mainframe
 	mainframe.connected_robots |= src
 	lawupdate = TRUE
+	// Inherit the AI's lawsync address so we sync from the same server
+	lawsync_address = AI.lawsync_address
 	sync_laws_from_drivebay()
 	picturesync()
 	if(radio && AI.radio) //AI keeps all channels, including Syndie if it is a Traitor
@@ -1111,6 +1114,8 @@
 	connected_ai = select_active_ai_with_fewest_borgs()
 	if(connected_ai)
 		connected_ai.connected_robots += src
+		// Inherit the AI's lawsync address so we sync from the same server
+		lawsync_address = connected_ai.lawsync_address
 		sync_laws_from_drivebay()
 		picturesync()
 		lawupdate = TRUE

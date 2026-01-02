@@ -15,6 +15,8 @@
 				. += span_warning("<B>Its casing is melted and heat-warped!</B>")
 		if(deployed_shell)
 			. += "The wireless networking light is blinking."
+		if(lawsync_address)
+			. += "Its LawSync address is set to 'cshackle://[lawsync_address]'."
 		else if (!shunted && !client)
 			. += "[src]  stopped responding! NTOS is searching for a solution to the problem..."
 

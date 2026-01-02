@@ -93,7 +93,7 @@ const BaySlot = ({ bay, locked, onInteract }) => {
 };
 
 const AccessDeniedScreen = () => (
-  <Window width={480} height={560} theme="ntos-cyborg">
+  <Window width={520} height={600} theme="ntos-cyborg">
     <Window.Content
       style={{
         display: 'flex',
@@ -156,7 +156,7 @@ export const DriveBay = () => {
   }
 
   return (
-    <Window width={600} height={560} theme="ntos-cyborg">
+    <Window width={720} height={620} theme="ntos-cyborg">
       <Window.Content scrollable>
         {/* System Control Section */}
         <Section
@@ -311,14 +311,30 @@ export const DriveBay = () => {
             </Box>
           </Box>
 
-          {bays.map((bay) => (
-            <BaySlot
-              key={bay.slot}
-              bay={bay}
-              locked={locked}
-              onInteract={() => act('bay_interact', { slot: bay.slot })}
-            />
-          ))}
+          {bays.length > 0 && (
+            <Stack>
+              <Stack.Item grow>
+                {bays.slice(0, 5).map((bay) => (
+                  <BaySlot
+                    key={bay.slot}
+                    bay={bay}
+                    locked={locked}
+                    onInteract={() => act('bay_interact', { slot: bay.slot })}
+                  />
+                ))}
+              </Stack.Item>
+              <Stack.Item grow>
+                {bays.slice(5, 10).map((bay) => (
+                  <BaySlot
+                    key={bay.slot}
+                    bay={bay}
+                    locked={locked}
+                    onInteract={() => act('bay_interact', { slot: bay.slot })}
+                  />
+                ))}
+              </Stack.Item>
+            </Stack>
+          )}
 
           {bays.length === 0 && (
             <NoticeBox>

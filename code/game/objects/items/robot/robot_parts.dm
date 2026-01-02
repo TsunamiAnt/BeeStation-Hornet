@@ -22,10 +22,27 @@
 	var/aisync = 1
 	var/panel_locked = TRUE
 	var/lawsync_address = DEFAULT_DRIVE_BAY_ADDRESS
+	/// List of laws to give to the cyborg when created (can be set via AI modules during construction)
+	var/list/laws = list()
 
 /obj/item/robot_suit/Initialize(mapload)
 	. = ..()
 	update_icon()
+
+/obj/item/robot_suit/Destroy()
+	. = ..()
+	laws = null
+
+/obj/item/robot_suit/examine(mob/user)
+	. = ..()
+	. += span_notice("LawSync address: <b>cshackle://[lawsync_address]</b>")
+	if(length(laws))
+		. += span_notice("Pre-installed laws:")
+		var/law_num = 1
+		for(var/law in laws)
+			. += span_notice("[law_num]. [law]")
+			law_num++
+	. += span_notice("Use an AI module to add laws during construction.")
 
 /obj/item/robot_suit/prebuilt/Initialize(mapload)
 	. = ..()
@@ -139,6 +156,26 @@
 	return TRUE
 
 /obj/item/robot_suit/attackby(obj/item/W, mob/user, params)
+
+	// AI modules can add or reset laws during construction
+	if(istype(W, /obj/item/ai_module))
+		var/obj/item/ai_module/module = W
+		// Reset board clears all pre-installed laws
+		if(istype(module, /obj/item/ai_module/reset_board))
+			if(!length(laws))
+				to_chat(user, span_warning("There are no pre-installed laws to clear."))
+				return
+			laws.Cut()
+			to_chat(user, span_notice("You clear all pre-installed laws from the cyborg frame's memory."))
+			playsound(loc, 'sound/machines/terminal_prompt_confirm.ogg', 50, TRUE)
+			return
+		if(!module.current_law || module.current_law == "")
+			to_chat(user, span_warning("This module has no law stored on it."))
+			return
+		laws += module.current_law
+		to_chat(user, span_notice("You upload the law from [module] to the cyborg frame's memory. It now has [length(laws)] pre-installed law\s."))
+		playsound(loc, 'sound/machines/terminal_prompt_confirm.ogg', 50, TRUE)
+		return
 
 	if(istype(W, /obj/item/stack/sheet/iron))
 		var/obj/item/stack/sheet/iron/M = W
@@ -292,9 +329,15 @@
 				O.notify_ai(NEW_BORG)
 				if(forced_ai)
 					O.connected_ai = forced_ai
+					// Inherit the AI's lawsync address so we sync from the same server
+					O.lawsync_address = forced_ai.lawsync_address
 			if(!lawsync)
 				O.lawupdate = FALSE
 				O.sync_laws_from_drivebay()
+
+			// Apply pre-installed laws from the frame (if any)
+			if(length(laws))
+				O.laws = laws.Copy()
 
 			O.job = JOB_NAME_CYBORG
 
@@ -348,6 +391,8 @@
 			else
 				if(forced_ai)
 					O.connected_ai = forced_ai
+					// Inherit the AI's lawsync address so we sync from the same server
+					O.lawsync_address = forced_ai.lawsync_address
 				O.notify_ai(AI_SHELL)
 			if(!lawsync)
 				O.lawupdate = FALSE
