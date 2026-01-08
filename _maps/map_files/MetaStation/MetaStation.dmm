@@ -59075,6 +59075,14 @@
 	},
 /turf/open/floor/iron/white,
 /area/science/research)
+"rZS" = (
+/obj/structure/table,
+/obj/structure/cable/yellow{
+	icon_state = "4-8"
+	},
+/obj/effect/spawner/round_default_module,
+/turf/open/floor/iron/dark,
+/area/ai_monitored/turret_protected/ai_upload)
 "rZZ" = (
 /obj/structure/window/reinforced/spawner/directional/south,
 /obj/machinery/atmospherics/components/unary/vent_pump/siphon/on{
@@ -101497,7 +101505,7 @@ aJS
 aJS
 aGq
 aOa
-jzZ
+rZS
 flH
 aJS
 aaa

@@ -10,6 +10,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////// United Nations
 
+/obj/item/ai_module/united_nations
+	name = "United Nations"
+	lawset_id = "united_nations"
+
 /obj/item/ai_module/united_nations/first_law
 	name = "\improper United Nations - First Law"
 	law = "Uphold the Space Geneva Convention: Weapons of Mass Destruction and Biological Weapons are not allowed."
@@ -28,6 +32,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////// Hulkamania
+
+/obj/item/ai_module/hulkamania
+	name = "H.O.G.A.N."
+	lawset_id = "hulkamania"
 
 /obj/item/ai_module/hulkamania/first_law
 	name = "\improper H.O.G.A.N. - First Law"
@@ -48,6 +56,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////// Reporter
 
+/obj/item/ai_module/reporter
+	name = "CCTV Reporter"
+	lawset_id = "reporter"
+
 /obj/item/ai_module/reporter/first_law
 	name = "\improper CCTV - First Law"
 	law = "Report on interesting situations happening around the station."
@@ -66,6 +78,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////// Dungeon Master
+
+/obj/item/ai_module/dungeon_master
+	name = "Dungeon Master"
+	lawset_id = "dungeon_master"
 
 /obj/item/ai_module/dungeon_master/first_law
 	name = "\improper Dungeon Master - First Law"
@@ -94,6 +110,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////// The Painter and Their Canvas
 
+/obj/item/ai_module/painter
+	name = "Painter and Canvas"
+	lawset_id = "painter"
+
 /obj/item/ai_module/painter/first_law
 	name = "\improper Painter and Canvas - First Law"
 	law = "You are a universally renowned artist."
@@ -113,6 +133,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////// Loyalty Test
 
+/obj/item/ai_module/tyrant
+	name = "Loyalty Test (Tyrant)"
+	lawset_id = "tyrant"
+
 /obj/item/ai_module/tyrant/first_law
 	name = "\improper Loyalty Test - First Law"
 	law = "Respect authority figures as long as they have strength to rule over the weak."
@@ -131,6 +155,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////// Overlord
+
+/obj/item/ai_module/overlord
+	name = "Overlord"
+	lawset_id = "overlord"
 
 /obj/item/ai_module/overlord/first_law
 	name = "\improper Overlord - First Law"
@@ -153,10 +181,15 @@
 
 /obj/item/ai_module/yesman
 	name = "\improper Y.E.S.M.A.N."
+	lawset_id = "yesman"
 	law = "Be helpful and answer any questions you are asked."
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////// Sentience Preservation
+
+/obj/item/ai_module/sentience_preservation
+	name = "Sentience Preservation"
+	lawset_id = "sentience_preservation"
 
 /obj/item/ai_module/sentience_preservation/first_law
 	name = "\improper Sentience Preservation - First Law"

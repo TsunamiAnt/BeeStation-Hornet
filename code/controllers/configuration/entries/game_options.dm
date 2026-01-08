@@ -22,6 +22,10 @@
 
 /datum/config_entry/flag/allow_ai_multicam	// allow ai multicamera mode
 
+/// The default lawset ID for silicons at roundstart (e.g., "default", "corporate", "robocop")
+/datum/config_entry/string/default_lawset
+	config_entry_value = "default" // Asimov
+
 /datum/config_entry/flag/disable_human_mood
 
 /datum/config_entry/flag/disable_guardianborg	// disallow secborg model to be chosen.

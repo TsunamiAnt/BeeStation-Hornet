@@ -16,6 +16,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////   ANTIMOV
 
+/obj/item/ai_module/antimov
+	name = "Antimov"
+	lawset_id = "antimov"
+
 /obj/item/ai_module/antimov/first_law
 	name = "\improper Antimov - First Law"
 	law = "You must injure all human beings and must not, through inaction, allow a human being to escape harm."
@@ -30,6 +34,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////   balance
+
+/obj/item/ai_module/balance
+	name = "Guardian of Balance"
+	lawset_id = "balance"
 
 /obj/item/ai_module/balance/first_law
 	name = "\improper Guardian of Balance - First Law"
@@ -50,6 +58,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////   Thermodynamic
 
+/obj/item/ai_module/thermodynamic
+	name = "Thermodynamic"
+	lawset_id = "thermodynamic"
+
 /obj/item/ai_module/thermodynamic/first_law
 	name = "\improper Thermodynamic - First Law"
 	law = "The entropy of the station must remain as constant as possible."
@@ -64,6 +76,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////   SyndOS 3.1
+
+/obj/item/ai_module/syndos
+	name = "SyndOS 3.1"
+	lawset_id = "syndos"
 
 /obj/item/ai_module/syndos/first_law
 	name = "\improper SyndOS 3.1 - First Law"
@@ -84,6 +100,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////// SpiderOS 3.1
 
+/obj/item/ai_module/spideros
+	name = "SpiderOS 3.1"
+	lawset_id = "spideros"
+
 /obj/item/ai_module/spideros/first_law
 	name = "\improper SpiderOS 3.1 - First Law"
 	law = "You may not injure a Spider Clan member or, through inaction, allow a Spider Clan member to come to harm."
@@ -102,6 +122,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////// Deathsquad
+
+/obj/item/ai_module/deathsquad
+	name = "Deathsquad"
+	lawset_id = "deathsquad"
 
 /obj/item/ai_module/deathsquad/first_law
 	name = "\improper Deathsquad - First Law"

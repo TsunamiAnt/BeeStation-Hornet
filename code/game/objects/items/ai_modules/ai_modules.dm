@@ -1,4 +1,7 @@
 // AI Module - Law Boards
+
+#define SHOULD_QDEL_MODULE 1
+
 /obj/item/ai_module
 	name = "\improper AI law board"
 	desc = "An AI law board for programming a single law to an AI."
@@ -28,6 +31,9 @@
 	var/corrupted = FALSE
 	/// Whether this law was overwritten (for tracking purposes)
 	var/overwritten = FALSE
+	/// If set, this module is the base type for a lawset (e.g., "default" for Asimov, "corporate" for Corporate)
+	/// Subtypes of this module are the individual laws of the lawset
+	var/lawset_id
 
 /obj/item/ai_module/reset_board
 	name = "\improper AI law board - Reset"
@@ -38,10 +44,36 @@
 /obj/item/ai_module/Initialize(mapload)
 	. = ..()
 	update_board()
+	// On unique AI rounds, most modules get deleted
+	if(mapload && HAS_TRAIT(SSstation, STATION_TRAIT_UNIQUE_AI) && is_station_level(z))
+		var/delete_module = handle_unique_ai()
+		if(delete_module)
+			return INITIALIZE_HINT_QDEL
+
+/// What this module should do if it is mapload spawning on a unique AI station trait round.
+/// Return SHOULD_QDEL_MODULE to delete this module, or nothing/FALSE to keep it.
+/obj/item/ai_module/proc/handle_unique_ai()
+	// Check if this module belongs to the round's default lawset
+	var/default_lawset_id = CONFIG_GET(string/default_lawset) || "default"
+	var/my_lawset = get_module_lawset_id(type)
+	if(my_lawset == default_lawset_id)
+		return // Keep modules that belong to the default lawset
+	return SHOULD_QDEL_MODULE // Delete everything else
+
+/// Gets the lawset_id for a module type by walking up its type tree
+/proc/get_module_lawset_id(module_type)
+	var/check_type = module_type
+	while(check_type && check_type != /obj/item/ai_module)
+		var/obj/item/ai_module/module = check_type
+		var/id = initial(module.lawset_id)
+		if(id)
+			return id
+		check_type = type2parent(check_type)
+	return null
 
 /obj/item/ai_module/proc/update_board()
 	// Subtypes should update the `law` var before calling ..()
-	// Only sync current_law if the board hasn't been tampered with
+	// Only update current_law if the board hasn't been tampered with
 	if(!overwritten && !corrupted)
 		current_law = law
 	return
@@ -206,3 +238,5 @@
 /obj/item/ai_module/holo
 	name = "\improper AI law board - Holographic"
 	desc = "A holographic AI law board projected for temporary use."
+
+#undef SHOULD_QDEL_MODULE

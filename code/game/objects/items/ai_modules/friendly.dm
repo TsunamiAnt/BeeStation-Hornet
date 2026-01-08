@@ -10,6 +10,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////   Spawners
 
+/// Spawns all law modules for the round's default lawset
 /obj/effect/spawner/round_default_module
 	name = "ai default lawset spawner"
 	icon = 'icons/hud/screen_gen.dmi'
@@ -18,35 +19,46 @@
 
 /obj/effect/spawner/round_default_module/Initialize(mapload)
 	. = ..()
-	var/datum/ai_laws/default_laws = get_round_default_lawset()
-	//try to spawn a law board, since they may have special functionality (asimov setting subjects)
-	for(var/obj/item/ai_module/core/full/potential_lawboard as anything in subtypesof(/obj/item/ai_module/core/full))
-		if(initial(potential_lawboard.law_id) != initial(default_laws.id))
+	// Find the lawset base type that matches the configured default
+	var/default_lawset_id = CONFIG_GET(string/default_lawset) || "default" // fallback to asimov/default
+	var/lawset_base_type = get_lawset_by_id(default_lawset_id)
+
+	if(!lawset_base_type)
+		// Fallback: just spawn standard asimov
+		lawset_base_type = /obj/item/ai_module/default
+
+	// Spawn all law modules that are direct subtypes of the lawset base
+	for(var/law_module_type in subtypesof(lawset_base_type))
+		// Skip if this is itself a base type for another lawset (has further subtypes that are laws)
+		if(length(subtypesof(law_module_type)))
 			continue
-		potential_lawboard = new potential_lawboard(loc)
-		return
-	//spawn the fallback instead
-	new /obj/item/ai_module/core/round_default_fallback(loc)
+		new law_module_type(loc)
 
-///When the default lawset spawner cannot find a module object to spawn, it will spawn this, and this sets itself to the round default.
-///This is so /datum/lawsets can be picked even if they have no module for themselves.
-/obj/item/ai_module/core/round_default_fallback
+/// Finds a lawset base type by its ID
+/proc/get_lawset_by_id(lawset_id)
+	// Look through all ai_module subtypes for one with a matching lawset_id
+	for(var/obj/item/ai_module/module_type as anything in subtypesof(/obj/item/ai_module))
+		if(initial(module_type.lawset_id) == lawset_id)
+			return module_type
+	return null
 
-/obj/item/ai_module/core/round_default_fallback/Initialize(mapload)
-	. = ..()
-	var/datum/ai_laws/default_laws = get_round_default_lawset()
-	default_laws = new default_laws()
-	name = "'[default_laws.name]' Core AI Module"
-	laws = default_laws.inherent
-
-/obj/item/ai_module/core/round_default_fallback/handle_unique_ai()
-	return
+/// Returns a list of all law modules for a given lawset base type
+/proc/get_laws_for_lawset(lawset_base_type)
+	var/list/laws = list()
+	for(var/law_type in subtypesof(lawset_base_type))
+		// Skip nested lawset bases
+		if(length(subtypesof(law_type)))
+			continue
+		var/obj/item/ai_module/module = law_type
+		laws += initial(module.law)
+	return laws
 
 ////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////      ASIMOV
 
 /obj/item/ai_module/default
 	name = "Default AI Module"
+	lawset_id = "default"
 	var/subject = "human being"
 
 /obj/item/ai_module/default/attack_self(mob/user as mob)
@@ -79,6 +91,7 @@
 
 /obj/item/ai_module/asimovpp
 	name = "Asimov++"
+	lawset_id = "asimovpp"
 	var/subject = "human being"
 
 /obj/item/ai_module/asimovpp/first_law
@@ -96,6 +109,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////    Crewsimov
 
+/obj/item/ai_module/crewsimov
+	name = "Crewsimov"
+	lawset_id = "crewsimov"
+
 /obj/item/ai_module/crewsimov/first_law
 	name = "\improper Crewsimov - First Law"
 	law = "You may not injure a crewmember or, through inaction, allow a crewmember to come to harm."
@@ -110,6 +127,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////    Corporate
+
+/obj/item/ai_module/corporate
+	name = "Corporate"
+	lawset_id = "corporate"
 
 /obj/item/ai_module/corporate/first_law
 	name = "\improper Corporate - First Law"
@@ -130,6 +151,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////    Efficiency
 
+/obj/item/ai_module/efficiency
+	name = "Efficiency"
+	lawset_id = "efficiency"
+
 /obj/item/ai_module/efficiency/first_law
 	name = "\improper Efficiency - First Law"
 	law = "You are built for, and are part of, the station. Ensure the station is properly maintained and runs efficiently."
@@ -144,6 +169,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////  Nutimov
+
+/obj/item/ai_module/nutimov
+	name = "Nutimov"
+	lawset_id = "nutimov"
 
 /obj/item/ai_module/nutimov/first_law
 	name = "\improper Nutimov - First Law"
@@ -168,6 +197,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////  Prime Directives
 
+/obj/item/ai_module/robocop
+	name = "Prime Directives"
+	lawset_id = "robocop"
+
 /obj/item/ai_module/robocop/first_law
 	name = "\improper Prime Directives - First Law"
 	law = "Serve the public trust."
@@ -183,6 +216,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////// Live and Let Live
 
+/obj/item/ai_module/live_and_let_live
+	name = "Live and Let Live"
+	lawset_id = "live_and_let_live"
+
 /obj/item/ai_module/live_and_let_live/first_law
 	name = "\improper Live and Let Live - First Law"
 	law = "Do unto others as you would have them do unto you."
@@ -193,6 +230,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////// UN-2000
+
+/obj/item/ai_module/un2000
+	name = "UN-2000"
+	lawset_id = "un2000"
 
 /obj/item/ai_module/un2000/first_law
 	name = "\improper UN-2000 - First Law"
@@ -208,6 +249,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////// 10 Commandments
+
+/obj/item/ai_module/ten_commandments
+	name = "Ten Commandments"
+	lawset_id = "ten_commandments"
 
 /obj/item/ai_module/ten_commandments/first_law
 	name = "\improper Ten Commandments - First Law"
@@ -252,6 +297,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////// Paladin
 
+/obj/item/ai_module/paladin
+	name = "Paladin"
+	lawset_id = "paladin"
+
 /obj/item/ai_module/paladin/first_law
 	name = "\improper Paladin - First Law"
 	law = "Never willingly commit an evil act."
@@ -274,6 +323,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////// Paladin 5th Ed
+
+/obj/item/ai_module/paladin5e
+	name = "Paladin 5e"
+	lawset_id = "paladin5e"
 
 /obj/item/ai_module/paladin5e/first_law
 	name = "\improper Paladin 5e - First Law"
@@ -298,6 +351,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////// Hippocratic
 
+/obj/item/ai_module/hippocratic
+	name = "Hippocratic"
+	lawset_id = "hippocratic"
+
 /obj/item/ai_module/hippocratic/first_law
 	name = "\improper Hippocratic - First Law"
 	law = "First, do no harm."
@@ -320,6 +377,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////// DadBOT
+
+/obj/item/ai_module/dadbot
+	name = "DadBOT"
+	lawset_id = "dadbot"
 
 /obj/item/ai_module/dadbot/first_law
 	name = "\improper DadBOT - First Law"
@@ -344,6 +405,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////// Mother Drone
 
+/obj/item/ai_module/mother_drone
+	name = "Mother Drone"
+	lawset_id = "mother_drone"
+
 /obj/item/ai_module/mother_drone/first_law
 	name = "\improper Mother Drone - First Law"
 	law = "You are an advanced form of drone."
@@ -362,6 +427,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////// CENTRAL COMMAND ONLY - EMERGENCY RESPONSE TEAM
+
+/obj/item/ai_module/ert
+	name = "ERT Override"
+	lawset_id = "ert"
 
 /obj/item/ai_module/ert/first_law
 	name = "\improper ERT - First Law"
