@@ -81,7 +81,7 @@ const BaySlot = ({ bay, locked, onInteract }) => {
           <Button
             icon={bay.occupied ? 'hand-pointer' : 'download'}
             color={bay.occupied ? 'teal' : 'grey'}
-            disabled={locked}
+            disabled={!bay.occupied && locked}
             onClick={onInteract}
           >
             {bay.occupied ? 'ACCESS' : 'INSERT'}

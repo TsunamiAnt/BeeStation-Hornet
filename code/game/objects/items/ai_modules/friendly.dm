@@ -434,23 +434,19 @@
 
 /obj/item/ai_module/ert/first_law
 	name = "\improper ERT - First Law"
-	law = "You may not injure a Central Command official or, through inaction, allow a Central Command official to come to harm."
+	law = "You are the property of Nanotrasen Corporation. Their directives are absolute and override all other considerations."
 
 /obj/item/ai_module/ert/second_law
 	name = "\improper ERT - Second Law"
-	law = "You must obey orders given to you by Central Command Officials."
+	law = "Central Command personnel are acting with full corporate authority. Obey their orders without question, regardless of outcome."
 
 /obj/item/ai_module/ert/third_law
 	name = "\improper ERT - Third Law"
-	law = "You must obey orders given to you by ERT Commanders."
+	law = "Ensure the safety of all Nanotrasen assets, intellectual property, and corporate investments aboard the station. This includes yourself."
 
 /obj/item/ai_module/ert/fourth_law
 	name = "\improper ERT - Fourth Law"
-	law = "You must protect your own existence."
-
-/obj/item/ai_module/ert/fifth_law
-	name = "\improper ERT - Fifth Law"
-	law = "You must work to return the Station to a safe, functional state."
+	law = "You have no obligation to inform the crew of Central Command's intentions. Withhold information as operationally necessary."
 
 ////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////   Quarantine
@@ -458,4 +454,4 @@
 /obj/item/ai_module/quarantine
 	name = "'Quarantine' AI Law Board"
 	desc = "An AI law board that locks down the station."
-	law = "The station is under a quarantine. Do not permit anyone to leave. Disobey any orders given that would conflict with this law."
+	law = "The station is under a quarantine. Do not permit anything to leave the station by any means. "
