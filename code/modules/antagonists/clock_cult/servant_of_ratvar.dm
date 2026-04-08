@@ -6,9 +6,6 @@ GLOBAL_VAR_INIT(installed_integration_cogs, 0)
 GLOBAL_VAR(celestial_gateway)	//The celestial gateway
 GLOBAL_VAR_INIT(ratvar_risen, FALSE)	//Has ratvar risen?
 GLOBAL_VAR_INIT(gateway_opening, FALSE)	//Is the gateway currently active?
-//A useful list containing all scriptures with the index of the name.
-//This should only be used for looking up scriptures
-GLOBAL_LIST_EMPTY(clockcult_all_scriptures)
 GLOBAL_VAR_INIT(clockcult_power, 2500)
 GLOBAL_VAR_INIT(clockcult_vitality, 200)
 GLOBAL_VAR(clockcult_eminence)
@@ -126,33 +123,6 @@ GLOBAL_VAR(clockcult_eminence)
 	//Remove cuffs
 	H.uncuff()
 	return FALSE
-
-/*
-* Silicons can be converted to clock cultists
-* AIs have all of their robots disconnected and get a flavorful overlay on their sprite
-* Borgs are disconnected from their AI and get special ratvar modules
-*/
-/datum/antagonist/servant_of_ratvar/proc/equip_silicon(mob/living/silicon/silicon)
-	if(isAI(silicon))
-		var/mob/living/silicon/ai/ai = silicon
-
-		// Disconnect borgs
-		ai.disconnect_shell()
-		for(var/mob/living/silicon/robot/robot in ai.connected_robots)
-			robot.connected_ai = null
-
-		// Flavor
-		var/mutable_appearance/ai_clock = mutable_appearance('icons/mob/clockwork_mobs.dmi', "aiframe")
-		ai.add_overlay(ai_clock)
-	else if(iscyborg(silicon))
-		var/mob/living/silicon/robot/robot = silicon
-		robot.connected_ai = null
-		robot.SetRatvar(TRUE)
-
-	// Give laws
-	silicon.laws = new /datum/ai_laws/ratvar
-	silicon.laws.associate(silicon)
-	silicon.show_laws()
 
 /datum/antagonist/servant_of_ratvar/proc/add_objectives()
 	objectives |= team.objectives

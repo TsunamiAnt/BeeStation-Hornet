@@ -2298,7 +2298,6 @@
 #include "code\modules\antagonists\clock_cult\clockwork_massive.dm"
 #include "code\modules\antagonists\clock_cult\clockwork_outfits.dm"
 #include "code\modules\antagonists\clock_cult\clockwork_turfs.dm"
-#include "code\modules\antagonists\clock_cult\hierophant_message.dm"
 #include "code\modules\antagonists\clock_cult\ratvar.dm"
 #include "code\modules\antagonists\clock_cult\ratvarian_cyborg_modules.dm"
 #include "code\modules\antagonists\clock_cult\ratvarian_language.dm"

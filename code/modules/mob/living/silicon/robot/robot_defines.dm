@@ -86,6 +86,9 @@
 // ------------------------------------------ Status
 	var/mob/living/silicon/ai/connected_ai = null
 
+	/// Internal clockwork slab for ratvarian cyborg modules (if converted by clock cult)
+	var/obj/item/clockwork/clockwork_slab/internal_clock_slab
+
 	var/opened = FALSE
 	var/emagged = FALSE
 	var/emag_cooldown = 0
