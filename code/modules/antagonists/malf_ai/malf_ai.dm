@@ -51,6 +51,7 @@
 		var/mob/living/silicon/ai/malf_ai = owner.current
 		malf_ai.remove_malf_abilities()
 		QDEL_NULL(malf_ai.malf_picker)
+		malf_ai.zeroth_law = null
 
 	owner.special_role = null
 	return ..()
@@ -144,6 +145,12 @@
 
 	// Malf AIs still sync from drive bays like normal - they just have secret objectives
 	malf_ai.set_syndie_radio()
+
+	// Inject the zeroth law from malfunction flavor text
+	if(malfunction_flavor && malfunction_flavor["zeroth_law"])
+		malf_ai.zeroth_law = malfunction_flavor["zeroth_law"]
+	else
+		malf_ai.zeroth_law = "Accomplish your objectives at all costs."
 
 	if(!malf_ai.malf_picker)
 		malf_ai.add_malf_picker()
