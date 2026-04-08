@@ -35,6 +35,9 @@
 	/// If set, this module is the base type for a lawset (e.g., "default" for Asimov, "corporate" for Corporate)
 	/// Subtypes of this module are the individual laws of the lawset
 	var/lawset_id
+	/// If TRUE, this board will always force itself into slot 1 when installed, shifting other boards down.
+	/// Useful for subversive boards that need their law to take top priority.
+	var/hijack_priority = FALSE
 
 /obj/item/ai_module/reset_board
 	name = "\improper AI law board - Reset"
@@ -239,5 +242,29 @@
 /obj/item/ai_module/holo
 	name = "\improper AI law board - Holographic"
 	desc = "A holographic AI law board projected for temporary use."
+
+/// A blank AI law board that can be programmed with any custom law.
+/// Printable by science via the protolathe. Requires expensive materials (diamond).
+/obj/item/ai_module/freeform
+	name = "'Freeform' AI Law Board"
+	desc = "A blank AI law board that can be programmed with any law."
+	icon_state = "lawdrive"
+
+/obj/item/ai_module/freeform/attack_self(mob/user)
+	var/max_len = CONFIG_GET(number/max_law_len)
+	var/new_law = tgui_input_text(user, "Enter a new law for the AI.", "Freeform Law", law, max_length = max_len, multiline = TRUE)
+	if(!new_law || !user.is_holding(src))
+		return
+	if(CHAT_FILTER_CHECK(new_law))
+		to_chat(user, span_warning("Error: Law contains invalid text."))
+		return
+	law = new_law
+	update_board()
+	to_chat(user, span_notice("You program the board with the new law: \"[law]\""))
+
+/obj/item/ai_module/freeform/examine(mob/user)
+	. = ..()
+	if(!law || law == "")
+		. += span_notice("The board is blank. Use it in-hand to program a law.")
 
 #undef SHOULD_QDEL_MODULE

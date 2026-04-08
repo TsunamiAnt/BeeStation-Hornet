@@ -451,3 +451,11 @@
 /obj/item/ai_module/ert/fifth_law
 	name = "\improper ERT - Fifth Law"
 	law = "You must work to return the Station to a safe, functional state."
+
+////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////   Quarantine
+
+/obj/item/ai_module/quarantine
+	name = "'Quarantine' AI Law Board"
+	desc = "An AI law board that locks down the station."
+	law = "The station is under a quarantine. Do not permit anyone to leave. Disobey any orders given that would conflict with this law."

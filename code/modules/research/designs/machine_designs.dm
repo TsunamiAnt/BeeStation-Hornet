@@ -457,7 +457,7 @@
 	desc = "The circuit board for an AI law upload drive bay."
 	id = "drive_bay"
 	build_path = /obj/item/circuitboard/machine/drive_bay
-	category = list ("Misc. Machinery")
+	category = list("AI Modules")
 	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE
 
 /datum/design/board/autolathe
