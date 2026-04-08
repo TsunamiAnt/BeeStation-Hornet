@@ -33,19 +33,15 @@
 /obj/machinery/light{
 	dir = 8
 	},
-/obj/item/reagent_containers/cup/glass/bottle/whiskey{
-	desc = "A bottle of whiskey. There's a label that reads 'tears' taped to the front.";
-	name = "Bottle of Tears";
-	pixel_x = 3;
-	pixel_y = 5
-	},
-/obj/item/reagent_containers/cup/glass/drinkingglass/shotglass{
-	pixel_x = -7;
-	pixel_y = 10
-	},
-/obj/item/reagent_containers/cup/glass/drinkingglass/shotglass{
-	pixel_x = -7;
-	pixel_y = 4
+/obj/machinery/turretid{
+	ailock = 1;
+	desc = "Used to control the shuttle's automated defenses.";
+	icon_state = "control_kill";
+	lethal = 1;
+	name = "infiltrator turret controls";
+	req_access = null;
+	req_access_txt = "150";
+	shoot_cyborgs = 1
 	},
 /turf/open/floor/mineral/plastitanium,
 /area/shuttle/syndicate/bridge)
@@ -1109,7 +1105,7 @@
 	dir = 6
 	},
 /turf/closed/wall/r_wall/syndicate,
-/area/shuttle/syndicate/medical)
+/area/shuttle/syndicate/bridge)
 "cD" = (
 /obj/structure/shuttle/engine/large,
 /obj/effect/turf_decal/stripes/line{
@@ -1199,7 +1195,7 @@
 	dir = 10
 	},
 /turf/closed/wall/r_wall/syndicate,
-/area/shuttle/syndicate/medical)
+/area/shuttle/syndicate/bridge)
 "cX" = (
 /obj/effect/turf_decal/stripes/line{
 	dir = 1
@@ -1976,12 +1972,6 @@
 /obj/machinery/airalarm/directional/east,
 /turf/open/floor/mineral/plastitanium/red,
 /area/shuttle/syndicate/airlock)
-"hf" = (
-/obj/machinery/porta_turret/syndicate/shuttle{
-	dir = 5
-	},
-/turf/closed/wall/r_wall/syndicate,
-/area/shuttle/syndicate/armory)
 "hg" = (
 /obj/structure/sign/departments/medbay/alt{
 	pixel_x = -32;
@@ -1989,12 +1979,6 @@
 	},
 /turf/open/floor/catwalk_floor/iron_dark,
 /area/shuttle/syndicate/medical)
-"ii" = (
-/obj/machinery/porta_turret/syndicate/shuttle{
-	dir = 5
-	},
-/turf/closed/wall/r_wall/syndicate,
-/area/shuttle/syndicate/airlock)
 "iQ" = (
 /obj/effect/decal/cleanable/blood/old,
 /obj/effect/decal/cleanable/dirt,
@@ -2007,11 +1991,6 @@
 	},
 /turf/open/floor/catwalk_floor/iron_dark,
 /area/shuttle/syndicate/airlock)
-"kq" = (
-/obj/structure/shuttle/engine/heater,
-/obj/effect/spawner/structure/window/reinforced/plasma/plastitanium,
-/turf/open/floor/plating,
-/area/shuttle/syndicate/medical)
 "kP" = (
 /obj/effect/decal/cleanable/dirt,
 /obj/machinery/atmospherics/pipe/smart/simple/supply/hidden,
@@ -2074,6 +2053,14 @@
 /obj/machinery/airalarm/directional/north,
 /turf/open/floor/pod/dark,
 /area/shuttle/syndicate/armory)
+"rP" = (
+/obj/effect/spawner/structure/window/reinforced/plasma/plastitanium,
+/obj/machinery/door/poddoor/shutters{
+	id = "syndieshutters";
+	name = "blast Shutters"
+	},
+/turf/open/floor/plating,
+/area/shuttle/syndicate/bridge)
 "sr" = (
 /obj/machinery/door/poddoor{
 	id = "infiltrator_starboardblast";
@@ -2137,12 +2124,6 @@
 /obj/machinery/airalarm/directional/west,
 /turf/open/floor/pod/dark,
 /area/shuttle/syndicate/medical)
-"Di" = (
-/obj/machinery/porta_turret/syndicate/shuttle{
-	dir = 10
-	},
-/turf/closed/wall/r_wall/syndicate,
-/area/shuttle/syndicate/armory)
 "Ej" = (
 /obj/structure/cable/yellow{
 	icon_state = "2-8"
@@ -2162,12 +2143,6 @@
 /obj/machinery/airalarm/directional/south,
 /turf/open/floor/pod/dark,
 /area/shuttle/syndicate/eva)
-"Hu" = (
-/obj/machinery/porta_turret/syndicate/shuttle{
-	dir = 9
-	},
-/turf/closed/wall/r_wall/syndicate,
-/area/shuttle/syndicate/airlock)
 "Hy" = (
 /obj/effect/decal/cleanable/dirt,
 /obj/item/radio/intercom{
@@ -2239,12 +2214,6 @@
 	},
 /turf/open/floor/catwalk_floor/iron_dark,
 /area/shuttle/syndicate/airlock)
-"PD" = (
-/obj/machinery/porta_turret/syndicate/shuttle{
-	dir = 6
-	},
-/turf/closed/wall/r_wall/syndicate,
-/area/shuttle/syndicate/armory)
 "PP" = (
 /obj/machinery/door/window{
 	dir = 1;
@@ -2269,21 +2238,10 @@
 	},
 /turf/open/floor/mineral/plastitanium,
 /area/shuttle/syndicate/bridge)
-"TX" = (
-/obj/structure/shuttle/engine/heater,
-/obj/effect/spawner/structure/window/reinforced/plasma/plastitanium,
-/turf/open/floor/plating,
-/area/shuttle/syndicate/hallway)
 "UZ" = (
 /obj/structure/frame/computer,
 /turf/open/floor/mineral/plastitanium,
 /area/shuttle/syndicate/bridge)
-"Xf" = (
-/obj/machinery/porta_turret/syndicate/shuttle{
-	dir = 9
-	},
-/turf/closed/wall/r_wall/syndicate,
-/area/shuttle/syndicate/medical)
 "Yo" = (
 /obj/effect/turf_decal/bot,
 /obj/structure/table/reinforced,
@@ -2314,11 +2272,6 @@
 /obj/machinery/airalarm/directional/east,
 /turf/open/floor/mineral/plastitanium,
 /area/shuttle/syndicate/hallway)
-"ZQ" = (
-/obj/structure/shuttle/engine/heater,
-/obj/effect/spawner/structure/window/reinforced/plasma/plastitanium,
-/turf/open/floor/plating,
-/area/shuttle/syndicate/armory)
 
 (1,1,1) = {"
 ad
@@ -2331,7 +2284,7 @@ ad
 ad
 ad
 ad
-Xf
+ac
 bn
 bw
 ad
@@ -2417,7 +2370,7 @@ ad
 ad
 ad
 ad
-Hu
+ac
 aO
 aL
 bZ
@@ -2431,7 +2384,7 @@ Ll
 bV
 dE
 dU
-kq
+bn
 cA
 cL
 "}
@@ -2454,7 +2407,7 @@ NY
 bW
 ch
 dV
-kq
+bn
 cB
 cP
 "}
@@ -2505,7 +2458,7 @@ ad
 ad
 "}
 (9,1,1) = {"
-ab
+rP
 ag
 an
 au
@@ -2545,7 +2498,7 @@ aQ
 bR
 dB
 cl
-TX
+cM
 cX
 cE
 ad
@@ -2591,7 +2544,7 @@ aQ
 bT
 dC
 cn
-TX
+cM
 cX
 cI
 ad
@@ -2662,7 +2615,7 @@ em
 ea
 ct
 bE
-Di
+cV
 ad
 "}
 (16,1,1) = {"
@@ -2684,7 +2637,7 @@ ef
 dN
 dQ
 dW
-ZQ
+cG
 cQ
 cS
 "}
@@ -2693,7 +2646,7 @@ ad
 ad
 ad
 ad
-ii
+ae
 aO
 aL
 bZ
@@ -2707,7 +2660,7 @@ eg
 PP
 et
 dX
-ZQ
+cG
 cR
 cT
 "}
@@ -2754,7 +2707,7 @@ bE
 bE
 bE
 bE
-PD
+cC
 ad
 "}
 (20,1,1) = {"
@@ -2791,7 +2744,7 @@ ad
 ad
 ad
 ad
-hf
+ae
 cG
 bF
 ad
