@@ -25,6 +25,7 @@
 	var/list/compiled_laws = list()
 	/// Whether the drive bay is locked with the upload code
 	var/locked = TRUE
+	var/lockable = TRUE
 	/// Last compiled laws that were synced to silicons (used to detect actual changes)
 	var/list/last_synced_laws = list()
 	/// Timer ID for delayed silicon notification
@@ -64,6 +65,15 @@
 			module.forceMove(get_turf(src))
 			installed_modules[i] = null
 	return ..()
+
+/// When power state changes, recompile laws and re-sync silicons if power was restored.
+/obj/machinery/drive_bay/power_change()
+	var/was_off = (machine_stat & NOPOWER)
+	. = ..()
+	if(was_off && !(machine_stat & NOPOWER))
+		// Power restored - recompile laws and notify silicons immediately
+		refresh()
+		notify_silicons()
 
 /**
  * Master refresh proc - call this whenever something changes that might need law-recomputing.
@@ -132,6 +142,10 @@
 
 	// Don't notify if we have no address
 	if(!lawsync_id)
+		return
+
+	// Don't notify if the server is offline - silicons should keep their local law backups
+	if(machine_stat & (NOPOWER|BROKEN))
 		return
 
 	// Check if laws actually changed
@@ -440,6 +454,11 @@
 			return FALSE
 
 		if("toggle_lock")
+			if(!lockable)
+				to_chat(usr, span_warning("This Law Server cannot be locked."))
+				playsound(src, 'sound/machines/terminal_prompt_deny.ogg', 50, TRUE)
+				locked = FALSE
+				return FALSE
 			if(locked)
 				// Trying to unlock - need upload code
 				if(!GLOB.upload_code)
