@@ -5,11 +5,11 @@
 "ab" = (
 /obj/structure/grille,
 /turf/template_noop,
-/area/misc/space/nearstation)
+/area/space/nearstation)
 "ac" = (
 /obj/structure/lattice,
 /turf/template_noop,
-/area/misc/space/nearstation)
+/area/space/nearstation)
 "ad" = (
 /obj/machinery/power/solar,
 /obj/structure/cable{

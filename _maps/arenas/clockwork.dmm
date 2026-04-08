@@ -2,53 +2,53 @@
 "a" = (
 /obj/item/stack/tile/mineral/bronze/ten,
 /turf/open/floor/clockwork/reebe,
-/area/centcom/tdome/arena)
+/area/tdome/arena)
 "c" = (
 /obj/item/stack/tile/mineral/bronze,
 /turf/open/floor/clockwork/reebe,
-/area/centcom/tdome/arena)
+/area/tdome/arena)
 "d" = (
 /turf/open/floor/clockwork/reebe,
-/area/centcom/tdome/arena)
+/area/tdome/arena)
 "e" = (
 /obj/item/clockwork/alloy_shards,
 /turf/open/floor/clockwork/reebe,
-/area/centcom/tdome/arena)
+/area/tdome/arena)
 "f" = (
 /obj/item/stack/tile/mineral/bronze/twenty,
 /turf/open/floor/clockwork/reebe,
-/area/centcom/tdome/arena)
+/area/tdome/arena)
 "g" = (
 /obj/item/clothing/shoes/bronze,
 /turf/open/floor/bronze,
-/area/centcom/tdome/arena)
+/area/tdome/arena)
 "h" = (
 /turf/open/floor/bronze,
-/area/centcom/tdome/arena)
+/area/tdome/arena)
 "i" = (
 /obj/structure/window/reinforced/clockwork/fulltile,
 /turf/open/floor/bronze,
-/area/centcom/tdome/arena)
+/area/tdome/arena)
 "j" = (
 /obj/structure/table_frame/brass,
 /turf/open/floor/clockwork/reebe,
-/area/centcom/tdome/arena)
+/area/tdome/arena)
 "k" = (
 /obj/item/clockwork/alloy_shards,
 /turf/open/floor/bronze,
-/area/centcom/tdome/arena)
+/area/tdome/arena)
 "l" = (
 /obj/item/clockwork/component/hierophant_ansible/obelisk,
 /turf/open/floor/clockwork/reebe,
-/area/centcom/tdome/arena)
+/area/tdome/arena)
 "m" = (
 /obj/item/toy/plush/plushvar,
 /turf/open/floor/clockwork/reebe,
-/area/centcom/tdome/arena)
+/area/tdome/arena)
 "n" = (
 /obj/item/wrench/brass,
 /turf/open/floor/clockwork/reebe,
-/area/centcom/tdome/arena)
+/area/tdome/arena)
 "o" = (
 /obj/item/banhammer{
 	desc = "A very REAL ratvarian spear.";
@@ -62,23 +62,23 @@
 /obj/structure/table/bronze,
 /obj/item/toy/clockwork_watch,
 /turf/open/floor/clockwork/reebe,
-/area/centcom/tdome/arena)
+/area/tdome/arena)
 "p" = (
 /obj/item/crowbar/brass,
 /turf/open/floor/clockwork/reebe,
-/area/centcom/tdome/arena)
+/area/tdome/arena)
 "q" = (
 /obj/structure/table_frame/brass,
 /turf/open/floor/bronze,
-/area/centcom/tdome/arena)
+/area/tdome/arena)
 "r" = (
 /obj/item/clockwork/component/vanguard_cogwheel/onyx_prism,
 /turf/open/floor/clockwork/reebe,
-/area/centcom/tdome/arena)
+/area/tdome/arena)
 "s" = (
 /obj/item/clothing/shoes/bronze,
 /turf/open/floor/clockwork/reebe,
-/area/centcom/tdome/arena)
+/area/tdome/arena)
 
 (1,1,1) = {"
 d

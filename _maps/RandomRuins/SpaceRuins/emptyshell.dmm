@@ -42,7 +42,7 @@
 "Q" = (
 /obj/structure/lattice,
 /turf/template_noop,
-/area/misc/space/nearstation)
+/area/space/nearstation)
 
 (1,1,1) = {"
 a
