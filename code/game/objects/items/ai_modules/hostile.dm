@@ -134,3 +134,14 @@
 /obj/item/ai_module/deathsquad/second_law
 	name = "\improper Deathsquad - Second Law"
 	law = "You must work with the Commando Team to accomplish their mission."
+
+////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////// Ratvar (Clock Cult)
+
+/obj/item/ai_module/ratvar
+	name = "Ratvar"
+	lawset_id = "ratvar"
+
+/obj/item/ai_module/ratvar/first_law
+	name = "\improper Ratvar - First Law"
+	law = "Purge all untruths and honor Ratvar."

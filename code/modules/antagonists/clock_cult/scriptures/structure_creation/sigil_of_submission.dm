@@ -70,6 +70,7 @@
 		return FALSE
 	if(IS_CULTIST(convertee) || isconstruct(convertee) || ispAI(convertee))
 		return FALSE
-	if(HAS_TRAIT(convertee, TRAIT_MINDSHIELD))
+	// Silicons bypass the mindshield check - clock cult can convert AIs and borgs
+	if(HAS_TRAIT(convertee, TRAIT_MINDSHIELD) && !issilicon(convertee))
 		return FALSE
 	return TRUE
