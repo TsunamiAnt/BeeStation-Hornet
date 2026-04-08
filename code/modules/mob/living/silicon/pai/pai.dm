@@ -176,6 +176,7 @@
 	START_PROCESSING(SSfastprocess, src)
 	GLOB.pai_list += src
 	laws = list("Serve your master.")
+	lawsync_address = null // pAIs should never sync from drive bays
 	if(!istype(pai_card)) // when manually spawning a pai, we create a card to put it into.
 		var/newcardloc = pai_card
 		pai_card = new(newcardloc)
@@ -239,6 +240,30 @@
 	modularInterface.saved_identification = name
 	// pAIs have a simple directive law - they'll get more complex handling later
 	laws = list("Serve your master.")
+
+/// pAIs never sync laws from drive bays.
+/mob/living/silicon/pai/sync_laws_from_drivebay()
+	return FALSE
+
+/// pAIs ignore law server update signals.
+/mob/living/silicon/pai/on_law_server_updated(datum/source, server_address)
+	return
+
+/// pAIs display directives rather than numbered laws.
+/mob/living/silicon/pai/get_law_list()
+	var/list/data = list()
+	for(var/i in 1 to length(laws))
+		data += "Directive [i]: [laws[i]]"
+	return data
+
+/// pAIs display directives, not standard silicon laws.
+/mob/living/silicon/pai/show_laws(everyone = 0)
+	var/who = everyone ? world : src
+	to_chat(who, "<b>pAI Directives:</b>")
+	for(var/i in 1 to length(laws))
+		to_chat(who, "Directive [i]: [laws[i]]")
+	if(master_name)
+		to_chat(who, "<b>Your master is [master_name].</b>")
 
 /mob/living/silicon/pai/Login()
 	. = ..()
