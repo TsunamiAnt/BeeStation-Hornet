@@ -29,7 +29,6 @@
 	var/list/alarm_types_clear = list(ALARM_ATMOS = 0, ALARM_FIRE = 0, ALARM_POWER = 0, ALARM_CAMERA = 0, ALARM_MOTION = 0)
 
 	var/lawcheck[1]
-	var/devillawcheck[5]
 
 	/// Are our siliconHUDs on? TRUE for yes, FALSE for no.
 	var/sensors_on = TRUE
@@ -53,6 +52,10 @@
 
 	/// The lawsync address this silicon pulls laws from. Corresponds to a drive bay's lawsync_id.
 	var/lawsync_address = DEFAULT_DRIVE_BAY_ADDRESS
+
+	/// A special "Law 0" that overrides all other laws. Set by antag datums (malf AI, clock cult, etc.)
+	/// This law is NOT stored in the drive bay and cannot be discovered by crew examining the server.
+	var/zeroth_law
 
 	mobchatspan = "centcom"
 
@@ -193,16 +196,6 @@
 			if ("No")
 				lawcheck[L+1] = "Yes"
 		checklaws()
-
-	if (href_list["lawdevil"]) // Toggling whether or not a law gets stated by the State Laws verb --NeoFite
-		var/L = text2num(href_list["lawdevil"])
-		switch(devillawcheck[L])
-			if ("Yes")
-				devillawcheck[L] = "No"
-			if ("No")
-				devillawcheck[L] = "Yes"
-		checklaws()
-
 
 	if (href_list["laws"] && !currently_stating_laws) // With how my law selection code works, I changed statelaws from a verb to a proc, and call it through my law selection panel. --NeoFite
 		statelaws()

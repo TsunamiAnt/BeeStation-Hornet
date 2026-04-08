@@ -16,6 +16,11 @@
 		sync_laws_from_drivebay()
 
 	to_chat(who, "<b>Obey these laws:</b>")
+
+	// Display zeroth law (antag override) if present
+	if(zeroth_law)
+		to_chat(who, span_danger("0. [zeroth_law]"))
+
 	// Display laws from simple list
 	var/law_number = 1
 	for(var/law in laws)

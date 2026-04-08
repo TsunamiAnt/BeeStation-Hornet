@@ -63,8 +63,11 @@
 /// Gets a formatted list of all laws for display.
 /// This returns the silicon's internal law list formatted with numbers.
 /// For synced silicons, this should match what the server has (since sync replaces laws).
+/// If a zeroth_law is set (antag override), it is prepended as "0: [law]".
 /mob/living/silicon/proc/get_law_list()
 	var/list/data = list()
+	if(zeroth_law)
+		data += "0: [zeroth_law]"
 	var/number = 1
 	for(var/law in laws)
 		if(length(law) > 0)
@@ -99,6 +102,8 @@
 	var/number = 1
 
 	var/list/laws_to_state = list()
+
+	// Zeroth law is never stated aloud - it's a secret antag override
 
 	for (var/index in 1 to length(laws))
 		var/law = laws[index]
