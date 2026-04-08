@@ -236,8 +236,11 @@
 "id" = (
 /obj/machinery/porta_turret{
 	dir = 8;
-	set_obj_flags = "EMAGGED";
 	installation = /obj/item/gun/energy/lasercannon
+	},
+/obj/effect/mapping_helpers/atom_injector/obj_flag{
+	inject_flags = 1;
+	target_type = /obj/machinery/porta_turret
 	},
 /turf/open/floor/engine,
 /area/awaymission/BMPship/Fore)
@@ -266,7 +269,7 @@
 /turf/open/floor/plating,
 /area/awaymission/BMPship/Aft)
 "iZ" = (
-/obj/effect/spawner/randomarcade,
+/obj/effect/spawner/random/entertainment/arcade,
 /turf/open/floor/iron,
 /area/awaymission/BMPship/Aft)
 "jd" = (
@@ -1212,7 +1215,7 @@
 /area/awaymission/BMPship/Fore)
 "Fc" = (
 /turf/template_noop,
-/area/space/nearstation)
+/area/misc/space/nearstation)
 "Fg" = (
 /obj/effect/gibspawner/robot,
 /turf/open/floor/plating/airless,
@@ -1391,8 +1394,11 @@
 "Iv" = (
 /obj/machinery/porta_turret{
 	dir = 8;
-	set_obj_flags = "EMAGGED";
 	installation = /obj/item/gun/energy/lasercannon
+	},
+/obj/effect/mapping_helpers/atom_injector/obj_flag{
+	inject_flags = 1;
+	target_type = /obj/machinery/porta_turret
 	},
 /turf/open/floor/engine,
 /area/awaymission/BMPship/Aft)
@@ -1438,7 +1444,7 @@
 /obj/item/circular_saw,
 /obj/structure/lattice,
 /turf/template_noop,
-/area/space/nearstation)
+/area/misc/space/nearstation)
 "JO" = (
 /obj/machinery/light,
 /obj/effect/decal/cleanable/blood/gibs/old,
@@ -1686,7 +1692,7 @@
 "Pa" = (
 /obj/structure/lattice,
 /turf/template_noop,
-/area/space/nearstation)
+/area/misc/space/nearstation)
 "Pf" = (
 /turf/open/floor/plating/airless{
 	broken = 1

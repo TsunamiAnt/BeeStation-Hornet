@@ -67,7 +67,7 @@ CREATION_TEST_IGNORE_SUBTYPES(/obj/docking_port)
 /obj/docking_port/take_damage(damage_amount, damage_type = BRUTE, damage_flag = 0, sound_effect = 1, attack_dir, armour_penetration = 0)
 	return
 
-/obj/docking_port/singularity_pull()
+/obj/docking_port/singularity_pull(obj/anomaly/singularity/singularity, current_size)
 	return
 /obj/docking_port/singularity_act()
 	return 0
@@ -243,7 +243,7 @@ CREATION_TEST_IGNORE_SUBTYPES(/obj/docking_port)
 
 	if(mapload)
 		for(var/turf/T in return_turfs())
-			T.flags_1 |= NO_RUINS_1
+			T.turf_flags |= NO_RUINS
 
 	#ifdef DOCKING_PORT_HIGHLIGHT
 	highlight("#f00")

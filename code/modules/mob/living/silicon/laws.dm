@@ -48,7 +48,7 @@
 /mob/living/silicon/proc/deadchat_lawchange()
 	var/list/the_laws = get_law_list()
 	var/lawtext = the_laws.Join("<br/>")
-	deadchat_broadcast("[span_deadsay("[span_name(name)]'s laws were changed.")] <a href='byond://?src=[REF(src)]&printlawtext=[rustg_url_encode(lawtext)]'>View</a>", span_name(name), follow_target=src, message_type=DEADCHAT_LAWCHANGE)
+	deadchat_broadcast("'s <b>laws were changed.</b> <a href='byond://?src=[REF(src)]&printlawtext=[rustg_url_encode(lawtext)]'>View</a>", span_name("[src]"), follow_target=src, message_type=DEADCHAT_LAWCHANGE)
 
 /mob/living/silicon/proc/post_lawchange(announce = TRUE)
 	if(!announce)

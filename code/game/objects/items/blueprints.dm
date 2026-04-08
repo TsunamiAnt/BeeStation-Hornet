@@ -52,10 +52,13 @@
 	var/legend = FALSE	//Viewing the wire legend
 	investigate_flags = ADMIN_INVESTIGATE_TARGET
 
+/obj/item/areaeditor/blueprints/Initialize(mapload)
+	. = ..()
+	AddElement(/datum/element/trackable)
+
 /obj/item/areaeditor/blueprints/Destroy()
 	clear_viewer()
 	return ..()
-
 
 /obj/item/areaeditor/blueprints/attack_self(mob/user)
 	. = ..()
@@ -149,11 +152,11 @@
 	var/list/SPECIALS = list(
 		/area/shuttle,
 		/area/centcom,
-		/area/asteroid,
-		/area/tdome,
-		/area/wizard_station,
-		/area/hilbertshotel,
-		/area/hilbertshotelstorage
+		/area/centcom/asteroid,
+		/area/centcom/tdome,
+		/area/centcom/wizard_station,
+		/area/misc/hilbertshotel,
+		/area/misc/hilbertshotelstorage
 	)
 	for (var/type in SPECIALS)
 		if ( istype(A,type) )

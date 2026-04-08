@@ -27,7 +27,8 @@
 		SPECIES_PLASMAMAN = /datum/outfit/plasmaman/mime
 	)
 
-	minimal_lightup_areas = list(/area/crew_quarters/theatre)
+	minimal_lightup_areas = list(
+/area/station/service/theater)
 
 	manuscript_jobs = list(
 		JOB_NAME_MIME,
@@ -75,7 +76,6 @@
 	if(H.mind)
 		var/datum/action/spell/vow_of_silence/vow = new(H.mind)
 		vow.Grant(H)
-		H.mind.miming = 1
 
 /obj/item/book/mimery
 	name = "Guide to Dank Mimery"
@@ -130,7 +130,7 @@
 		return FALSE
 	if(!user.is_holding(src))
 		return FALSE
-	if(user.incapacitated())
+	if(user.incapacitated)
 		return FALSE
 	if(!user.mind)
 		return FALSE
