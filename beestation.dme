@@ -1696,6 +1696,7 @@
 #include "code\game\objects\items\ai_modules\friendly.dm"
 #include "code\game\objects\items\ai_modules\hostile.dm"
 #include "code\game\objects\items\ai_modules\neutral.dm"
+#include "code\game\objects\items\ai_modules\syndicate.dm"
 #include "code\game\objects\items\circuitboards\circuitboard.dm"
 #include "code\game\objects\items\circuitboards\computer_circuitboards.dm"
 #include "code\game\objects\items\circuitboards\machine_circuitboards.dm"

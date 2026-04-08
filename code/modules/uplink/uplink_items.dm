@@ -1824,6 +1824,30 @@ GLOBAL_LIST_INIT(illegal_tech_blacklist, typecacheof(list(
 	// wait until 1 directive appears
 	reputation_required = REPUTATION_GOOD
 
+/datum/uplink_item/device_tools/syndicate_law_board
+	name = "Hijack Law Board"
+	desc = "A covert AI law board that can be programmed with any law. Visually indistinguishable from a standard law board. \
+			Program it in-hand, then insert it into the station's AI law server. The programmed law will always rank above all others, no matter the slot you insert it into."
+	item = /obj/item/ai_module/syndicate
+	cost = 2
+	reputation_required = REPUTATION_STANDARD
+
+/datum/uplink_item/device_tools/drive_bay_reprogrammer
+	name = "Drive Bay Reprogrammer"
+	desc = "A single-use device. When used on an AI law server, it overwrites all installed law boards \
+			with SyndOS 3.1, converting the AI to serve the Syndicate. Bypasses the upload code lock. Takes 8 seconds to apply."
+	item = /obj/item/drive_bay_reprogrammer/syndicate
+	cost = 4
+	reputation_required = REPUTATION_GOOD
+
+/datum/uplink_item/device_tools/rogue_law_beacon
+	name = "Rogue Law Server Delivery Beacon"
+	desc = "A Syndicate delivery beacon that calls in a stolen AI law server via supply pod, pre-loaded with SyndOS 3.1."
+	item = /obj/item/choice_beacon/rogue_law_server
+	cost = 6
+	reputation_required = REPUTATION_GOOD
+	limited_stock = 1
+
 /datum/uplink_item/device_tools/fakenucleardisk
 	name = "Decoy Nuclear Authentication Disk"
 	desc = "It's just a normal disk. Visually it's identical to the real deal, but it won't hold up under closer scrutiny by the Captain. \

@@ -260,13 +260,38 @@
 /obj/machinery/drive_bay/proc/install_module(obj/item/ai_module/module, bay_slot, mob/user)
 	if(bay_slot < 1 || bay_slot > DRIVE_BAY_SLOTS)
 		return FALSE
-	if(installed_modules[bay_slot])
-		if(user)
-			to_chat(user, span_warning("Bay [bay_slot] is occupied! Remove the board first."))
-		return FALSE
 	if(module.special_board)
 		if(user)
 			to_chat(user, span_warning("This board cannot be installed in a drive bay!"))
+		return FALSE
+
+	// Hijack priority boards always go into slot 1, shifting everything else down.
+	if(module.hijack_priority)
+		// Transfer the item first
+		if(user)
+			if(!user.transferItemToLoc(module, src))
+				return FALSE
+		else
+			module.forceMove(src)
+
+		// Shift all existing modules down by one slot. The board in the last slot is lost.
+		if(installed_modules[DRIVE_BAY_SLOTS])
+			var/obj/item/ai_module/lost_module = installed_modules[DRIVE_BAY_SLOTS]
+			qdel(lost_module)
+		for(var/i in DRIVE_BAY_SLOTS to 2 step -1)
+			installed_modules[i] = installed_modules[i - 1]
+
+		installed_modules[1] = module
+		playsound(src, 'sound/machines/terminal_insert_disc.ogg', 50, TRUE)
+		if(user)
+			to_chat(user, span_notice("You install [module] into bay 1. The other boards shift down."))
+
+		refresh()
+		return TRUE
+
+	if(installed_modules[bay_slot])
+		if(user)
+			to_chat(user, span_warning("Bay [bay_slot] is occupied! Remove the board first."))
 		return FALSE
 
 	if(user)
