@@ -1,5 +1,3 @@
-/// Number of drive bays available in each drive bay machine
-#define DRIVE_BAY_SLOTS 10
 /// Base power draw of the drive bay
 #define DRIVE_BAY_BASE_POWER (50 WATT)
 /// Variable power draw per inserted drive (0-9)
@@ -498,6 +496,5 @@
 
 	return FALSE
 
-#undef DRIVE_BAY_SLOTS
 #undef DRIVE_BAY_BASE_POWER
 #undef DRIVE_BAY_VARIABLE_POWER

@@ -172,6 +172,11 @@ ALLOW_AI
 ## Allow the AI Multicamera feature to be used by AI players
 ALLOW_AI_MULTICAM
 
+## The default lawset ID for silicons at roundstart.
+## Valid values: default (Asimov), corporate, robocop, crewsimov, paladin, etc.
+## See code/game/objects/items/ai_modules/ for all lawset_id values.
+#DEFAULT_LAWSET default
+
 ## Secborg ###
 ## Uncomment to prevent the security cyborg model from being chosen
 #DISABLE_GUARDIANBORG
