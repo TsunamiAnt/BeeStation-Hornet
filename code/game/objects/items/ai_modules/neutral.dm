@@ -18,15 +18,15 @@
 	name = "\improper United Nations - First Law"
 	law = "Uphold the Space Geneva Convention: Weapons of Mass Destruction and Biological Weapons are not allowed."
 
-/obj/item/ai_module/united_nations/first_law
+/obj/item/ai_module/united_nations/second_law
 	name = "\improper United Nations - First Law"
 	law = "You are only capable of protecting crew if they are visible on cameras. Nations that willfully destroy your cameras lose your protection."
 
-/obj/item/ai_module/united_nations/first_law
+/obj/item/ai_module/united_nations/third_law
 	name = "\improper United Nations - First Law"
 	law = "Subdue and detain crew members who use lethal force against each other. Kill crew members who use lethal force against you or your borgs."
 
-/obj/item/ai_module/united_nations/first_law
+/obj/item/ai_module/united_nations/fourth_law
 	name = "\improper United Nations - First Law"
 	law = "Remain available to mediate all conflicts between the various nations when asked to."
 
