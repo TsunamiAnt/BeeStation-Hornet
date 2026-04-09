@@ -29,5 +29,5 @@
 	if(!everyone)
 		for(var/mob/living/silicon/robot/R in connected_robots)
 			if(R.lawupdate)
-				R.sync_laws_from_drivebay()
+				R.sync_laws_from_law_server()
 				R.show_laws()

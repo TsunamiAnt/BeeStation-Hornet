@@ -43,6 +43,7 @@
 #define THEME_RETRO "retro"
 
 #define THEME_SYNDICATE "syndicate"
+#define THEME_NTOS_CYBORG "ntos-cyborg"
 
 #define THEME_NEUTRAL "neutral"
 

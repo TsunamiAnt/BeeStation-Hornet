@@ -52,7 +52,7 @@
 						robot.notify_ai(TRUE)
 					// Sync laws from the new AI's server
 					if(robot.lawupdate)
-						robot.sync_laws_from_drivebay()
+						robot.sync_laws_from_law_server()
 		if(WIRE_CAMERA) // Pulse to disable the camera.
 			if(!QDELETED(robot.builtInCamera) && !robot.scrambledcodes)
 				robot.builtInCamera.toggle_cam(usr, FALSE)
@@ -73,7 +73,7 @@
 				robot.visible_message("[robot] gently chimes.", "LawSync protocol engaged.")
 				log_combat(usr, robot, "forcibly synced cyborg laws via pulse", important = FALSE)
 				// TODO, log the laws they gained here
-				robot.sync_laws_from_drivebay()
+				robot.sync_laws_from_law_server()
 				robot.show_laws()
 		if(WIRE_LOCKDOWN)
 			robot.SetLockdown(!robot.lockcharge) // Toggle

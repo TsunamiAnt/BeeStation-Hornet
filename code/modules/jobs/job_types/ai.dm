@@ -42,7 +42,7 @@
 			var/mob/living/silicon/ai/AI_mob = H
 			if(istype(AI_mob))
 				AI_mob.lawsync_address = lateJoinCore.lawsync_address
-				AI_mob.sync_laws_from_drivebay()
+				AI_mob.sync_laws_from_law_server()
 			qdel(lateJoinCore)
 	var/mob/living/silicon/ai/AI = H
 	if(M.client)

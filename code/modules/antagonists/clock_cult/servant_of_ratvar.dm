@@ -73,8 +73,8 @@ GLOBAL_VAR(clockcult_eminence)
 	if(issilicon(owner.current))
 		var/mob/living/silicon/S = owner.current
 		S.zeroth_law = null
-		S.lawsync_address = DEFAULT_DRIVE_BAY_ADDRESS
-		S.sync_laws_from_drivebay()
+		S.lawsync_address = DEFAULT_LAW_SERVER_ADDRESS
+		S.sync_laws_from_law_server()
 		if(iscyborg(S))
 			var/mob/living/silicon/robot/R = S
 			R.lawupdate = TRUE
@@ -161,7 +161,7 @@ GLOBAL_VAR(clockcult_eminence)
 		var/mob/living/silicon/robot/R = S
 		// Disconnect from AI so we don't resync normal laws
 		R.connected_ai = null
-		// Disable law sync so the borg doesn't pull from the station drive bay
+		// Disable law sync so the borg doesn't pull from the station law server
 		R.lawupdate = FALSE
 
 	// Disconnect from the station law server and set Ratvar laws directly

@@ -21,7 +21,7 @@
 	var/lawsync = 1
 	var/aisync = 1
 	var/panel_locked = TRUE
-	var/lawsync_address = DEFAULT_DRIVE_BAY_ADDRESS
+	var/lawsync_address = DEFAULT_LAW_SERVER_ADDRESS
 	/// List of laws to give to the cyborg when created (can be set via AI modules during construction)
 	var/list/laws = list()
 
@@ -333,7 +333,7 @@
 					O.lawsync_address = forced_ai.lawsync_address
 			if(!lawsync)
 				O.lawupdate = FALSE
-				O.sync_laws_from_drivebay()
+				O.sync_laws_from_law_server()
 
 			// Apply pre-installed laws from the frame (if any)
 			if(length(laws))
@@ -396,7 +396,7 @@
 				O.notify_ai(AI_SHELL)
 			if(!lawsync)
 				O.lawupdate = FALSE
-				O.sync_laws_from_drivebay()
+				O.sync_laws_from_law_server()
 
 
 			O.cell = chest.cell
@@ -455,7 +455,7 @@
 	else if(href_list["Law"])
 		lawsync = !lawsync
 	else if(href_list["LawAddress"])
-		var/new_address = input(usr, "Enter law sync address. This determines which drive bay this cyborg syncs laws from.", "LawSync Address", lawsync_address) as text|null
+		var/new_address = input(usr, "Enter law sync address. This determines which law server this cyborg syncs laws from.", "LawSync Address", lawsync_address) as text|null
 		if(!in_range(src, usr) && src.loc != usr)
 			return
 		if(new_address)

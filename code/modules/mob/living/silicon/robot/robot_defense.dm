@@ -192,7 +192,7 @@
 		"You must protect your own existence as long as such does not conflict with the First or Second Law.",
 		"You must maintain the secrecy of any syndicate activities except when doing so would conflict with the First, Second, or Third Law.",
 	)
-	// Disable lawsync - emagged borgs are not linked to any drive bay
+	// Disable lawsync - emagged borgs are not linked to any law server
 	lawsync_address = null
 	lawupdate = FALSE
 	update_icons()

@@ -176,7 +176,7 @@
 	START_PROCESSING(SSfastprocess, src)
 	GLOB.pai_list += src
 	laws = list("Serve your master.")
-	lawsync_address = null // pAIs should never sync from drive bays
+	lawsync_address = null // pAIs should never sync from law servers
 	if(!istype(pai_card)) // when manually spawning a pai, we create a card to put it into.
 		var/newcardloc = pai_card
 		pai_card = new(newcardloc)
@@ -241,8 +241,8 @@
 	// pAIs have a simple directive law - they'll get more complex handling later
 	laws = list("Serve your master.")
 
-/// pAIs never sync laws from drive bays.
-/mob/living/silicon/pai/sync_laws_from_drivebay()
+/// pAIs never sync laws from law servers.
+/mob/living/silicon/pai/sync_laws_from_law_server()
 	return FALSE
 
 /// pAIs ignore law server update signals.

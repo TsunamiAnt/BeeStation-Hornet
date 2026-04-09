@@ -125,8 +125,8 @@ CREATION_TEST_IGNORE_SUBTYPES(/mob/living/silicon/ai)
 	if(starting_laws && islist(starting_laws) && length(starting_laws))
 		laws = starting_laws.Copy()
 	else
-		// Sync laws from drive bay
-		sync_laws_from_drivebay()
+		// Sync laws from law server
+		sync_laws_from_law_server()
 
 	if(target_ai.mind)
 		target_ai.mind.transfer_to(src)

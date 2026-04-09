@@ -1832,11 +1832,11 @@ GLOBAL_LIST_INIT(illegal_tech_blacklist, typecacheof(list(
 	cost = 2
 	reputation_required = REPUTATION_STANDARD
 
-/datum/uplink_item/device_tools/drive_bay_reprogrammer
-	name = "Drive Bay Reprogrammer"
+/datum/uplink_item/device_tools/law_server_reprogrammer
+	name = "Law Server Reprogrammer"
 	desc = "A single-use device. When used on an AI law server, it overwrites all installed law boards \
 			with SyndOS 3.1, converting the AI to serve the Syndicate. Bypasses the upload code lock. Takes 8 seconds to apply."
-	item = /obj/item/drive_bay_reprogrammer/syndicate
+	item = /obj/item/law_server_reprogrammer/syndicate
 	cost = 4
 	reputation_required = REPUTATION_GOOD
 

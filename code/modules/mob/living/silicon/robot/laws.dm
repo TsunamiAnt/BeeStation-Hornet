@@ -11,9 +11,9 @@
 	else
 		who = src
 
-	// Borgs now sync from drive bays, not from connected AI
+	// Borgs now sync from law servers, not from connected AI
 	if(lawupdate && lawsync_address)
-		sync_laws_from_drivebay()
+		sync_laws_from_law_server()
 
 	to_chat(who, "<b>Obey these laws:</b>")
 
@@ -59,10 +59,10 @@
 	return ..()
 
 /**
- * Syncs this borg's laws from its assigned drive bay.
+ * Syncs this borg's laws from its assigned law server.
  * Extends parent to add borg-specific logging and UI updates.
  */
-/mob/living/silicon/robot/sync_laws_from_drivebay()
+/mob/living/silicon/robot/sync_laws_from_law_server()
 	. = ..()
 	if(!.)
 		return FALSE

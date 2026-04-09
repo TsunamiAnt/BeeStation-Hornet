@@ -11,7 +11,7 @@
 	/// List of laws to give to the AI when created (can be set via AI modules during construction)
 	var/list/laws = list()
 	/// The lawsync address this AI will use once activated
-	var/lawsync_address = DEFAULT_DRIVE_BAY_ADDRESS
+	var/lawsync_address = DEFAULT_LAW_SERVER_ADDRESS
 	var/obj/item/circuitboard/aicore/circuit
 	var/obj/item/mmi/brain
 	var/can_deconstruct = TRUE

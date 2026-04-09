@@ -84,8 +84,8 @@
 			for(var/mob/living/silicon/robot/R in connected_robots)
 				if(R.lawupdate)
 					R.lawsync_address = new_address
-					R.sync_laws_from_drivebay()
+					R.sync_laws_from_law_server()
 
 			// Sync with new address
-			sync_laws_from_drivebay()
+			sync_laws_from_law_server()
 	return TRUE

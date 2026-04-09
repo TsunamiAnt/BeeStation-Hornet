@@ -265,7 +265,7 @@
 		"You must protect your own existence as long as such does not conflict with the First or Second Law.",
 		"You must maintain the secrecy of any Spider Clan activities except when doing so would conflict with the First, Second, or Third Law.",
 	)
-	// Ninja borgs are never linked to any drive bay
+	// Ninja borgs are never linked to any law server
 	lawsync_address = null
 	lawupdate = FALSE
 	model.transform_to(pick(/obj/item/robot_model/syndicate, /obj/item/robot_model/syndicate_medical, /obj/item/robot_model/saboteur))

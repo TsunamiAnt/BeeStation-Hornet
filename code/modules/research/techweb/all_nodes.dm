@@ -1038,7 +1038,7 @@
 		"aicore",
 		"aifixer",
 		"borg_ai_control",
-		"drive_bay",
+		"law_server",
 		"intellicard",
 		"mecha_tracking_ai_control",
 		"reset_module",

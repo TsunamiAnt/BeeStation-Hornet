@@ -41,7 +41,7 @@
 			lawupdate = FALSE
 			wires.ui_update()
 			// If no AI found, just sync from our default address
-			sync_laws_from_drivebay()
+			sync_laws_from_law_server()
 
 	if(!scrambledcodes && !builtInCamera)
 		builtInCamera = new (src)
@@ -106,7 +106,7 @@
 		modularInterface.device_theme = THEME_SYNDICATE
 		modularInterface.icon_state = "tablet-silicon-syndicate"
 	else
-		modularInterface.device_theme = THEME_NTOS
+		modularInterface.device_theme = THEME_NTOS_CYBORG
 		modularInterface.icon_state = "tablet-silicon"
 	modularInterface.update_icon()
 
@@ -1039,7 +1039,7 @@
 	lawupdate = TRUE
 	// Inherit the AI's lawsync address so we sync from the same server
 	lawsync_address = AI.lawsync_address
-	sync_laws_from_drivebay()
+	sync_laws_from_law_server()
 	picturesync()
 	if(radio && AI.radio) //AI keeps all channels, including Syndie if it is a Traitor
 		if(AI.radio.syndie)
@@ -1132,7 +1132,7 @@
 		connected_ai.connected_robots += src
 		// Inherit the AI's lawsync address so we sync from the same server
 		lawsync_address = connected_ai.lawsync_address
-		sync_laws_from_drivebay()
+		sync_laws_from_law_server()
 		picturesync()
 		lawupdate = TRUE
 		wires.ui_update()

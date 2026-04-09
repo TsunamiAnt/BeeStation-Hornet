@@ -143,7 +143,7 @@
 	if(!malf_ai || !istype(malf_ai))
 		return
 
-	// Malf AIs still sync from drive bays like normal - they just have secret objectives
+	// Malf AIs still sync from law servers like normal - they just have secret objectives
 	malf_ai.set_syndie_radio()
 
 	// Inject the zeroth law from malfunction flavor text

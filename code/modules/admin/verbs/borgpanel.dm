@@ -224,6 +224,6 @@
 				message_admins("[key_name_admin(user)] freed [ADMIN_LOOKUPFLW(borg)] from being slaved to an AI.")
 				log_admin("[key_name(user)] freed [key_name(borg)] from being slaved to an AI.")
 			if (borg.lawupdate)
-				borg.sync_laws_from_drivebay()
+				borg.sync_laws_from_law_server()
 
 	. = TRUE

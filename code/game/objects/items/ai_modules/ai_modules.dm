@@ -106,11 +106,11 @@
 	return TRUE
 
 /**
- * Notifies the parent drive bay (if any) that this module's state has changed.
- * This triggers a full refresh of the drive bay.
+ * Notifies the parent law server (if any) that this module's state has changed.
+ * This triggers a full refresh of the law server.
  */
 /obj/item/ai_module/proc/notify_parent_server()
-	var/obj/machinery/drive_bay/bay = loc
+	var/obj/machinery/law_server/bay = loc
 	if(!istype(bay))
 		return FALSE
 	bay.refresh()

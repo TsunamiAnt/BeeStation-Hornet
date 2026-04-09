@@ -14,7 +14,7 @@
 	examine_cursor_icon = null
 	fire_stack_decay_rate = -0.55
 	speech_span = SPAN_ROBOT
-	/// List of laws this silicon must obey. Synced from drive bays.
+	/// List of laws this silicon must obey. Synced from law servers.
 	var/list/laws = list()
 	var/list/alarms_to_show = list()
 	var/list/alarms_to_clear = list()
@@ -50,11 +50,11 @@
 	var/obj/item/card/id/internal_id_card
 	var/currently_stating_laws = FALSE
 
-	/// The lawsync address this silicon pulls laws from. Corresponds to a drive bay's lawsync_id.
-	var/lawsync_address = DEFAULT_DRIVE_BAY_ADDRESS
+	/// The lawsync address this silicon pulls laws from. Corresponds to a law server's lawsync_id.
+	var/lawsync_address = DEFAULT_LAW_SERVER_ADDRESS
 
 	/// A special "Law 0" that overrides all other laws. Set by antag datums (malf AI, clock cult, etc.)
-	/// This law is NOT stored in the drive bay and cannot be discovered by crew examining the server.
+	/// This law is NOT stored in the law server and cannot be discovered by crew examining the server.
 	var/zeroth_law
 
 	mobchatspan = "centcom"

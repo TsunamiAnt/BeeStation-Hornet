@@ -259,7 +259,7 @@ GLOBAL_LIST_INIT(approved_status_pictures, list(
 /// Air alarm has all components but isn't completed
 #define AIRALARM_BUILD_COMPLETE 2
 
-/// Drive bay defines
-#define DEFAULT_DRIVE_BAY_ADDRESS "SYS/DEFAULT"
-/// Number of drive bays available in each drive bay machine
-#define DRIVE_BAY_SLOTS 10
+/// Law server defines
+#define DEFAULT_LAW_SERVER_ADDRESS "SYS/DEFAULT"
+/// Number of law slots available in each law server machine
+#define LAW_SERVER_SLOTS 10

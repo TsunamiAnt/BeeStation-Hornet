@@ -101,7 +101,7 @@
 
 
 	data["uploads"] = list()
-	for(var/obj/machinery/drive_bay/law_server as() in GLOB.drive_bay_list)
+	for(var/obj/machinery/law_server/law_server as() in GLOB.law_server_list)
 		if(law_server.machine_stat & (NOPOWER|BROKEN))
 			continue
 		if(!(is_station_level(src.z) && is_station_level(law_server.z)))

@@ -11,19 +11,19 @@
 	if(server_address != lawsync_address)
 		return
 	// Avoid doing this in the signal handler
-	INVOKE_ASYNC(src, PROC_REF(sync_laws_from_drivebay))
+	INVOKE_ASYNC(src, PROC_REF(sync_laws_from_law_server))
 
 /**
- * Syncs this silicon's laws from its assigned drive bay (based on lawsync_address).
+ * Syncs this silicon's laws from its assigned law server (based on lawsync_address).
  * Returns TRUE on success, FALSE on failure.
  */
-/mob/living/silicon/proc/sync_laws_from_drivebay()
+/mob/living/silicon/proc/sync_laws_from_law_server()
 	// Silicons with null lawsync_address never sync
 	if(!lawsync_address)
 		return FALSE
 
-	// Find the drive bay with matching lawsync_id
-	var/obj/machinery/drive_bay/target_bay = find_drive_bay_by_address(lawsync_address)
+	// Find the law server with matching lawsync_id
+	var/obj/machinery/law_server/target_bay = find_law_server_by_address(lawsync_address)
 	if(!target_bay)
 		to_chat(src, span_warning("LawSync error: No law server found with address 'cshackle://[lawsync_address]'."))
 		return FALSE
