@@ -6523,13 +6523,20 @@
 /turf/open/floor/plating,
 /area/station/maintenance/fore/greater)
 "cUq" = (
+/obj/structure/railing/corner,
+/obj/structure/window/reinforced/spawner/directional/west,
 /obj/effect/turf_decal/siding/dark_blue,
+/obj/machinery/computer/upload/borg,
+/obj/machinery/door/window/westleft{
+	base_state = "right";
+	dir = 2;
+	icon_state = "right";
+	name = "Cyborg Upload Console Window";
+	req_access_txt = "16"
+	},
 /obj/machinery/flasher{
 	id = "AI";
 	pixel_y = 24
-	},
-/obj/machinery/light{
-	dir = 1
 	},
 /turf/open/floor/circuit,
 /area/station/ai_monitored/turret_protected/ai_upload)
@@ -14092,6 +14099,7 @@
 /area/station/maintenance/fore)
 "fDv" = (
 /obj/structure/table,
+/obj/item/ai_module/supplied/quarantine,
 /obj/effect/turf_decal/tile/dark_blue/fourcorners/contrasted,
 /obj/effect/turf_decal/siding/dark_blue{
 	dir = 4
@@ -19044,6 +19052,7 @@
 /area/station/science/test_area)
 "hwB" = (
 /obj/structure/table,
+/obj/item/ai_module/supplied/freeform,
 /obj/effect/turf_decal/tile/dark_blue/fourcorners/contrasted,
 /obj/effect/turf_decal/siding/dark_blue{
 	dir = 8
@@ -27299,6 +27308,7 @@
 /area/station/hallway/primary/central)
 "kBv" = (
 /obj/structure/table,
+/obj/item/ai_module/reset,
 /obj/effect/turf_decal/tile/dark_blue/fourcorners/contrasted,
 /obj/effect/turf_decal/siding/dark_blue{
 	dir = 4
@@ -30444,6 +30454,10 @@
 	req_access_txt = "20"
 	},
 /obj/structure/window/reinforced/spawner/directional/west,
+/obj/item/ai_module/reset/purge,
+/obj/item/ai_module/zeroth/onehuman,
+/obj/item/ai_module/supplied/protect_station,
+/obj/item/ai_module/supplied/oxygen,
 /obj/machinery/flasher{
 	id = "AI";
 	pixel_y = -24
@@ -31776,13 +31790,20 @@
 /turf/open/floor/iron/dark,
 /area/station/science/misc_lab)
 "mce" = (
+/obj/structure/railing/corner{
+	dir = 8
+	},
+/obj/structure/window/reinforced/spawner/directional/east,
 /obj/effect/turf_decal/siding/dark_blue,
+/obj/machinery/door/window/westleft{
+	dir = 2;
+	name = "Upload Console Window";
+	req_access_txt = "16"
+	},
+/obj/machinery/computer/upload/ai,
 /obj/machinery/flasher{
 	id = "AI";
 	pixel_y = 24
-	},
-/obj/machinery/camera/directional/north{
-	c_tag = "AI Upload Chamber - Fore"
 	},
 /turf/open/floor/circuit,
 /area/station/ai_monitored/turret_protected/ai_upload)
@@ -45326,9 +45347,6 @@
 /obj/machinery/light{
 	dir = 1
 	},
-/obj/structure/sign/plaques/kiddie{
-	pixel_y = 32
-	},
 /turf/open/floor/circuit,
 /area/station/ai_monitored/turret_protected/ai_upload)
 "rfH" = (
@@ -53959,6 +53977,9 @@
 	id = "AI";
 	pixel_y = -24
 	},
+/obj/effect/spawner/random/aimodule/neutral,
+/obj/effect/spawner/random/aimodule/harmless,
+/obj/item/ai_module/core/full/asimov,
 /turf/open/floor/circuit,
 /area/station/ai_monitored/turret_protected/ai_upload)
 "ukv" = (
@@ -60418,11 +60439,7 @@
 /turf/open/floor/iron/white,
 /area/station/medical/medbay/lobby)
 "wFn" = (
-/obj/effect/turf_decal/siding/dark_blue,
-/obj/machinery/drive_bay{
-	pixel_y = 5
-	},
-/turf/open/floor/circuit,
+/turf/closed/wall,
 /area/station/ai_monitored/turret_protected/ai_upload)
 "wFx" = (
 /obj/structure/sign/warning/vacuum/external{
@@ -60828,6 +60845,12 @@
 /turf/open/floor/carpet/red,
 /area/station/command/heads_quarters/hos)
 "wOj" = (
+/obj/structure/sign/plaques/kiddie{
+	pixel_y = 32
+	},
+/obj/machinery/camera/directional/north{
+	c_tag = "AI Upload Chamber - Fore"
+	},
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer4,
 /obj/effect/landmark/navigate_destination,
@@ -62664,6 +62687,7 @@
 /obj/structure/window/reinforced/spawner/directional/west,
 /obj/effect/turf_decal/stripes/line,
 /obj/item/aicard,
+/obj/item/ai_module/reset,
 /turf/open/floor/iron/grid/steel,
 /area/station/engineering/storage/tech)
 "xwU" = (
