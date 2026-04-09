@@ -15,7 +15,7 @@ export const ExosuitControlConsole = (props) => {
   const { act, data } = useBackend();
   const { mechs = [] } = data;
   return (
-    <Window width={500} height={500}>
+    <Window width={500} height={500} theme="ntos-cyborg">
       <Window.Content scrollable>
         {mechs.length === 0 && <NoticeBox>No exosuits detected</NoticeBox>}
         {mechs.map((mech) => (

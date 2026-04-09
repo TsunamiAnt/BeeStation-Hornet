@@ -11,7 +11,7 @@ import { Window } from '../layouts';
 
 export const AiRestorer = () => {
   return (
-    <Window width={370} height={360}>
+    <Window width={370} height={360} theme="ntos-cyborg">
       <Window.Content scrollable>
         <AiRestorerContent />
       </Window.Content>

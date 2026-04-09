@@ -348,10 +348,10 @@ export const NtosCyborgSelfMonitorContent = (_) => {
       )}
       {tab_main === 2 && (
         <Flex.Item height={40}>
-          <Section fill scrollable backgroundColor="black">
+          <Section fill scrollable>
             {borgLog.map((log) => (
-              <Box mb={1} key={log}>
-                <font color="green">{log}</font>
+              <Box mb={1} key={log} color="good">
+                {log}
               </Box>
             ))}
           </Section>
