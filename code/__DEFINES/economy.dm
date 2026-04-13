@@ -97,3 +97,14 @@
 #define PAYMENT_CLINICAL "clinical"
 #define PAYMENT_FRIENDLY "friendly"
 #define PAYMENT_ANGRY "angry"
+
+// Account Security Levels
+// Determines visibility and editability of a bank account on ID consoles.
+/// Normal crew account. Editable by any authorized console (department or master).
+#define ACCOUNT_SECURITY_LEVEL_NORMAL     0
+/// Captain-level account. Only visible/editable on the master console.
+#define ACCOUNT_SECURITY_LEVEL_CAPTAIN    1
+/// Off-station account (CentCom, ERT). Completely invisible to all station consoles.
+#define ACCOUNT_SECURITY_LEVEL_OFFSTATION 2
+/// Syndicate account. Completely invisible, used by agent cards.
+#define ACCOUNT_SECURITY_LEVEL_SYNDICATE  3

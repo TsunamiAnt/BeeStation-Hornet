@@ -21,6 +21,13 @@
 	/// bonus from each department.
 	var/list/bonus_per_department = list()
 
+	/// The authoritative access list for this account. Consoles modify THIS, then sync to cards.
+	var/list/access = list()
+	/// Controls visibility and editability on ID consoles. See ACCOUNT_SECURITY_LEVEL_* defines.
+	var/account_security_level = ACCOUNT_SECURITY_LEVEL_NORMAL
+	/// If TRUE, this account's access cannot be modified by any console (e.g. Captain's Spare).
+	var/access_immutable = FALSE
+
 /datum/bank_account/New(newname, job)
 	account_holder = newname
 	account_job = job
@@ -148,6 +155,60 @@
 
 /datum/bank_account/proc/has_currency(type, amt)
 	return custom_currency[type] >= amt
+
+/**
+ * Copies this account's authoritative access list to every linked card.
+ * Called automatically by set_access(), grant_access(), and revoke_access().
+ * This is THE key sync mechanism: account is authoritative, cards are cached.
+ */
+/datum/bank_account/proc/sync_access_to_cards()
+	for(var/obj/item/card/id/card in bank_cards)
+		card.access = access.Copy()
+
+/**
+ * Replaces the entire access list and syncs to all linked cards.
+ * Use this for bulk operations (e.g. job assignment, "set to default").
+ */
+/datum/bank_account/proc/set_access(list/new_access)
+	if(access_immutable)
+		return FALSE
+	access = new_access.Copy()
+	sync_access_to_cards()
+	return TRUE
+
+/**
+ * Adds one or more access flags to the account and syncs to all linked cards.
+ * Accepts a single access value or a list.
+ */
+/datum/bank_account/proc/grant_access(access_to_grant)
+	if(access_immutable)
+		return FALSE
+	if(islist(access_to_grant))
+		access |= access_to_grant
+	else
+		access |= list(access_to_grant)
+	sync_access_to_cards()
+	return TRUE
+
+/**
+ * Removes one or more access flags from the account and syncs to all linked cards.
+ * Accepts a single access value or a list.
+ */
+/datum/bank_account/proc/revoke_access(access_to_revoke)
+	if(access_immutable)
+		return FALSE
+	if(islist(access_to_revoke))
+		access -= access_to_revoke
+	else
+		access -= list(access_to_revoke)
+	sync_access_to_cards()
+	return TRUE
+
+/**
+ * Returns TRUE if this account has the given access flag.
+ */
+/datum/bank_account/proc/has_access(access_flag)
+	return (access_flag in access)
 
 /datum/bank_account/proc/report_currency(type)
 	return custom_currency[type]
