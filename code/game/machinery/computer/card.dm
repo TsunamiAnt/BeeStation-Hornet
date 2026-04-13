@@ -38,6 +38,8 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 	var/list/opened_positions = list()
 	var/obj/item/card/id/inserted_scan_id
 	var/obj/item/card/id/inserted_modify_id
+	/// Weak ref string to the currently selected bank_account in the TGUI
+	var/selected_account_ref = null
 	var/list/region_access = null
 	var/region_access_payment = NONE
 	var/list/head_subordinates = null
@@ -198,325 +200,336 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 			updateUsrDialog()
 			return
 
-/obj/machinery/computer/card/ui_interact(mob/user)
+/obj/machinery/computer/card/ui_interact(mob/user, datum/tgui/ui)
 	. = ..()
-
-	var/dat
-	if(!SSticker)
+	if(.)
 		return
-	if (mode == 1) // accessing crew manifest
-		var/crew = ""
-		for(var/datum/record/crew/record in sort_record(GLOB.manifest.general))
-			crew += record.name + " - " + record.rank + "<br>"
-		dat = "<tt><b>Crew Manifest:</b><you dbr>Please use security record computer to modify entries.<br><br>[crew]<a href='byond://?src=[REF(src)];choice=print'>Print</a><br><br><a href='byond://?src=[REF(src)];choice=mode;mode_target=0'>Return</a><br></tt>"
+	ui = SStgui.try_update_ui(user, src, ui)
+	if(!ui)
+		ui = new(user, src, "IdConsole")
+		ui.open()
 
-	else if(mode == 2)
-		// JOB MANAGEMENT
-		dat = "<a href='byond://?src=[REF(src)];choice=return'>Return</a>"
-		dat += " || Confirm Identity: "
-		var/S
-		if(inserted_scan_id)
-			S = html_encode(inserted_scan_id.name)
-		else
-			S = "--------"
-		dat += "<a href='byond://?src=[REF(src)];choice=inserted_scan_id'>[S]</a>"
-		dat += "<table>"
-		dat += "<tr><td style='width:25%'><b>Job</b></td><td style='width:5%'><b>Slots</b></td><td style='width:20%'><b>Open job</b></td><td style='width:20%'><b>Close job</b><td style='width:20%'><b>Prioritize</b></td></td></tr>"
-		var/ID
-		if(inserted_scan_id && (ACCESS_CHANGE_IDS in inserted_scan_id.access) && !target_dept)
-			ID = 1
-		else
-			ID = 0
-		for(var/datum/job/job in SSjob.occupations)
-			dat += "<tr>"
-			if(job_blacklisted(job.title))
+/obj/machinery/computer/card/ui_static_data(mob/user)
+	var/list/data = list()
+	data["is_master"] = !target_dept
+	data["is_silicon"] = issilicon(user)
+	data["paycheck_departments"] = available_paycheck_departments.Copy()
+
+	// Build the access region definitions (these don't change)
+	var/list/regions = list()
+	for(var/i in 1 to 7)
+		var/list/region_data = list()
+		region_data["name"] = get_region_accesses_name(i)
+		region_data["region_code"] = i
+		var/list/accesses = list()
+		for(var/A in get_region_accesses(i))
+			accesses += list(list(
+				"access_code" = A,
+				"access_name" = get_access_desc(A),
+			))
+		region_data["accesses"] = accesses
+		regions += list(region_data)
+	data["access_regions"] = regions
+	return data
+
+/obj/machinery/computer/card/ui_data(mob/user)
+	var/list/data = list()
+	data["authenticated"] = authenticated
+	data["scan_name"] = inserted_scan_id ? inserted_scan_id.name : null
+	data["modify_name"] = inserted_modify_id ? inserted_modify_id.name : null
+	data["target_paycheck"] = target_paycheck
+	data["printing"] = printing
+	data["allowed_regions"] = region_access ? region_access.Copy() : list()
+
+	// Build the visible accounts list
+	var/list/accounts = list()
+	if(authenticated)
+		for(var/datum/bank_account/B in SSeconomy.bank_accounts)
+			if(B.account_security_level >= ACCOUNT_SECURITY_LEVEL_OFFSTATION)
 				continue
-			dat += "<td>[job.title]</td>"
-			dat += "<td>[job.current_positions]/[job.get_spawn_position_count()]</td>"
-			dat += "<td>"
-			switch(can_open_job(job))
-				if(1)
-					if(ID)
-						dat += "<a href='byond://?src=[REF(src)];choice=make_job_available;job=[job.title]'>Open Position</a><br>"
-					else
-						dat += "Open Position"
-				if(-1)
-					dat += "Denied"
-				if(-2)
-					var/time_to_wait = round(change_position_cooldown - ((world.time / 10) - GLOB.time_last_changed_position), 1)
-					var/mins = round(time_to_wait / 60)
-					var/seconds = time_to_wait - (60*mins)
-					dat += "Cooldown ongoing: [mins]:[(seconds < 10) ? "0[seconds]" : "[seconds]"]"
-				if(0)
-					dat += "Denied"
-			dat += "</td><td>"
-			switch(can_close_job(job))
-				if(1)
-					if(ID)
-						dat += "<a href='byond://?src=[REF(src)];choice=make_job_unavailable;job=[job.title]'>Close Position</a>"
-					else
-						dat += "Close Position"
-				if(-1)
-					dat += "Denied"
-				if(-2)
-					var/time_to_wait = round(change_position_cooldown - ((world.time / 10) - GLOB.time_last_changed_position), 1)
-					var/mins = round(time_to_wait / 60)
-					var/seconds = time_to_wait - (60*mins)
-					dat += "Cooldown ongoing: [mins]:[(seconds < 10) ? "0[seconds]" : "[seconds]"]"
-				if(0)
-					dat += "Denied"
-			dat += "</td><td>"
-			switch(job.get_spawn_position_count())
-				if(0)
-					dat += "Denied"
-				else
-					if(ID)
-						if(job in SSjob.prioritized_jobs)
-							dat += "<a href='byond://?src=[REF(src)];choice=prioritize_job;job=[job.title]'>Deprioritize</a>"
-						else
-							if(SSjob.prioritized_jobs.len < 5)
-								dat += "<a href='byond://?src=[REF(src)];choice=prioritize_job;job=[job.title]'>Prioritize</a>"
-							else
-								dat += "Denied"
-					else
-						dat += "Prioritize"
+			if(B.account_security_level >= ACCOUNT_SECURITY_LEVEL_CAPTAIN && authenticated < 2)
+				continue
+			var/datum/record/crew/record = find_record(B.account_holder, GLOB.manifest.general)
+			accounts += list(list(
+				"account_ref" = REF(B),
+				"name" = B.account_holder,
+				"rank" = record ? record.rank : "Unknown",
+				"suspended" = B.suspended,
+				"security_level" = B.account_security_level,
+			))
+	data["accounts"] = accounts
 
+	// Selected account detail
+	var/datum/bank_account/selected = selected_account_ref ? locate(selected_account_ref) : null
+	if(selected && !(selected in SSeconomy.bank_accounts))
+		selected = null
+		selected_account_ref = null
 
-			dat += "</td></tr>"
-		dat += "</table>"
-	else if(mode == 3)
-		//PAYCHECK MANAGEMENT
-		dat = "<a href='byond://?src=[REF(src)];choice=return'>Return</a>"
-		dat += " || Confirm Identity: "
-		var/S
-		var/list/paycheck_departments = list()
-		if(inserted_scan_id)
-			S = html_encode(inserted_scan_id.name)
-			//Checking all the accesses and their corresponding departments
-			if((ACCESS_HOP in inserted_scan_id.access) && ((target_dept==DEPT_GEN) || !target_dept))
-				paycheck_departments |= ACCOUNT_SRV_ID
-				paycheck_departments |= ACCOUNT_CIV_ID
-				paycheck_departments |= ACCOUNT_CAR_ID //Currently no seperation between service/civillian and supply
-			if((ACCESS_HOS in inserted_scan_id.access) && ((target_dept==DEPT_SEC) || !target_dept))
-				paycheck_departments |= ACCOUNT_SEC_ID
-			if((ACCESS_CMO in inserted_scan_id.access) && ((target_dept==DEPT_MED) || !target_dept))
-				paycheck_departments |= ACCOUNT_MED_ID
-			if((ACCESS_RD in inserted_scan_id.access) && ((target_dept==DEPT_SCI) || !target_dept))
-				paycheck_departments |= ACCOUNT_SCI_ID
-			if((ACCESS_CE in inserted_scan_id.access) && ((target_dept==DEPT_ENG) || !target_dept))
-				paycheck_departments |= ACCOUNT_ENG_ID
-		else
-			S = "--------"
-		dat += "<a href='byond://?src=[REF(src)];choice=inserted_scan_id'>[S]</a><br>"
-		dat += "<td>target department: "
-		if(length(paycheck_departments))
-			for(var/P in available_paycheck_departments)
-				if(SSeconomy.is_nonstation_account(P))
-					continue
-				var/colourful = "[P == target_paycheck ? "<font color=\"6bc473\">" : "" ]"
-				dat += "<a href='byond://?src=[REF(src)];choice=set_paycheck_department;paytype=[P]'>[colourful][P][colourful ? "</font>" : ""]</a> "
-		dat += "</td>"
-		dat += "<table>"
-		dat += "<tr><td style='width:30%'><b>Name</b></td><td style='width:20%'><b>Job</b></td><td style='width:20%'><b>Department</b></td><td style='width:15%'><b>Paycheck</b></td><td style='width:15%'><b>Pay Bonus</b></td></tr>"
+	data["selected_account_ref"] = selected_account_ref
 
-		if(length(paycheck_departments))
-			for(var/datum/bank_account/B in SSeconomy.bank_accounts)
-				var/datum/record/crew/record = find_record(B.account_holder, GLOB.manifest.general)
-				dat += "<tr>"
-				dat += "<td>[B.account_holder] [B.suspended ? "(Account closed)" : ""]</td>"
-				dat += "<td>[record ? record.rank : "(No data)"]</td>"
-				if(!(target_paycheck in paycheck_departments))
-					dat += "<td>(Auth-denied)</td>"
-				else
-					if(B.active_departments & SSeconomy.get_budget_acc_bitflag(target_paycheck))
-						dat += "<td><a href='byond://?src=[REF(src)];choice=turn_on_off_department_bank;bank_account=[B.account_id];check_card=1'><font color=\"6bc473\">Free Vendor Access</font></a></td>"
-					else
-						dat += "<td><a href='byond://?src=[REF(src)];choice=turn_on_off_department_bank;bank_account=[B.account_id];check_card=1;paycheck_t=[target_paycheck]'>No Free Vendor Access</a></td>"
-				if(B.suspended)
-					dat += "<td>Closed</td>"
-					dat += "<td>$0</td>"
-				else if(!(target_paycheck in paycheck_departments))
-					dat += "<td>$[B.payment_per_department[target_paycheck]] (Auth-denied)</td>"
-					dat += "<td>$[B.bonus_per_department[target_paycheck]]</td>"
-				else
-					dat += "<td><a href='byond://?src=[REF(src)];choice=adjust_pay;paycheck_t=[target_paycheck];bank_account=[B.account_id]'>$[B.payment_per_department[target_paycheck]]</a></td>"
-					dat += "<td><a href='byond://?src=[REF(src)];choice=adjust_bonus;paycheck_t=[target_paycheck];bank_account=[B.account_id]'>$[B.bonus_per_department[target_paycheck]]</a></td>"
-				dat += "</tr>"
+	if(selected)
+		var/datum/record/crew/record = find_record(selected.account_holder, GLOB.manifest.general)
+		var/list/detail = list()
+		detail["account_ref"] = REF(selected)
+		detail["name"] = selected.account_holder
+		detail["rank"] = record ? record.rank : "Unknown"
+		detail["account_id"] = selected.account_id
+		detail["security_level"] = selected.account_security_level
+		detail["suspended"] = selected.suspended
+		detail["immutable"] = selected.access_immutable
+		detail["balance"] = selected.account_balance
+		detail["access"] = selected.access.Copy()
+		detail["active_departments"] = selected.active_departments
+
+		var/list/payments = list()
+		var/list/bonuses = list()
+		for(var/dept in selected.payment_per_department)
+			payments[dept] = selected.payment_per_department[dept]
+		for(var/dept in selected.bonus_per_department)
+			bonuses[dept] = selected.bonus_per_department[dept]
+		detail["payments"] = payments
+		detail["bonuses"] = bonuses
+		data["selected_account"] = detail
+
+		// Build per-account access region data (with has_access and can_edit flags)
+		var/list/regions = list()
+		for(var/i in 1 to 7)
+			var/can_edit_region = (authenticated == 2) || (region_access && (i in region_access))
+			var/list/region_data = list()
+			region_data["name"] = get_region_accesses_name(i)
+			region_data["region_code"] = i
+			var/list/accesses = list()
+			for(var/A in get_region_accesses(i))
+				accesses += list(list(
+					"access_code" = A,
+					"access_name" = get_access_desc(A),
+					"has_access" = (A in selected.access),
+					"can_edit" = can_edit_region && !selected.access_immutable,
+				))
+			region_data["accesses"] = accesses
+			regions += list(region_data)
+		data["access_regions"] = regions
 	else
-		var/header = ""
+		data["selected_account"] = null
+		data["access_regions"] = list()
 
-		var/scan_name = inserted_scan_id ? html_encode(inserted_scan_id.name) : "--------"
-		var/target_name = inserted_modify_id ? html_encode(inserted_modify_id.name) : "--------"
-		var/target_owner = (inserted_modify_id && inserted_modify_id.registered_name) ? html_encode(inserted_modify_id.registered_name) : "--------"
-		var/target_rank = (inserted_modify_id && inserted_modify_id.assignment) ? html_encode(inserted_modify_id.assignment) : "Unassigned"
+	return data
 
-		if(!authenticated)
-			header += "<br><i>Please insert the cards into the slots</i><br>"
-			header += "Target: <a href='byond://?src=[REF(src)];choice=inserted_modify_id'>[target_name]</a><br>"
-			header += "Confirm Identity: <a href='byond://?src=[REF(src)];choice=inserted_scan_id'>[scan_name]</a><br>"
-		else
-			header += "<div align='center'><br>"
-			header += "<a href='byond://?src=[REF(src)];choice=inserted_modify_id'>Remove [target_name]</a> || "
-			header += "<a href='byond://?src=[REF(src)];choice=inserted_scan_id'>Remove [scan_name]</a> <br> "
-			header += "<a href='byond://?src=[REF(src)];choice=mode;mode_target=1'>Access Crew Manifest</a> <br> "
-			header += "<a href='byond://?src=[REF(src)];choice=logout'>Log Out</a></div>"
+/obj/machinery/computer/card/ui_act(action, list/params, datum/tgui/ui)
+	. = ..()
+	if(.)
+		return
 
-		header += "<hr>"
+	var/mob/user = ui.user
 
-		var/jobs_all = ""
-		var/list/alljobs = list("Unassigned")
-		alljobs += (istype(src, /obj/machinery/computer/card/centcom)? get_all_centcom_jobs() : get_all_jobs()) + "Custom"
-		for(var/job in alljobs)
-			if(job == JOB_NAME_ASSISTANT)
-				jobs_all += "<br/>* Service: "
-			if(job == JOB_NAME_QUARTERMASTER)
-				jobs_all += "<br/>* Cargo: "
-			if(job == JOB_NAME_RESEARCHDIRECTOR)
-				jobs_all += "<br/>* R&D: "
-			if(job == JOB_NAME_CHIEFENGINEER)
-				jobs_all += "<br/>* Engineering: "
-			if(job == JOB_NAME_CHIEFMEDICALOFFICER)
-				jobs_all += "<br/>* Medical: "
-			if(job == JOB_NAME_HEADOFSECURITY)
-				jobs_all += "<br/>* Security: "
-			if(job == "Custom")
-				jobs_all += "<br/>"
-			// these will make some separation for the department.
-			jobs_all += "<a href='byond://?src=[REF(src)];choice=assign;assign_target=[job]'>[replacetext(job, " ", "&nbsp")]</a> " //make sure there isn't a line break in the middle of a job
-
-
-		var/body
-
-		if (authenticated && inserted_modify_id)
-
-			var/carddesc = ""
-			var/jobs = ""
-			if( authenticated == 2)
-				carddesc += {"<script type="text/javascript">
-									function markRed(){
-										var nameField = document.getElementById('namefield');
-										nameField.style.backgroundColor = "#FFDDDD";
-									}
-									function markGreen(){
-										var nameField = document.getElementById('namefield');
-										nameField.style.backgroundColor = "#DDFFDD";
-									}
-									function showAll(){
-										var allJobsSlot = document.getElementById('alljobsslot');
-										allJobsSlot.innerHTML = "<a href='#' onclick='hideAll()'>hide</a><br>"+ "[jobs_all]";
-									}
-									function hideAll(){
-										var allJobsSlot = document.getElementById('alljobsslot');
-										allJobsSlot.innerHTML = "<a href='#' onclick='showAll()'>show</a>";
-									}
-								</script>"}
-				carddesc += "<form name='cardcomp' action='byond://?src=[REF(src)]' method='get'>"
-				carddesc += "<input type='hidden' name='src' value='[REF(src)]'>"
-				carddesc += "<input type='hidden' name='choice' value='reg'>"
-				carddesc += "<b>registered name:</b> <input type='text' id='namefield' name='reg' value='[target_owner]' style='width:250px; background-color:white;' onchange='markRed()'>"
-				carddesc += "<input type='submit' value='Rename' onclick='markGreen()'>"
-				carddesc += "</form>"
-				carddesc += "<b>Assignment:</b> "
-
-				jobs += "<span id='alljobsslot'><a href='#' onclick='showAll()'>[target_rank]</a></span>" //CHECK THIS
-
+	switch(action)
+		if("login")
+			if(authenticated)
+				return FALSE
+			if(!inserted_scan_id && !issilicon(user))
+				balloon_alert(user, "no ID detected")
+				playsound(src, 'sound/machines/terminal_error.ogg', 50, FALSE)
+				return FALSE
+			if(!check_access(inserted_scan_id))
+				balloon_alert(user, "access denied")
+				playsound(src, 'sound/machines/terminal_error.ogg', 50, FALSE)
+				return FALSE
+			region_access = list()
+			region_access_payment = NONE
+			head_subordinates = list()
+			if(ACCESS_CHANGE_IDS in inserted_scan_id.access)
+				if(target_dept)
+					head_subordinates = get_all_jobs()
+					region_access |= target_dept
+					region_access_payment = ALL
+					authenticated = 1
+				else
+					region_access_payment = ALL
+					authenticated = 2
 			else
-				carddesc += "<b>registered_name:</b> [target_owner]</span>"
-				jobs += "<b>Assignment:</b> [target_rank] (<a href='byond://?src=[REF(src)];choice=demote'>Demote</a>)</span>"
+				if((ACCESS_HOP in inserted_scan_id.access) && ((target_dept == DEPT_GEN) || !target_dept))
+					region_access |= DEPT_GEN
+					region_access |= DEPT_SUP
+					region_access_payment |= ACCOUNT_COM_BITFLAG | ACCOUNT_CIV_BITFLAG | ACCOUNT_SRV_BITFLAG | ACCOUNT_CAR_BITFLAG
+					get_subordinates(JOB_NAME_HEADOFPERSONNEL)
+				if((ACCESS_HOS in inserted_scan_id.access) && ((target_dept == DEPT_SEC) || !target_dept))
+					region_access |= DEPT_SEC
+					region_access_payment |= ACCOUNT_SEC_BITFLAG
+					get_subordinates(JOB_NAME_HEADOFSECURITY)
+				if((ACCESS_CMO in inserted_scan_id.access) && ((target_dept == DEPT_MED) || !target_dept))
+					region_access |= DEPT_MED
+					region_access_payment |= ACCOUNT_MED_BITFLAG
+					get_subordinates(JOB_NAME_CHIEFMEDICALOFFICER)
+				if((ACCESS_RD in inserted_scan_id.access) && ((target_dept == DEPT_SCI) || !target_dept))
+					region_access |= DEPT_SCI
+					region_access_payment |= ACCOUNT_SCI_BITFLAG
+					get_subordinates(JOB_NAME_RESEARCHDIRECTOR)
+				if((ACCESS_CE in inserted_scan_id.access) && ((target_dept == DEPT_ENG) || !target_dept))
+					region_access |= DEPT_ENG
+					region_access_payment |= ACCOUNT_ENG_BITFLAG
+					get_subordinates(JOB_NAME_CHIEFENGINEER)
+				if(length(region_access))
+					authenticated = 1
+			if(authenticated)
+				playsound(src, 'sound/machines/terminal_on.ogg', 50, FALSE)
+			return TRUE
 
-			var/banking = ""
-			banking += "<b>Department active & Bank account status:</b>"
-			banking += "<table border='1' cellspacing='1' cellpadding='0'>"
-			// Department active status
-			banking += "<tr>"
-			banking += "<td><b>Active Department Manifest:</b></td>"
-			var/datum/record/crew/record = find_record(inserted_modify_id.registered_name, GLOB.manifest.general)
-			if(record)
-				for(var/each in available_paycheck_departments)
-					if(!(SSeconomy.get_budget_acc_bitflag(each) & region_access_payment))
-						continue
-					if(record.active_department & SSeconomy.get_budget_acc_bitflag(each))
-						banking += "<td><a href='byond://?src=[REF(src)];choice=turn_on_off_department_manifest;target_bitflag=[SSeconomy.get_budget_acc_bitflag(each)]'><font color=\"6bc473\">[each]</a></font></td>"
-					else
-						banking += "<td><a href='byond://?src=[REF(src)];choice=turn_on_off_department_manifest;target_bitflag=[SSeconomy.get_budget_acc_bitflag(each)]'>[each]</a></td>"
+		if("logout")
+			region_access = null
+			head_subordinates = null
+			authenticated = 0
+			selected_account_ref = null
+			playsound(src, 'sound/machines/terminal_off.ogg', 50, FALSE)
+			return TRUE
+
+		if("insert_scan")
+			if(inserted_scan_id)
+				return FALSE
+			if(!user.get_id_in_hand())
+				return FALSE
+			var/obj/item/held_item = user.get_active_held_item()
+			var/obj/item/card/id/id_to_insert = held_item.GetID()
+			if(id_insert(user, held_item, inserted_scan_id))
+				inserted_scan_id = id_to_insert || held_item
+			return TRUE
+
+		if("eject_scan")
+			if(!inserted_scan_id)
+				return FALSE
+			if(id_eject(user, inserted_scan_id))
+				inserted_scan_id = null
+				region_access = null
+				head_subordinates = null
+				authenticated = 0
+				selected_account_ref = null
+			return TRUE
+
+		if("select_account")
+			if(!authenticated)
+				return FALSE
+			var/target_ref = params["account_ref"]
+			if(!target_ref)
+				return FALSE
+			var/datum/bank_account/target = locate(target_ref)
+			if(!target || !(target in SSeconomy.bank_accounts))
+				return FALSE
+			selected_account_ref = target_ref
+			playsound(src, "sound/machines/terminal_button0[rand(1, 8)].ogg", 50, TRUE)
+			return TRUE
+
+		if("deselect_account")
+			selected_account_ref = null
+			return TRUE
+
+		if("toggle_access")
+			if(!authenticated)
+				return FALSE
+			var/target_ref = params["account_ref"]
+			var/access_code = text2num(params["access_code"])
+			if(!target_ref || isnull(access_code))
+				return FALSE
+			var/datum/bank_account/target = locate(target_ref)
+			if(!target || !(target in SSeconomy.bank_accounts))
+				return FALSE
+			if(target.access_immutable)
+				balloon_alert(user, "access locked")
+				return FALSE
+			// Verify this console is allowed to edit this access
+			if(!can_edit_access(access_code))
+				balloon_alert(user, "unauthorized")
+				return FALSE
+			if(target.has_access(access_code))
+				target.revoke_access(access_code)
+				log_id("[key_name(user)] removed [get_access_desc(access_code)] from [target.account_holder]'s account using [inserted_scan_id] at [AREACOORD(user)].")
 			else
-				banking += "<td colspan=\"8\"><b>Error: Cannot locate user entry in data core</b></td>"
-			banking += "</tr>"
-			//adjustable only when they have bank account in their card
-			var/datum/bank_account/B = inserted_modify_id?.registered_account
-			if(B)
-				// Bank vendor free status - Lets you to buy department stuff for free
-				banking += "<tr>"
-				banking += "<td><b>Free Vendor Access:</b></td>"
-				for(var/each in available_paycheck_departments)
-					if(!(SSeconomy.get_budget_acc_bitflag(each) & region_access_payment))
-						continue
-					if(B.active_departments & SSeconomy.get_budget_acc_bitflag(each))
-						banking += "<td><a href='byond://?src=[REF(src)];choice=turn_on_off_department_bank;paycheck_t=[each]'><font color=\"6bc473\">[each]</a></font></td>"
-					else
-						banking += "<td><a href='byond://?src=[REF(src)];choice=turn_on_off_department_bank;paycheck_t=[each]'>[each]</a></td>"
-				banking += "</tr>"
-				// Payment status
-				banking += "<tr>"
-				banking += "<td><b>Payment per department:</b></td>"
-				for(var/each in available_paycheck_departments)
-					if(!(SSeconomy.get_budget_acc_bitflag(each) & region_access_payment))
-						continue
-					if(SSeconomy.is_nonstation_account(each))
-						banking += "<td>$[B.payment_per_department[each]]</td>"
-						continue
-					banking += "<td><a href='byond://?src=[REF(src)];choice=adjust_pay;paycheck_t=[each]'>$[B.payment_per_department[each]]</a></td>"
-				banking += "</tr>"
-			else
-				banking += "<td><b>Banking information:</b></td>"
-				banking += "<td colspan=\"8\"><b>Error: No linked bank account detected</b></td>"
-			banking += "</table>"
-			banking += "<br>"
+				target.grant_access(access_code)
+				log_id("[key_name(user)] added [get_access_desc(access_code)] to [target.account_holder]'s account using [inserted_scan_id] at [AREACOORD(user)].")
+			playsound(src, "terminal_type", 50, FALSE)
+			return TRUE
 
-			var/accesses = ""
-			if(istype(src, /obj/machinery/computer/card/centcom))
-				accesses += "<h5>Central Command:</h5>"
-				for(var/A in get_all_centcom_access())
-					if(A in inserted_modify_id.access)
-						accesses += "<a href='byond://?src=[REF(src)];choice=access;access_target=[A];allowed=0'><font color=\"6bc473\">[replacetext(get_access_desc(A), " ", "&nbsp")]</font></a> "
-					else
-						accesses += "<a href='byond://?src=[REF(src)];choice=access;access_target=[A];allowed=1'>[replacetext(get_access_desc(A), " ", "&nbsp")]</a> "
-			else
-				accesses += "<div align='center'><b>Access</b></div>"
-				accesses += "<table style='width:100%'>"
-				accesses += "<tr>"
-				for(var/i = 1; i <= 7; i++)
-					if(authenticated == 1 && !(i in region_access))
-						continue
-					accesses += "<td style='width:14%'><b>[get_region_accesses_name(i)]:</b></td>"
-				accesses += "</tr><tr>"
-				for(var/i = 1; i <= 7; i++)
-					if(authenticated == 1 && !(i in region_access))
-						continue
-					accesses += "<td style='width:14%' valign='top'>"
-					for(var/A in get_region_accesses(i))
-						if(A in inserted_modify_id.access)
-							accesses += "<a href='byond://?src=[REF(src)];choice=access;access_target=[A];allowed=0'><font color=\"6bc473\">[replacetext(get_access_desc(A), " ", "&nbsp")]</font></a> "
-						else
-							accesses += "<a href='byond://?src=[REF(src)];choice=access;access_target=[A];allowed=1'>[replacetext(get_access_desc(A), " ", "&nbsp")]</a> "
-						accesses += "<br>"
-					accesses += "</td>"
-				accesses += "</tr></table>"
-			body = "[carddesc]<br>[jobs]<br>[banking]<br>[accesses]" //CHECK THIS
+		if("grant_all")
+			if(!authenticated)
+				return FALSE
+			var/target_ref = params["account_ref"]
+			if(!target_ref)
+				return FALSE
+			var/datum/bank_account/target = locate(target_ref)
+			if(!target || !(target in SSeconomy.bank_accounts))
+				return FALSE
+			if(target.access_immutable)
+				balloon_alert(user, "access locked")
+				return FALSE
+			var/list/to_grant = list()
+			if(authenticated == 2)
+				to_grant = get_all_accesses()
+			else if(region_access)
+				for(var/region in region_access)
+					to_grant |= get_region_accesses(region)
+			target.grant_access(to_grant)
+			log_id("[key_name(user)] granted all accessible access to [target.account_holder]'s account using [inserted_scan_id] at [AREACOORD(user)].")
+			playsound(src, 'sound/machines/terminal_prompt_confirm.ogg', 50, FALSE)
+			return TRUE
 
-		else
-			body = "<a href='byond://?src=[REF(src)];choice=auth'>{Log in}</a> <br><hr>"
-			body += "<a href='byond://?src=[REF(src)];choice=mode;mode_target=1'>Access Crew Manifest</a>"
-			if(!target_dept)
-				body += "<br><hr><a href='byond://?src=[REF(src)];choice=mode;mode_target=2'>Job Management</a>"
-			body += "<a href='byond://?src=[REF(src)];choice=mode;mode_target=3'>Paycheck Management</a>"
-			if(target_dept == DEPT_ALL) // currently locked in HoP console only. other console can make bank account with their own budget if this lock is removed
-				body += "<a href='byond://?src=[REF(src)];choice=open_new_account'>Open a new bank account</a>"
+		if("revoke_all")
+			if(!authenticated)
+				return FALSE
+			var/target_ref = params["account_ref"]
+			if(!target_ref)
+				return FALSE
+			var/datum/bank_account/target = locate(target_ref)
+			if(!target || !(target in SSeconomy.bank_accounts))
+				return FALSE
+			if(target.access_immutable)
+				balloon_alert(user, "access locked")
+				return FALSE
+			var/list/to_revoke = list()
+			if(authenticated == 2)
+				to_revoke = get_all_accesses()
+			else if(region_access)
+				for(var/region in region_access)
+					to_revoke |= get_region_accesses(region)
+			target.revoke_access(to_revoke)
+			log_id("[key_name(user)] revoked all accessible access from [target.account_holder]'s account using [inserted_scan_id] at [AREACOORD(user)].")
+			playsound(src, 'sound/machines/terminal_prompt_deny.ogg', 50, FALSE)
+			return TRUE
 
-		dat = "<tt>[header][body]<hr><br></tt>"
-	var/datum/browser/popup = new(user, "id_com", src.name, 1150, 720)
-	popup.set_content(dat)
-	popup.open()
+		if("create_account")
+			if(!authenticated || target_dept)
+				return FALSE
+			if(!inserted_scan_id)
+				balloon_alert(user, "no ID detected")
+				return FALSE
+			if(!(ACCESS_HOP in inserted_scan_id.access))
+				balloon_alert(user, "insufficient access")
+				return FALSE
+			var/datum/bank_account/budget = SSeconomy.get_budget_account(initial(target_paycheck))
+			if(!budget || !budget.has_money(NEW_BANK_ACCOUNT_COST))
+				balloon_alert(user, "insufficient budget")
+				return FALSE
+			var/target_name = reject_bad_text(stripped_input(user, "Write the bank owner's name", "Account owner's name?"), MAX_NAME_LEN)
+			if(!target_name)
+				return FALSE
+			if(!budget.adjust_money(-NEW_BANK_ACCOUNT_COST))
+				balloon_alert(user, "insufficient budget")
+				return FALSE
+			var/datum/bank_account/new_account = new(target_name, SSjob.GetJob(JOB_NAME_ASSISTANT))
+			for(var/each in new_account.payment_per_department)
+				new_account.payment_per_department[each] = 0
+			balloon_alert(user, "account created: [new_account.account_id]")
+			playsound(src, 'sound/machines/terminal_prompt_confirm.ogg', 50, FALSE)
+			return TRUE
+
+	return FALSE
+
+/// Returns TRUE if this console is allowed to toggle the given access code.
+/obj/machinery/computer/card/proc/can_edit_access(access_code)
+	if(authenticated == 2)
+		return (access_code in get_all_accesses())
+	if(authenticated == 1 && region_access)
+		for(var/region in region_access)
+			if(access_code in get_region_accesses(region))
+				return TRUE
+	return FALSE
 
 /obj/machinery/computer/card/Topic(href, href_list)
 	if(..())

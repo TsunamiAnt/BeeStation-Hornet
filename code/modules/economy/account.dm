@@ -159,7 +159,6 @@
 /**
  * Copies this account's authoritative access list to every linked card.
  * Called automatically by set_access(), grant_access(), and revoke_access().
- * This is THE key sync mechanism: account is authoritative, cards are cached.
  */
 /datum/bank_account/proc/sync_access_to_cards()
 	for(var/obj/item/card/id/card in bank_cards)
@@ -167,7 +166,7 @@
 
 /**
  * Replaces the entire access list and syncs to all linked cards.
- * Use this for bulk operations (e.g. job assignment, "set to default").
+ * Use this for bulk operations.
  */
 /datum/bank_account/proc/set_access(list/new_access)
 	if(access_immutable)
