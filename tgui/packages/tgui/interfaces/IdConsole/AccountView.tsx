@@ -2,6 +2,7 @@ import { useBackend } from 'tgui/backend';
 import {
   Box,
   Button,
+  Collapsible,
   LabeledList,
   NoticeBox,
   Section,
@@ -26,7 +27,7 @@ export const AccountView = () => {
 /** Detailed view of the selected account */
 const AccountDetail = () => {
   const { act, data } = useBackend<IdConsoleData>();
-  const { selected_account, is_master } = data;
+  const { selected_account, is_master, trim_styles } = data;
 
   if (!selected_account) return null;
 
@@ -38,6 +39,7 @@ const AccountDetail = () => {
     suspended,
     immutable,
     balance,
+    card_trim,
   } = selected_account;
 
   return (
@@ -97,6 +99,26 @@ const AccountDetail = () => {
             ) : null}
           </LabeledList>
         </Section>
+      </Stack.Item>
+      <Stack.Item>
+        <Collapsible title={`Card Trim: ${card_trim || 'None'}`}>
+          <Box wrap="wrap" style={{ display: 'flex', gap: '4px' }}>
+            {trim_styles.map((style) => (
+              <Button
+                key={style.name}
+                selected={card_trim === style.icon}
+                onClick={() =>
+                  act('set_trim', {
+                    account_ref: account_ref,
+                    trim_name: style.name,
+                  })
+                }
+              >
+                {style.name}
+              </Button>
+            ))}
+          </Box>
+        </Collapsible>
       </Stack.Item>
       <Stack.Item grow>
         <AccessGrid />

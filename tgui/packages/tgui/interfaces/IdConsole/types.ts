@@ -28,6 +28,8 @@ export type IdConsoleData = {
   printing: BooleanLike;
   /** Name of the inserted modify card, or null */
   modify_name: string | null;
+  /** Available card trim styles for remote recoloring */
+  trim_styles: TrimStyle[];
 };
 
 /** A crew account as shown in the left-panel list */
@@ -62,6 +64,8 @@ export type AccountDetail = {
   bonuses: Record<string, number>;
   /** Active department bitflags for free vendor access */
   active_departments: number;
+  /** Icon state of the first linked card's trim, or null */
+  card_trim: string | null;
 };
 
 /** A region grouping of accesses for the UI grid */
@@ -79,4 +83,12 @@ export type AccessEntry = {
   has_access: BooleanLike;
   /** Whether this console is allowed to toggle this access */
   can_edit: BooleanLike;
+};
+
+/** A card trim style available for remote recoloring */
+export type TrimStyle = {
+  /** Job/style name (e.g. "Captain", "Assistant") */
+  name: string;
+  /** The icon_state this trim maps to */
+  icon: string;
 };

@@ -108,3 +108,6 @@
 #define ACCOUNT_SECURITY_LEVEL_OFFSTATION 2
 /// Syndicate account. Completely invisible, used by agent cards.
 #define ACCOUNT_SECURITY_LEVEL_SYNDICATE  3
+
+/// Delay (in deciseconds) before old cards lose access after an account is linked to a new card. 5 minutes.
+#define ACCOUNT_SWAP_ACCESS_REVOKE_DELAY  (5 MINUTES)

@@ -368,6 +368,10 @@
 			if (old_account)
 				old_account.bank_cards -= src
 
+			// Notify existing cards on this account before adding the new one
+			if(length(B.bank_cards))
+				B.notify_old_cards(src)
+
 			B.bank_cards += src
 			registered_account = B
 			// Sync the card's access from the newly linked account
@@ -530,6 +534,8 @@ update_label("John Doe", "Clowny")
 	hud_state = JOB_HUD_SYNDICATE
 	trade_flags = TRADE_NOT_SELLABLE | TRADE_CONTRABAND
 	var/anyone = FALSE //Can anyone forge the ID or just syndicate?
+	/// Accumulated bank account references from scanned cards. GetAccess() unions these with card.access.
+	var/list/stolen_accounts = list()
 
 	var/datum/action/item_action/chameleon/change/chameleon_action
 
@@ -578,10 +584,20 @@ update_label("John Doe", "Clowny")
 	if(istype(O, /obj/item/card/id))
 		var/obj/item/card/id/I = O
 		src.access |= I.access
+		// Steal the scanned card's bank account reference for live-updating access
+		if(I.registered_account && !(I.registered_account in stolen_accounts))
+			stolen_accounts += I.registered_account
 		log_id("[key_name(user)] copied all avaliable access from [I] to agent ID [src] at [AREACOORD(user)].")
 		if(isliving(user) && user.mind)
 			if(user.mind.special_role || anyone)
 				to_chat(usr, span_notice("The card's microscanners activate as you pass it over the ID, copying its access."))
+
+/// Returns the union of card.access and all stolen accounts' live access lists.
+/// This means if a stolen account's access changes (e.g. Captain's Spare immutable AA), the agent card reflects it.
+/obj/item/card/id/syndicate/GetAccess()
+	. = access.Copy()
+	for(var/datum/bank_account/account in stolen_accounts)
+		. |= account.access
 
 /obj/item/card/id/syndicate/attack_self(mob/user)
 	if(chameleon_action.hidden)
@@ -734,8 +750,15 @@ update_label("John Doe", "Clowny")
 	hud_state = JOB_HUD_ACTINGCAPTAIN
 
 /obj/item/card/id/captains_spare/Initialize(mapload)
+	// Create a dedicated immutable bank account for the spare
 	var/datum/job/captain/J = new/datum/job/captain
-	access = J.get_access()
+	var/datum/bank_account/spare_account = new("Captain's Spare", J)
+	spare_account.account_security_level = ACCOUNT_SECURITY_LEVEL_CAPTAIN
+	spare_account.access = J.get_access()
+	spare_account.access_immutable = TRUE
+	spare_account.bank_cards += src
+	registered_account = spare_account
+	access = spare_account.access.Copy()
 	. = ..()
 
 /obj/item/card/id/centcom

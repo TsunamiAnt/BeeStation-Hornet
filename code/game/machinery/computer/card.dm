@@ -215,6 +215,18 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 	data["is_silicon"] = issilicon(user)
 	data["paycheck_departments"] = available_paycheck_departments.Copy()
 
+	// Build the available trim/card styles
+	var/list/trim_styles = list()
+	for(var/style_name in get_card_style_list(FALSE))
+		// Skip the separator labels (e.g. "----Command----")
+		if(findtext(style_name, "----"))
+			continue
+		trim_styles += list(list(
+			"name" = style_name,
+			"icon" = get_cardstyle_by_jobname(style_name),
+		))
+	data["trim_styles"] = trim_styles
+
 	// Build the access region definitions (these don't change)
 	var/list/regions = list()
 	for(var/i in 1 to 7)
@@ -280,6 +292,13 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 		detail["balance"] = selected.account_balance
 		detail["access"] = selected.access.Copy()
 		detail["active_departments"] = selected.active_departments
+
+		// Include the current card trim for the first linked card
+		if(length(selected.bank_cards))
+			var/obj/item/card/id/first_card = selected.bank_cards[1]
+			detail["card_trim"] = first_card.icon_state
+		else
+			detail["card_trim"] = null
 
 		var/list/payments = list()
 		var/list/bonuses = list()
@@ -516,6 +535,33 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 			for(var/each in new_account.payment_per_department)
 				new_account.payment_per_department[each] = 0
 			balloon_alert(user, "account created: [new_account.account_id]")
+			playsound(src, 'sound/machines/terminal_prompt_confirm.ogg', 50, FALSE)
+			return TRUE
+
+		if("set_trim")
+			if(!authenticated)
+				return FALSE
+			var/target_ref = params["account_ref"]
+			var/trim_name = params["trim_name"]
+			if(!target_ref || !trim_name)
+				return FALSE
+			var/datum/bank_account/target = locate(target_ref)
+			if(!target || !(target in SSeconomy.bank_accounts))
+				return FALSE
+			var/new_icon = get_cardstyle_by_jobname(trim_name)
+			var/new_hud = get_hud_by_jobname(trim_name)
+			if(!new_icon)
+				return FALSE
+			// Apply the trim to all cards linked to this account
+			for(var/obj/item/card/id/card in target.bank_cards)
+				card.icon_state = new_icon
+				card.hud_state = new_hud
+				card.update_label()
+				// Update the HUD for the card holder
+				var/mob/living/carbon/human/H = recursive_loc_check(card, /mob/living/carbon/human)
+				if(istype(H))
+					H.sec_hud_set_ID()
+			log_id("[key_name(user)] changed card trim to [trim_name] for [target.account_holder]'s account using [inserted_scan_id] at [AREACOORD(user)].")
 			playsound(src, 'sound/machines/terminal_prompt_confirm.ogg', 50, FALSE)
 			return TRUE
 

@@ -209,6 +209,44 @@
 /datum/bank_account/proc/has_access(access_flag)
 	return (access_flag in access)
 
+/**
+ * Notifies all existing cards on this account that a new card has been linked,
+ * then schedules them for access revocation after ACCOUNT_SWAP_ACCESS_REVOKE_DELAY.
+ * Called when a card is linked to an account that already has other cards.
+ */
+/datum/bank_account/proc/notify_old_cards(obj/item/card/id/new_card)
+	for(var/obj/item/card/id/old_card in bank_cards)
+		if(old_card == new_card)
+			continue
+		// Immediately warn the old card's holder
+		var/mob/card_holder = recursive_loc_check(old_card, /mob)
+		if(ismob(card_holder))
+			card_holder.playsound_local(get_turf(card_holder), 'sound/machines/twobeep_high.ogg', 50, TRUE)
+			if(card_holder.can_hear())
+				to_chat(card_holder, "[icon2html(old_card, card_holder)] *[span_warning("ALERT: Your account has been linked to a new card. Access on this card will be revoked in 5 minutes.")]*")
+		// Schedule access wipe on the old card
+		addtimer(CALLBACK(src, PROC_REF(revoke_old_card), old_card), ACCOUNT_SWAP_ACCESS_REVOKE_DELAY)
+
+/**
+ * Revokes access on an old card after the account swap delay has elapsed.
+ * Removes the card from bank_cards and wipes its access list.
+ */
+/datum/bank_account/proc/revoke_old_card(obj/item/card/id/old_card)
+	if(QDELETED(old_card))
+		return
+	// Only revoke if the card is still linked to this account
+	if(old_card.registered_account != src)
+		return
+	bank_cards -= old_card
+	old_card.registered_account = null
+	old_card.access = list()
+	// Notify the card holder that access has been revoked
+	var/mob/card_holder = recursive_loc_check(old_card, /mob)
+	if(ismob(card_holder))
+		card_holder.playsound_local(get_turf(card_holder), 'sound/machines/twobeep_high.ogg', 50, TRUE)
+		if(card_holder.can_hear())
+			to_chat(card_holder, "[icon2html(old_card, card_holder)] *[span_warning("Your access has been revoked. This card is no longer linked to an account.")]*")
+
 /datum/bank_account/proc/report_currency(type)
 	return custom_currency[type]
 
