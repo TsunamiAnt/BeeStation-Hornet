@@ -1314,8 +1314,7 @@
 				created_robot.lawupdate = FALSE
 				created_robot.connected_ai = null
 				created_robot.mmi.transfer_identity(src) //Does not transfer key/client.
-				created_robot.clear_inherent_laws(announce = FALSE)
-				created_robot.clear_zeroth_law(announce = FALSE)
+				created_robot.clear_laws(announce = FALSE)
 
 		if(WABBAJACK_ANIMAL)
 			var/picked_animal = pick(

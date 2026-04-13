@@ -48,7 +48,6 @@
 		/obj/item/storage/box/survival/engineer=1,
 		/obj/item/storage/box/zipties/compact=1,
 		/obj/item/ammo_box/magazine/x200law=1,
-		/obj/item/ai_module/core/full/ert=1
 		)
 	r_hand = /obj/item/gun/ballistic/automatic/pistol/security
 	belt = /obj/item/storage/belt/security/ert/full
@@ -73,7 +72,6 @@
 	backpack_contents = list(
 		/obj/item/storage/box/survival/engineer=1,
 		/obj/item/storage/box/zipties/compact=1,
-		/obj/item/ai_module/core/full/ert=1,
 		/obj/item/door_remote/omni,
 		)
 	r_hand = /obj/item/gun/energy/e_gun/stun
@@ -93,7 +91,6 @@
 	r_hand = /obj/item/nullrod/claymore/chainsaw_sword
 	backpack_contents = list(
 		/obj/item/storage/box/survival/engineer=1,
-		/obj/item/ai_module/core/full/ert=1,
 		/obj/item/door_remote/omni=1,
 		/obj/item/storage/book/bible=1,
 		/obj/item/reagent_containers/cup/glass/bottle/holywater=1,
@@ -358,7 +355,6 @@
 		/obj/item/storage/box/survival/engineer=1,
 		/obj/item/storage/firstaid/compact=1,
 		/obj/item/grenade/plastic/x4=2,
-		/obj/item/ai_module/core/full/deathsquad=1,
 		/obj/item/door_remote/omni=1,
 	)
 

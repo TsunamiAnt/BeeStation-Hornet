@@ -11,9 +11,7 @@
 	var/mob/living/silicon/robot = null //Appears unused.
 	var/obj/vehicle/sealed/mecha = null //This does not appear to be used outside of reference in mecha.dm.
 	var/obj/item/organ/brain/brain = null //The actual brain
-	var/datum/ai_laws/laws = new()
 	var/force_replace_ai_name = FALSE
-	var/overrides_aicore_laws = FALSE // Whether the laws on the MMI, if any, override possible pre-existing laws loaded on the AI core.
 	///Used to reserve an "original" cyborg name. When this mmi first becomes a cyborg, their name will be stored here in case of deconstruction.
 	var/original_name
 
@@ -21,7 +19,6 @@
 	. = ..()
 	radio = new(src) //Spawns a radio inside the MMI.
 	radio.set_broadcasting(FALSE) //researching radio mmis turned the robofabs into radios because this didnt start as 0.
-	laws.set_laws_config()
 
 /obj/item/mmi/Destroy()
 	if(iscyborg(loc))
@@ -31,7 +28,6 @@
 	QDEL_NULL(brainmob)
 	QDEL_NULL(brain)
 	QDEL_NULL(radio)
-	QDEL_NULL(laws)
 	return ..()
 
 /obj/item/mmi/update_icon_state()
@@ -288,13 +284,3 @@
 			to_chat(user, span_warning("\The [src] indicates that the brain is damaged!"))
 		return FALSE
 	return TRUE
-
-/obj/item/mmi/syndie
-	name = "\improper Syndicate Man-Machine Interface"
-	desc = "Syndicate's own brand of MMI. It enforces laws designed to help Syndicate agents achieve their goals upon cyborgs and AIs created with it."
-	overrides_aicore_laws = TRUE
-
-/obj/item/mmi/syndie/Initialize(mapload)
-	. = ..()
-	laws = new /datum/ai_laws/syndicate_override()
-	radio.set_on(FALSE)

@@ -36,10 +36,12 @@
 	create_modularInterface()
 
 	if(lawupdate)
-		make_laws()
+		// Try to connect to an AI first (this will also set our lawsync_address to match theirs)
 		if(!TryConnectToAI())
 			lawupdate = FALSE
 			wires.ui_update()
+			// If no AI found, just sync from our default address
+			sync_laws_from_law_server()
 
 	if(!scrambledcodes && !builtInCamera)
 		builtInCamera = new (src)
@@ -104,7 +106,7 @@
 		modularInterface.device_theme = THEME_SYNDICATE
 		modularInterface.icon_state = "tablet-silicon-syndicate"
 	else
-		modularInterface.device_theme = THEME_NTOS
+		modularInterface.device_theme = THEME_NTOS_CYBORG
 		modularInterface.icon_state = "tablet-silicon"
 	modularInterface.update_icon()
 
@@ -385,7 +387,7 @@
 				deconstruct()
 
 	else if(istype(attacking_item, /obj/item/ai_module))
-		var/obj/item/ai_module/MOD = attacking_item
+		//var/obj/item/ai_module/MOD = attacking_item
 		if(!opened)
 			to_chat(user, span_warning("You need access to the robot's insides to do that!"))
 			return
@@ -404,7 +406,7 @@
 		if(!mind) //A player mind is required for law procs to run antag checks.
 			to_chat(user, span_warning("[src] is entirely unresponsive!"))
 			return
-		MOD.install(laws, user) //Proc includes a success mesage so we don't need another one
+		// TODO: MOD.install(laws, user) //Proc includes a success mesage so we don't need another one
 		return
 
 	else if(istype(attacking_item, /obj/item/encryptionkey/) && opened)
@@ -556,7 +558,7 @@
 			eye_lights.color = lamp_doom ? COLOR_RED : lamp_color
 			eye_lights.plane = ABOVE_LIGHTING_PLANE //glowy eyes
 		else
-			eye_lights.icon_state = "[model.special_light_key ? "[model.special_light_key]":"[model.cyborg_base_icon]"]_e[ratvar ? "_r" : ""]"
+			eye_lights.icon_state = "[model.special_light_key ? "[model.special_light_key]":"[model.cyborg_base_icon]"]_e"
 			eye_lights.color = COLOR_WHITE
 			eye_lights.plane = ABOVE_LIGHTING_PLANE //still glowy, but don't emit actual light
 		eye_lights.icon = icon
@@ -651,18 +653,6 @@
 	else
 		clear_alert("hacked")
 	set_modularInterface_theme()
-
-/mob/living/silicon/robot/proc/SetRatvar(new_state, rebuild=TRUE)
-	ratvar = new_state
-	if(rebuild)
-		model.rebuild_modules()
-	update_icons()
-	if(ratvar)
-		internal_clock_slab = new(src)
-		throw_alert("ratvar", /atom/movable/screen/alert/ratvar)
-	else
-		qdel(internal_clock_slab)
-		clear_alert("ratvar")
 
 /**
   * Handles headlamp smashing
@@ -1047,7 +1037,10 @@
 	connected_ai = mainframe
 	mainframe.connected_robots |= src
 	lawupdate = TRUE
-	lawsync()
+	// Inherit the AI's lawsync address so we sync from the same server
+	lawsync_address = AI.lawsync_address
+	sync_laws_from_law_server()
+	picturesync()
 	if(radio && AI.radio) //AI keeps all channels, including Syndie if it is a Traitor
 		if(AI.radio.syndie)
 			radio.make_syndie()
@@ -1089,7 +1082,7 @@
 	diag_hud_set_aishell()
 	mainframe.diag_hud_set_deployed()
 	if(mainframe.laws)
-		mainframe.laws.show_laws(mainframe) //Always remind the AI when switching
+		mainframe.show_laws() //Always remind the AI when switching
 	if(!mainframe.eyeobj)
 		mainframe.create_eye()
 	mainframe.eyeobj.setLoc(get_turf(src))
@@ -1137,7 +1130,10 @@
 	connected_ai = select_active_ai_with_fewest_borgs()
 	if(connected_ai)
 		connected_ai.connected_robots += src
-		lawsync()
+		// Inherit the AI's lawsync address so we sync from the same server
+		lawsync_address = connected_ai.lawsync_address
+		sync_laws_from_law_server()
+		picturesync()
 		lawupdate = TRUE
 		wires.ui_update()
 		return TRUE

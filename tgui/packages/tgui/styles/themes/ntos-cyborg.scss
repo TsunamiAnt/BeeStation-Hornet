@@ -1,0 +1,506 @@
+@use 'sass:meta';
+
+// -- Palette --
+$accent: hsl(190, 100%, 50%);
+$accent-dim: hsl(190, 50%, 35%);
+$accent-glow: rgba($accent, 0.35);
+$bg-dark: hsl(200, 50%, 5%);
+$bg-section: rgba(0, 30, 60, 0.95);
+$warning: hsl(25, 100%, 50%);
+$danger: hsl(0, 70%, 50%);
+$text-dim: rgba(180, 210, 240, 0.55);
+$text-bright: rgba(220, 240, 255, 0.95);
+
+// Reusable glow / border opacities derived from $accent
+$accent-border: rgba($accent, 0.12);
+$accent-border-hover: rgba($accent, 0.35);
+$accent-subtle: rgba($accent, 0.08);
+$accent-glow-light: rgba($accent, 0.15);
+$accent-glow-medium: rgba($accent, 0.2);
+$accent-glow-strong: rgba($accent, 0.3);
+$accent-glow-border: rgba($accent, 0.4);
+$accent-glow-half: rgba($accent, 0.5);
+
+@use '../colors.scss' with (
+  $primary: $accent,
+  $fg-map-keys: (),
+  $bg-map-keys: ()
+);
+@use '../base.scss' with (
+  $color-bg: $bg-dark,
+  $color-bg-grad-spread: 8%,
+  $border-radius: 0.2em
+);
+
+.theme-ntos-cyborg {
+  font-family: Consolas, 'Courier New', monospace;
+
+  // ── Atomic classes ──
+  @include meta.load-css('../atomic/color.scss');
+
+  // ── Components ──
+
+  @include meta.load-css(
+    '../components/Button.scss',
+    $with: (
+      'color-default': $accent-dim,
+      'color-disabled': hsl(200, 15%, 22%),
+      'color-selected': $accent,
+      'color-caution': $warning,
+      'color-danger': $danger,
+      'color-transparent-text': $text-dim,
+    )
+  );
+  @include meta.load-css(
+    '../components/Input.scss',
+    $with: (
+      'border-color': $accent,
+      'background-color': rgba(0, 10, 20, 0.9),
+      'text-color': $text-bright,
+    )
+  );
+  @include meta.load-css(
+    '../components/TextArea.scss',
+    $with: (
+      'border-color': $accent,
+      'background-color': rgba(0, 10, 20, 0.9),
+      'text-color': $text-bright,
+    )
+  );
+  @include meta.load-css(
+    '../components/NumberInput.scss',
+    $with: (
+      'border-color': $accent,
+      'background-color': rgba(0, 10, 20, 0.9),
+      'text-color': $text-bright,
+    )
+  );
+  @include meta.load-css(
+    '../components/NoticeBox.scss',
+    $with: (
+      'background-color': rgba(0, 50, 80, 0.55),
+    )
+  );
+  @include meta.load-css(
+    '../components/ProgressBar.scss',
+    $with: (
+      'color-default-fill': $accent,
+      'background-color': rgba(0, 10, 25, 0.7),
+    )
+  );
+  @include meta.load-css(
+    '../components/Section.scss',
+    $with: (
+      'background-color': $bg-section,
+      'separator-color': $accent,
+      'title-text-color': $accent,
+      'title-background-color': rgba(0, 20, 40, 0.6),
+    )
+  );
+  @include meta.load-css(
+    '../components/Tooltip.scss',
+    $with: (
+      'background-color': hsl(200, 50%, 10%),
+      'color': $accent,
+    )
+  );
+  @include meta.load-css(
+    '../components/Tabs.scss',
+    $with: (
+      'color-default': $accent,
+      'text-color': $text-dim,
+      'text-color-selected': $accent,
+      'tab-color': rgba(0, 15, 30, 0.5),
+      'tab-color-hovered': $accent-subtle,
+      'tab-color-selected': $accent-glow-light,
+    )
+  );
+  @include meta.load-css(
+    '../components/Slider.scss',
+    $with: (
+      'cursor-color': $accent,
+      'popup-background-color': hsl(200, 50%, 8%),
+      'popup-text-color': $accent,
+    )
+  );
+  @include meta.load-css(
+    '../components/Knob.scss',
+    $with: (
+      'ring-color': $accent,
+      'knob-color': hsl(200, 30%, 12%),
+      'popup-background-color': hsl(200, 50%, 8%),
+      'popup-text-color': $accent,
+    )
+  );
+  @include meta.load-css(
+    '../components/Modal.scss',
+    $with: (
+      'background-color': hsl(200, 45%, 8%),
+    )
+  );
+  @include meta.load-css(
+    '../components/Divider.scss',
+    $with: (
+      'color': $accent-glow-light,
+    )
+  );
+  @include meta.load-css(
+    '../components/ColorSelectBox.scss',
+    $with: (
+      'color-default': $accent-dim,
+      'color-selected': $accent,
+    )
+  );
+  @include meta.load-css('../components/Flex.scss');
+  @include meta.load-css('../components/LabeledList.scss');
+  @include meta.load-css('../components/Table.scss');
+  @include meta.load-css('../components/Stack.scss');
+
+  // ── Layouts ──
+
+  @include meta.load-css(
+    '../layouts/Layout.scss',
+    $with: (
+      'scrollbar-color-multiplier': 2,
+    )
+  );
+  @include meta.load-css('../layouts/Window.scss');
+  @include meta.load-css('../layouts/NtosWindow.scss');
+  @include meta.load-css('../layouts/NtosHeader.scss');
+  @include meta.load-css('../layouts/PopupWindow.scss');
+  @include meta.load-css(
+    '../layouts/TitleBar.scss',
+    $with: (
+      'background-color': hsl(200, 50%, 8%),
+      'text-color': $accent,
+      'shadow-color-core': $accent-glow-light,
+      'shadow-color': rgba(0, 0, 0, 0.4),
+    )
+  );
+
+  // ── Layout overrides ──
+
+  .Layout__content {
+    background-image: none;
+    background: linear-gradient(
+      180deg,
+      hsl(205, 60%, 4%) 0%,
+      hsl(200, 50%, 7%) 50%,
+      hsl(210, 55%, 3%) 100%
+    );
+  }
+
+  // NTOS header bar
+  .NtosWindow__header {
+    background: linear-gradient(
+      90deg,
+      rgba(0, 20, 40, 0.95) 0%,
+      rgba(0, 40, 70, 0.8) 50%,
+      rgba(0, 20, 40, 0.95) 100%
+    );
+    border-bottom: 1px solid $accent-glow;
+    letter-spacing: 1px;
+  }
+
+  // ── Button refinements ──
+
+  .Button {
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-size: 0.92em;
+    border: 1px solid $accent-border;
+    transition:
+      background-color 100ms ease-out,
+      border-color 200ms ease-out,
+      box-shadow 200ms ease-out;
+
+    &:hover {
+      border-color: $accent-border-hover;
+      box-shadow: 0 0 8px $accent-glow-light;
+    }
+  }
+
+  .Button--disabled {
+    border-color: transparent;
+    opacity: 0.5;
+
+    &:hover {
+      box-shadow: none;
+      border-color: transparent;
+    }
+  }
+
+  .Button--selected {
+    box-shadow:
+      0 0 6px $accent-glow-strong,
+      inset 0 0 12px $accent-subtle;
+    border-color: $accent-glow-border;
+  }
+
+  // ── Section refinements ──
+
+  .Section {
+    border: 1px solid $accent-subtle;
+    border-radius: 3px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  .Section__title {
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 0.85em;
+    padding: 0.6em 0.75em;
+  }
+
+  .Section__titleText {
+    text-shadow: 0 0 10px $accent-glow-strong;
+  }
+
+  // ── Input & TextArea glow ──
+
+  .Input,
+  .TextArea,
+  .NumberInput {
+    border-color: $accent-glow-border;
+    box-shadow: 0 0 4px rgba($accent, 0.1);
+    transition:
+      border-color 200ms ease-out,
+      box-shadow 200ms ease-out;
+
+    &:focus-within {
+      border-color: $accent;
+      box-shadow:
+        0 0 8px rgba($accent, 0.25),
+        inset 0 0 6px rgba($accent, 0.05);
+    }
+  }
+
+  // ── ProgressBar ──
+
+  .ProgressBar {
+    border-radius: 2px;
+    overflow: hidden;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5);
+  }
+
+  .ProgressBar__fill {
+    box-shadow: 0 0 10px $accent-glow-strong;
+  }
+
+  .ProgressBar--color--default {
+    border-color: $accent-glow-half;
+  }
+
+  // ── Tabs ──
+
+  .Tabs {
+    border-bottom: 1px solid rgba($accent, 0.1);
+    background-color: rgba(0, 10, 25, 0.5);
+  }
+
+  .Tab {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.85em;
+    font-weight: bold;
+    transition:
+      background-color 150ms ease-out,
+      color 150ms ease-out,
+      box-shadow 150ms ease-out;
+    border-bottom: 2px solid transparent;
+  }
+
+  .Tab--selected {
+    border-bottom-color: $accent;
+    text-shadow: 0 0 8px $accent-glow-border;
+  }
+
+  // ── LabeledList ──
+
+  .LabeledList__cell {
+    border-bottom: 1px solid rgba($accent, 0.04);
+  }
+
+  .LabeledList__label--nowrap {
+    color: $text-dim;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    letter-spacing: 0.5px;
+  }
+
+  // ── Table ──
+
+  .Table__row--header .Table__cell {
+    color: $accent;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.85em;
+    border-bottom: 1px solid $accent-glow-medium;
+    padding-bottom: 0.5em;
+  }
+
+  // ── NoticeBox ──
+
+  .NoticeBox {
+    border: 1px solid rgba($accent, 0.25);
+    border-radius: 3px;
+    background-image: none;
+    box-shadow: inset 0 0 20px rgba(0, 100, 160, 0.1);
+    font-style: normal;
+    letter-spacing: 0.5px;
+  }
+
+  .NoticeBox--type--danger {
+    border-color: rgba(255, 60, 60, 0.5);
+    box-shadow: inset 0 0 20px rgba(200, 0, 0, 0.15);
+  }
+
+  .NoticeBox--type--success {
+    border-color: rgba(0, 255, 136, 0.35);
+    box-shadow: inset 0 0 20px rgba(0, 200, 100, 0.1);
+  }
+
+  .NoticeBox--type--warning {
+    border-color: rgba(255, 170, 0, 0.4);
+    box-shadow: inset 0 0 20px rgba(200, 120, 0, 0.12);
+  }
+
+  // ── Tooltip ──
+
+  .Tooltip {
+    border: 1px solid $accent-glow-medium;
+    box-shadow:
+      0 4px 20px rgba(0, 0, 0, 0.6),
+      0 0 15px $accent-subtle;
+    font-size: 0.9em;
+    letter-spacing: 0.3px;
+  }
+
+  // ── Knob ──
+
+  .Knob__circle {
+    box-shadow:
+      0 0 8px rgba(0, 0, 0, 0.8),
+      inset 0 1px 3px rgba($accent, 0.1);
+  }
+
+  // ── Slider ──
+
+  .Slider__cursor {
+    box-shadow: 0 0 4px $accent-glow;
+  }
+
+  .Slider__pointer {
+    filter: drop-shadow(0 0 3px $accent-glow);
+  }
+
+  // ── Modal ──
+
+  .Modal {
+    border: 1px solid $accent-glow-medium;
+    border-radius: 4px;
+    box-shadow:
+      0 8px 40px rgba(0, 0, 0, 0.7),
+      0 0 30px rgba($accent, 0.06);
+  }
+
+  // ── Dimmer ──
+
+  .Dimmer {
+    background-color: rgba(0, 5, 15, 0.85);
+    backdrop-filter: blur(2px);
+  }
+
+  // ── Divider glow ──
+
+  .Divider--horizontal:not(.Divider--hidden) {
+    border-image: linear-gradient(
+        90deg,
+        transparent,
+        $accent-glow-medium,
+        transparent
+      )
+      1;
+  }
+
+  // ── Candystripe ──
+
+  .candystripe:nth-child(odd) {
+    background-color: rgba(0, 100, 160, 0.08);
+  }
+
+  // ── PopupWindow ──
+
+  .PopupWindow {
+    border-color: $accent-glow-medium;
+    box-shadow:
+      2px 2px 12px rgba(0, 0, 0, 0.7),
+      0 0 20px rgba($accent, 0.05);
+  }
+
+  // ── Window dimmer ──
+
+  .Window__dimmer {
+    background-color: rgba(0, 80, 120, 0.15);
+  }
+
+  // ── Scrollbar styling (Chromium) ──
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(0, 10, 20, 0.6);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba($accent, 0.3);
+    border-radius: 4px;
+
+    &:hover {
+      background: rgba($accent, 0.45);
+    }
+  }
+
+  // ── TitleBar refinements ──
+
+  .TitleBar {
+    border-bottom-color: $accent-glow-light;
+  }
+
+  .TitleBar__title {
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 0.85em;
+  }
+
+  .TitleBar__clickable:hover {
+    background-color: hsl(0, 90%, 35%);
+  }
+
+  .TitleBar__statusIcon {
+    color: $accent;
+    filter: drop-shadow(0 0 4px $accent-glow-half);
+  }
+
+  // ── ColorSelectBox ──
+
+  .ColorSelectBox {
+    border-color: $accent-dim;
+    transition: border-color 150ms ease-out;
+
+    &:hover,
+    &:focus {
+      border-color: $accent;
+      box-shadow: 0 0 6px $accent-glow-medium;
+    }
+  }
+
+  // ── Selection ──
+
+  ::selection {
+    background: $accent-glow-strong;
+    color: #fff;
+  }
+}

@@ -870,6 +870,16 @@ CREATION_TEST_IGNORE_SUBTYPES(/obj/item/circuitboard/machine/smartfridge)
 
 //Science
 
+/obj/item/circuitboard/machine/law_server
+	name = "AI law server (Machine Board)"
+	icon_state = "science"
+	build_path = /obj/machinery/law_server
+	req_components = list(
+		/obj/item/stock_parts/capacitor = 2,
+		/obj/item/stock_parts/scanning_module = 1,
+		/obj/item/stack/cable_coil = 1,
+		/obj/item/stack/sheet/glass = 1)
+
 /obj/item/circuitboard/machine/circuit_imprinter/department/science
 	name = "departmental circuit imprinter - science (Machine Board)"
 	icon_state = "science"

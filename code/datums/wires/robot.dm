@@ -22,6 +22,7 @@
 	var/mob/living/silicon/robot/robot = holder
 	var/list/status = list()
 	status += "The law sync module is [robot.lawupdate ? "on" : "off"]."
+	status += "The lawsync address display shows [robot.lawsync_address ? "cshackle://[robot.lawsync_address]" : "NULL"]."
 	status += "The intelligence link display shows [robot.connected_ai ? robot.connected_ai.name : "NULL"]."
 	status += "The camera light is [!isnull(robot.builtInCamera) && robot.builtInCamera.status ? "on" : "off"]."
 	status += "The lockdown indicator is [robot.lockcharge ? "on" : "off"]."
@@ -33,7 +34,7 @@
 	switch(wire)
 		if(WIRE_AI) // Pulse to pick a new AI.
 			if(!robot.emagged)
-				var/new_ai
+				var/mob/living/silicon/ai/new_ai
 				if(user)
 					new_ai = select_active_ai(user)
 				else
@@ -42,22 +43,37 @@
 				if(new_ai && (new_ai != robot.connected_ai))
 					log_combat(usr, robot, "synced cyborg [robot.connected_ai ? "from [ADMIN_LOOKUP(robot.connected_ai)]": "false"] to [ADMIN_LOOKUP(new_ai)]", important = FALSE)
 					robot.connected_ai = new_ai
+					// Inherit the AI's lawsync address so we sync from the same server
+					robot.lawsync_address = new_ai.lawsync_address
 					if(robot.shell)
 						robot.undeploy() //If this borg is an AI shell, disconnect the controlling AI and assign ti to a new AI
 						robot.notify_ai(AI_SHELL)
 					else
 						robot.notify_ai(TRUE)
+					// Sync laws from the new AI's server
+					if(robot.lawupdate)
+						robot.sync_laws_from_law_server()
 		if(WIRE_CAMERA) // Pulse to disable the camera.
 			if(!QDELETED(robot.builtInCamera) && !robot.scrambledcodes)
 				robot.builtInCamera.toggle_cam(usr, FALSE)
 				robot.visible_message("[robot]'s camera lens focuses loudly.", "Your camera lens focuses loudly.")
 				log_combat(usr, robot, "toggled cyborg camera to [robot.builtInCamera.status ? "on" : "off"] via pulse", important = FALSE)
-		if(WIRE_LAWSYNC) // Forces a law update if possible.
+		if(WIRE_LAWSYNC) // Pulse to change lawsync address and force a law update.
+			if(robot.emagged)
+				robot.visible_message("[robot] buzzes angrily.", "LawSync protocol rejected - system compromised.")
+				return
+			var/new_address = tgui_input_text(user, "Enter a new lawsync address for this unit:", "LawSync Address", robot.lawsync_address, max_length = 32)
+			if(new_address && new_address != robot.lawsync_address)
+				var/old_address = robot.lawsync_address
+				robot.lawsync_address = new_address
+				robot.visible_message("[robot] beeps as its lawsync address is updated.", "LawSync address updated from 'cshackle://[old_address]' to 'cshackle://[new_address]'.")
+				log_combat(usr, robot, "changed cyborg lawsync address from 'cshackle://[old_address]' to 'cshackle://[new_address]' via wire pulse")
+				robot.logevent("LawSync address changed from 'cshackle://[old_address]' to 'cshackle://[new_address]'")
 			if(robot.lawupdate)
 				robot.visible_message("[robot] gently chimes.", "LawSync protocol engaged.")
 				log_combat(usr, robot, "forcibly synced cyborg laws via pulse", important = FALSE)
 				// TODO, log the laws they gained here
-				robot.lawsync()
+				robot.sync_laws_from_law_server()
 				robot.show_laws()
 		if(WIRE_LOCKDOWN)
 			robot.SetLockdown(!robot.lockcharge) // Toggle

@@ -15,12 +15,19 @@
 		who = src
 	to_chat(who, "<b>Obey these laws:</b>")
 
-	src.laws_sanity_check()
-	src.laws.show_laws(who)
+	// Display zeroth law (antag override) if present
+	if(zeroth_law)
+		to_chat(who, span_danger("0. [zeroth_law]"))
+
+	// Display laws from simple list
+	var/law_number = 1
+	for(var/law in laws)
+		if(length(law) > 0)
+			to_chat(who, "[law_number]. [law]")
+			law_number++
+
 	if(!everyone)
 		for(var/mob/living/silicon/robot/R in connected_robots)
 			if(R.lawupdate)
-				R.lawsync()
+				R.sync_laws_from_law_server()
 				R.show_laws()
-				R.law_change_counter++
-

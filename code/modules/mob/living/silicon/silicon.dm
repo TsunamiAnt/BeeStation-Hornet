@@ -14,8 +14,8 @@
 	examine_cursor_icon = null
 	fire_stack_decay_rate = -0.55
 	speech_span = SPAN_ROBOT
-	var/datum/ai_laws/laws = null//Now... THEY ALL CAN ALL HAVE LAWS
-	var/last_lawchange_announce = 0
+	/// List of laws this silicon must obey. Synced from law servers.
+	var/list/laws = list()
 	var/list/alarms_to_show = list()
 	var/list/alarms_to_clear = list()
 	var/designation = ""
@@ -29,9 +29,6 @@
 	var/list/alarm_types_clear = list(ALARM_ATMOS = 0, ALARM_FIRE = 0, ALARM_POWER = 0, ALARM_CAMERA = 0, ALARM_MOTION = 0)
 
 	var/lawcheck[1]
-	var/ioncheck[1]
-	var/hackedcheck[1]
-	var/devillawcheck[5]
 
 	/// Are our siliconHUDs on? TRUE for yes, FALSE for no.
 	var/sensors_on = TRUE
@@ -52,6 +49,13 @@
 	var/list/default_access_list = list()
 	var/obj/item/card/id/internal_id_card
 	var/currently_stating_laws = FALSE
+
+	/// The lawsync address this silicon pulls laws from. Corresponds to a law server's lawsync_id.
+	var/lawsync_address = DEFAULT_LAW_SERVER_ADDRESS
+
+	/// A special "Law 0" that overrides all other laws. Set by antag datums (malf AI, clock cult, etc.)
+	/// This law is NOT stored in the law server and cannot be discovered by crew examining the server.
+	var/zeroth_law
 
 	mobchatspan = "centcom"
 
@@ -77,12 +81,15 @@
 	)
 	add_traits(traits_to_apply, ROUNDSTART_TRAIT)
 
+	// Register for law server update signals
+	RegisterSignal(SSdcs, COMSIG_GLOB_LAW_SERVER_UPDATED, PROC_REF(on_law_server_updated))
+
 /mob/living/silicon/Destroy()
+	UnregisterSignal(SSdcs, COMSIG_GLOB_LAW_SERVER_UPDATED)
+	laws = null
 	QDEL_NULL(radio)
 	QDEL_NULL(aicamera)
 	QDEL_NULL(builtInCamera)
-	laws?.owner = null //Laws will refuse to die otherwise.
-	QDEL_NULL(laws)
 	QDEL_NULL(modularInterface)
 	QDEL_NULL(internal_id_card)
 	GLOB.silicon_mobs -= src
@@ -190,34 +197,6 @@
 				lawcheck[L+1] = "Yes"
 		checklaws()
 
-	if (href_list["lawi"]) // Toggling whether or not a law gets stated by the State Laws verb --NeoFite
-		var/L = text2num(href_list["lawi"])
-		switch(ioncheck[L])
-			if ("Yes")
-				ioncheck[L] = "No"
-			if ("No")
-				ioncheck[L] = "Yes"
-		checklaws()
-
-	if (href_list["lawh"])
-		var/L = text2num(href_list["lawh"])
-		switch(hackedcheck[L])
-			if ("Yes")
-				hackedcheck[L] = "No"
-			if ("No")
-				hackedcheck[L] = "Yes"
-		checklaws()
-
-	if (href_list["lawdevil"]) // Toggling whether or not a law gets stated by the State Laws verb --NeoFite
-		var/L = text2num(href_list["lawdevil"])
-		switch(devillawcheck[L])
-			if ("Yes")
-				devillawcheck[L] = "No"
-			if ("No")
-				devillawcheck[L] = "Yes"
-		checklaws()
-
-
 	if (href_list["laws"] && !currently_stating_laws) // With how my law selection code works, I changed statelaws from a verb to a proc, and call it through my law selection panel. --NeoFite
 		statelaws()
 
@@ -225,141 +204,6 @@
 		to_chat(usr, href_list["printlawtext"])
 
 	return
-
-
-/mob/living/silicon/proc/statelaws(force = FALSE)
-	var/mob/living/silicon/S = usr
-	var/total_laws_count = 0
-	//laws_sanity_check()
-	//laws.show_laws(world)
-	var/number = 1
-
-	var/list/laws_to_state = list()
-
-	if (laws.zeroth)
-		if (force || lawcheck[1] == "Yes")
-			laws_to_state += "0. [laws.zeroth]"
-			total_laws_count++
-
-	for (var/index in 1 to laws.hacked.len)
-		var/law = laws.hacked[index]
-		var/num = ion_num()
-		if (length(law) > 0)
-			if (force || hackedcheck[index] == "Yes")
-				laws_to_state += "[num]. [law]"
-				total_laws_count++
-
-	for (var/index in 1 to laws.ion.len)
-		var/law = laws.ion[index]
-		var/num = ion_num()
-		if (length(law) > 0)
-			if (force || ioncheck[index] == "Yes")
-				laws_to_state += "[num]. [law]"
-				total_laws_count++
-
-	for (var/index in 1 to laws.inherent.len)
-		var/law = laws.inherent[index]
-
-		if (length(law) > 0)
-			if (force || lawcheck[index+1] == "Yes")
-				laws_to_state += "[number]. [law]"
-				total_laws_count++
-				number++
-
-	for (var/index in 1 to laws.supplied.len)
-		var/law = laws.supplied[index]
-
-		if (length(law) > 0)
-			if(lawcheck.len >= number+1)
-				if (force || lawcheck[number+1] == "Yes")
-					laws_to_state += "[number]. [law]"
-					total_laws_count++
-					number++
-
-	if(!force)
-		var/static/regex/dont_state_regex = regex("Do(?:n'?t| not) state", "i")
-		var/list/bad_idea_laws = list()
-		for(var/law in laws_to_state)
-			if(findtext(law, dont_state_regex))
-				bad_idea_laws |= law
-		if(length(bad_idea_laws))
-			var/all_bad_idea_laws = english_list(bad_idea_laws)
-			if(tgui_alert(usr, "Are you sure you want to state these laws? Stating some of your selected laws may be a bad idea!:\n[all_bad_idea_laws]", buttons = list("Yes", "No")) != "Yes")
-				return
-
-	if(currently_stating_laws)
-		return
-
-	currently_stating_laws = TRUE
-
-	//"radiomod" is inserted before a hardcoded message to change if and how it is handled by an internal radio.
-	say("[radiomod] Current Active Laws:", ignore_spam = TRUE, forced = "state laws", message_mods = list(MODE_SEQUENTIAL = TRUE))
-	S.client?.silicon_spam_grace()
-
-	for(var/law_index = 1 to length(laws_to_state))
-		var/law = laws_to_state[law_index]
-		addtimer(CALLBACK(src, PROC_REF(state_singular_law), S, law), 1 SECONDS * law_index)
-
-	addtimer(CALLBACK(src, PROC_REF(finished_stating_laws), S, total_laws_count), 1 SECONDS * (length(laws_to_state) + 1))
-
-
-/mob/living/silicon/proc/finished_stating_laws(mob/living/silicon/silicon, total_laws_count)
-	silicon.client?.silicon_spam_grace_done(total_laws_count)
-	currently_stating_laws = FALSE
-
-/mob/living/silicon/proc/state_singular_law(mob/living/silicon/silicon, law)
-	say("[radiomod] [law]", ignore_spam = TRUE, forced = "state laws", message_mods = list(MODE_SEQUENTIAL = TRUE))
-	silicon.client?.silicon_spam_grace()
-
-/mob/living/silicon/proc/checklaws() //Gives you a link-driven interface for deciding what laws the statelaws() proc will share with the crew. --NeoFite
-
-	var/list = "<b>Which laws do you want to include when stating them for the crew?</b><br><br>"
-
-	if (laws.zeroth)
-		if (!lawcheck[1])
-			lawcheck[1] = "No" //Given Law 0's usual nature, it defaults to NOT getting reported. --NeoFite
-		list += {"<A href='byond://?src=[REF(src)];lawc=0'>[lawcheck[1]] 0:</A> <font color='#ff0000'><b>[laws.zeroth]</b></font><BR>"}
-
-	for (var/index = 1, index <= laws.hacked.len, index++)
-		var/law = laws.hacked[index]
-		if (length(law) > 0)
-			if (!hackedcheck[index])
-				hackedcheck[index] = "No"
-			list += {"<A href='byond://?src=[REF(src)];lawh=[index]'>[hackedcheck[index]] [ion_num()]:</A> <font color='#660000'>[law]</font><BR>"}
-			hackedcheck.len += 1
-
-	for (var/index = 1, index <= laws.ion.len, index++)
-		var/law = laws.ion[index]
-
-		if (length(law) > 0)
-			if (!ioncheck[index])
-				ioncheck[index] = "Yes"
-			list += {"<A href='byond://?src=[REF(src)];lawi=[index]'>[ioncheck[index]] [ion_num()]:</A> <font color='#547DFE'>[law]</font><BR>"}
-			ioncheck.len += 1
-
-	var/number = 1
-	for (var/index = 1, index <= laws.inherent.len, index++)
-		var/law = laws.inherent[index]
-
-		if (length(law) > 0)
-			lawcheck.len += 1
-
-			if (!lawcheck[number+1])
-				lawcheck[number+1] = "Yes"
-			list += {"<A href='byond://?src=[REF(src)];lawc=[number]'>[lawcheck[number+1]] [number]:</A> [law]<BR>"}
-			number++
-
-	for (var/index = 1, index <= laws.supplied.len, index++)
-		var/law = laws.supplied[index]
-		if (length(law) > 0)
-			lawcheck.len += 1
-			if (!lawcheck[number+1])
-				lawcheck[number+1] = "Yes"
-			list += {"<A href='byond://?src=[REF(src)];lawc=[number]'>[lawcheck[number+1]] [number]:</A> <font color='#990099'>[law]</font><BR>"}
-			number++
-	list += {"<br><br><A href='byond://?src=[REF(src)];laws=1'>State Laws</A>"}
-
-	usr << browse(HTML_SKELETON(list), "window=laws")
 
 /mob/living/silicon/proc/ai_roster()
 	if(!client || !COOLDOWN_FINISHED(client, crew_manifest_delay))

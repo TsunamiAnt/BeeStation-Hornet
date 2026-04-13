@@ -52,7 +52,6 @@ export const NtosCyborgSelfMonitorContent = (_) => {
   } = data;
   const borgName = data.name || [];
   const borgType = data.designation || [];
-  const masterAI = data.masterAI || [];
   const laws = data.Laws || [];
   const borgLog = data.borgLog || [];
   const borgUpgrades = data.borgUpgrades || [];
@@ -88,8 +87,17 @@ export const NtosCyborgSelfMonitorContent = (_) => {
                     {borgName.slice(0, 17)}
                   </LabeledList.Item>
                   <LabeledList.Item label="Type">{borgType}</LabeledList.Item>
-                  <LabeledList.Item label="AI">
-                    {masterAI.slice(0, 17)}
+                  <LabeledList.Item
+                    label="LawSync"
+                    color={wireLaw === 'FAULT' ? 'red' : 'green'}
+                  >
+                    {wireLaw}
+                  </LabeledList.Item>
+                  <LabeledList.Item label="Server">
+                    {data.lawsyncAddress ? data.lawsyncAddress : '---'}
+                  </LabeledList.Item>
+                  <LabeledList.Item label="Linked AI">
+                    {data.masterAI ? data.masterAI : '---'}
                   </LabeledList.Item>
                 </LabeledList>
               </Section>
@@ -266,6 +274,9 @@ export const NtosCyborgSelfMonitorContent = (_) => {
                     >
                       {wireLaw}
                     </LabeledList.Item>
+                    <LabeledList.Item label="LawSync Address">
+                      {data.lawsyncAddress ? data.lawsyncAddress : '---'}
+                    </LabeledList.Item>
                     <LabeledList.Item
                       label="Camera"
                       color={
@@ -337,10 +348,10 @@ export const NtosCyborgSelfMonitorContent = (_) => {
       )}
       {tab_main === 2 && (
         <Flex.Item height={40}>
-          <Section fill scrollable backgroundColor="black">
+          <Section fill scrollable>
             {borgLog.map((log) => (
-              <Box mb={1} key={log}>
-                <font color="green">{log}</font>
+              <Box mb={1} key={log} color="good">
+                {log}
               </Box>
             ))}
           </Section>

@@ -22,7 +22,7 @@ export const RoboticsControlConsole = (props) => {
     uploads = [],
   } = data;
   return (
-    <Window width={500} height={460}>
+    <Window width={500} height={460} theme="ntos-cyborg">
       <Window.Content scrollable>
         <Tabs>
           <Tabs.Tab

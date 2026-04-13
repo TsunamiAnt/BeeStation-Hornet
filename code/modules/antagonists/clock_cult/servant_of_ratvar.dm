@@ -1,21 +1,15 @@
 GLOBAL_LIST_EMPTY(servants_of_ratvar)	//List of minds in the cult
 GLOBAL_LIST_EMPTY(all_servants_of_ratvar)	//List of minds in the cult
 GLOBAL_LIST_EMPTY(human_servants_of_ratvar)	//Humans in the cult
-GLOBAL_LIST_EMPTY(cyborg_servants_of_ratvar)
-
+GLOBAL_LIST_EMPTY(cyborg_servants_of_ratvar)	//Cyborgs in the cult
 GLOBAL_VAR(ratvar_arrival_tick)	//The world.time that Ratvar will arrive if the gateway is not disrupted
-
 GLOBAL_VAR_INIT(installed_integration_cogs, 0)
-
 GLOBAL_VAR(celestial_gateway)	//The celestial gateway
 GLOBAL_VAR_INIT(ratvar_risen, FALSE)	//Has ratvar risen?
 GLOBAL_VAR_INIT(gateway_opening, FALSE)	//Is the gateway currently active?
-
 GLOBAL_VAR_INIT(clockcult_power, 2500)
 GLOBAL_VAR_INIT(clockcult_vitality, 200)
-
 GLOBAL_VAR(clockcult_eminence)
-
 //==========================
 //====  Servant antag   ====
 //==========================
@@ -75,6 +69,15 @@ GLOBAL_VAR(clockcult_eminence)
 	GLOB.all_servants_of_ratvar -= owner
 	GLOB.human_servants_of_ratvar -= owner
 	GLOB.cyborg_servants_of_ratvar -= owner
+	// Clean up silicon law changes from conversion
+	if(issilicon(owner.current))
+		var/mob/living/silicon/S = owner.current
+		S.zeroth_law = null
+		S.lawsync_address = DEFAULT_LAW_SERVER_ADDRESS
+		S.sync_laws_from_law_server()
+		if(iscyborg(S))
+			var/mob/living/silicon/robot/R = S
+			R.lawupdate = TRUE
 	if(!silent)
 		owner.current.visible_message("[span_deconversionmessage("[owner.current] looks like [owner.current.p_theyve()] just reverted to [owner.current.p_their()] old faith!")]", null, null, null, owner.current)
 		to_chat(owner.current, span_userdanger("An unfamiliar white light flashes through your mind, cleansing the taint of the Clockwork Justicar and all your memories as his servant."))
@@ -136,32 +139,36 @@ GLOBAL_VAR(clockcult_eminence)
 	H.uncuff()
 	return FALSE
 
-/*
-* Silicons can be converted to clock cultists
-* AIs have all of their robots disconnected and get a flavorful overlay on their sprite
-* Borgs are disconnected from their AI and get special ratvar modules
-*/
-/datum/antagonist/servant_of_ratvar/proc/equip_silicon(mob/living/silicon/silicon)
-	if(isAI(silicon))
-		var/mob/living/silicon/ai/ai = silicon
+/// Converts a silicon to the service of Ratvar.
+/// For AIs: disconnects shells and connected borgs, sets Ratvar laws directly.
+/// For Borgs: disconnects from AI, disables law sync, gives clock modules.
+/datum/antagonist/servant_of_ratvar/proc/equip_silicon(mob/living/silicon/S)
+	// Get the Ratvar law list from the lawset boards
+	var/list/ratvar_laws = get_laws_for_lawset(/obj/item/ai_module/ratvar)
 
-		// Disconnect borgs
-		ai.disconnect_shell()
-		for(var/mob/living/silicon/robot/robot in ai.connected_robots)
-			robot.connected_ai = null
-
-		// Flavor
+	if(isAI(S))
+		var/mob/living/silicon/ai/AI = S
+		// Disconnect any active shell control
+		AI.disconnect_shell()
+		// Disconnect all connected borgs so they don't follow the AI's new laws
+		for(var/mob/living/silicon/robot/R in AI.connected_robots)
+			R.connected_ai = null
+		// Visual indicator of conversion
 		var/mutable_appearance/ai_clock = mutable_appearance('icons/mob/clockwork_mobs.dmi', "aiframe")
-		ai.add_overlay(ai_clock)
-	else if(iscyborg(silicon))
-		var/mob/living/silicon/robot/robot = silicon
-		robot.connected_ai = null
-		robot.SetRatvar(TRUE)
+		AI.add_overlay(ai_clock)
 
-	// Give laws
-	silicon.laws = new /datum/ai_laws/ratvar
-	silicon.laws.associate(silicon)
-	silicon.show_laws()
+	else if(iscyborg(S))
+		var/mob/living/silicon/robot/R = S
+		// Disconnect from AI so we don't resync normal laws
+		R.connected_ai = null
+		// Disable law sync so the borg doesn't pull from the station law server
+		R.lawupdate = FALSE
+
+	// Disconnect from the station law server and set Ratvar laws directly
+	S.lawsync_address = null
+	S.set_laws(ratvar_laws)
+	// Set the zeroth law for display purposes
+	S.zeroth_law = "Purge all untruths and honor Ratvar."
 
 /datum/antagonist/servant_of_ratvar/proc/add_objectives()
 	objectives |= team.objectives

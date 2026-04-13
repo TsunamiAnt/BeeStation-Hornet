@@ -1143,14 +1143,6 @@
 /obj/structure/shuttle/engine/heater,
 /turf/closed/wall/r_wall/syndicate,
 /area/shuttle/syndicate/hallway)
-"cN" = (
-/obj/effect/spawner/structure/window/reinforced/plasma/plastitanium,
-/obj/machinery/door/poddoor/shutters{
-	id = "syndieshutters";
-	name = "blast Shutters"
-	},
-/turf/open/floor/plating,
-/area/shuttle/syndicate/bridge)
 "cO" = (
 /obj/structure/shuttle/engine/propulsion,
 /obj/effect/turf_decal/stripes/line,
@@ -2061,6 +2053,14 @@
 /obj/machinery/airalarm/directional/north,
 /turf/open/floor/pod/dark,
 /area/shuttle/syndicate/armory)
+"rP" = (
+/obj/effect/spawner/structure/window/reinforced/plasma/plastitanium,
+/obj/machinery/door/poddoor/shutters{
+	id = "syndieshutters";
+	name = "blast Shutters"
+	},
+/turf/open/floor/plating,
+/area/shuttle/syndicate/bridge)
 "sr" = (
 /obj/machinery/door/poddoor{
 	id = "infiltrator_starboardblast";
@@ -2458,7 +2458,7 @@ ad
 ad
 "}
 (9,1,1) = {"
-cN
+rP
 ag
 an
 au

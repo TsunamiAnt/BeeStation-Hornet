@@ -198,6 +198,7 @@ CREATION_TEST_IGNORE_SUBTYPES(/obj/item/modular_computer/tablet/integrated)
 	name = "modular interface"
 	icon_state = "tablet-silicon"
 	icon_state_menu = "menu"
+	device_theme = THEME_NTOS_CYBORG
 	has_light = FALSE //tablet light button actually enables/disables the borg lamp
 	comp_light_luminosity = 0
 	///Ref to the silicon we're installed in. Set by the borg during our creation.

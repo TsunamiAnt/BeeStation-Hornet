@@ -54,24 +54,6 @@
 	category = list("Computer Boards")
 	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE
 
-/datum/design/board/aiupload
-	name = "Computer Design (AI Upload)"
-	desc = "Allows for the construction of circuit boards used to build an AI Upload Console."
-	id = "aiupload"
-	materials = list(/datum/material/glass = 1000, /datum/material/gold = 2000, /datum/material/copper = 300)
-	build_path = /obj/item/circuitboard/computer/aiupload
-	category = list("Computer Boards")
-	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE
-
-/datum/design/board/borgupload
-	name = "Computer Design (Cyborg Upload)"
-	desc = "Allows for the construction of circuit boards used to build a Cyborg Upload Console."
-	id = "borgupload"
-	materials = list(/datum/material/glass = 1000, /datum/material/gold = 2000, /datum/material/copper = 300)
-	build_path = /obj/item/circuitboard/computer/borgupload
-	category = list("Computer Boards")
-	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE
-
 /datum/design/board/records/medical
 	name = "Computer Design (Medical Records)"
 	desc = "Allows for the construction of circuit boards used to build a medical records console."

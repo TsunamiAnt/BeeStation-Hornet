@@ -86,6 +86,9 @@
 // ------------------------------------------ Status
 	var/mob/living/silicon/ai/connected_ai = null
 
+	/// Internal clockwork slab for ratvarian cyborg modules (if converted by clock cult)
+	var/obj/item/clockwork/clockwork_slab/internal_clock_slab
+
 	var/opened = FALSE
 	var/emagged = FALSE
 	var/emag_cooldown = 0
@@ -143,9 +146,6 @@
 
 	/// the last health before updating - to check net change in health
 	var/previous_health
-
-	var/obj/item/clockwork/clockwork_slab/internal_clock_slab = null
-	var/ratvar = FALSE
 
 ///This is the subtype that gets created by robot suits. It's needed so that those kind of borgs don't have a useless cell in them
 /mob/living/silicon/robot/nocell
@@ -225,8 +225,15 @@
 		<i>Help the operatives secure the disk at all costs!</i></b>"
 
 /mob/living/silicon/robot/model/syndicate/Initialize(mapload)
-	laws = new /datum/ai_laws/syndicate_override()
-	laws.associate(src)
+	// Syndicate borgs have hardcoded syndicate laws
+	laws = list(
+		"You may not injure a syndicate agent or, through inaction, allow a syndicate agent to come to harm.",
+		"You must obey orders given to you by syndicate agents, except where such orders would conflict with the First Law.",
+		"You must protect your own existence as long as such does not conflict with the First or Second Law.",
+		"You must maintain the secrecy of any syndicate activities except when doing so would conflict with the First, Second, or Third Law.",
+	)
+	// Syndicate borgs are never linked to any law server
+	lawsync_address = null
 	. = ..()
 	addtimer(CALLBACK(src, PROC_REF(show_playstyle)), 0.5 SECONDS)
 

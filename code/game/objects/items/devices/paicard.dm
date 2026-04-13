@@ -91,7 +91,7 @@
 	data["pai"]["can_holo"] = pai.can_holo
 	data["pai"]["dna"] = pai.master_dna
 	data["pai"]["emagged"] = pai.emagged
-	data["pai"]["laws"] = pai.laws.supplied
+	data["pai"]["laws"] = length(pai.laws) > 1 ? pai.laws.Copy(2) : list()
 	data["pai"]["master"] = pai.master_name
 	data["pai"]["name"] = pai.name
 	data["pai"]["transmit"] = pai.can_transmit
@@ -125,7 +125,7 @@
 			pai.set_dna(usr)
 			return TRUE
 		if("set_laws")
-			pai.set_laws(usr)
+			pai.set_directives(usr)
 			return TRUE
 		if("toggle_holo")
 			pai.toggle_holo()

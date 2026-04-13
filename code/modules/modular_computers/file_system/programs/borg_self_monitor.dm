@@ -70,6 +70,8 @@
 	data["wireAI"] = "[borgo.wires.is_cut(WIRE_AI)?"FAULT":"[borgo.connected_ai?"CONNECTED":"READY"]"]"
 	//Law sync wire. FAULT if cut, NOMINAL otherwise
 	data["wireLaw"] = "[borgo.wires.is_cut(WIRE_LAWSYNC)?"FAULT":"NOMINAL"]"
+	//Lawsync address - the law server address we're syncing from
+	data["lawsyncAddress"] = borgo.lawsync_address
 
 	return data
 
@@ -79,7 +81,7 @@
 		return data
 	var/mob/living/silicon/robot/borgo = user
 
-	data["Laws"] = borgo.laws.get_law_list(TRUE, TRUE, FALSE)
+	data["Laws"] = borgo.get_law_list()
 	data["borgLog"] = tablet.borglog
 	data["borgUpgrades"] = borgo.upgrades
 	return data

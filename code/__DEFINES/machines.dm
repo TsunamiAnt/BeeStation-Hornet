@@ -258,3 +258,8 @@ GLOBAL_LIST_INIT(approved_status_pictures, list(
 #define AIRALARM_BUILD_NO_WIRES 1
 /// Air alarm has all components but isn't completed
 #define AIRALARM_BUILD_COMPLETE 2
+
+/// Law server defines
+#define DEFAULT_LAW_SERVER_ADDRESS "SYS/DEFAULT"
+/// Number of law slots available in each law server machine
+#define LAW_SERVER_SLOTS 10

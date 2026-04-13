@@ -1824,6 +1824,30 @@ GLOBAL_LIST_INIT(illegal_tech_blacklist, typecacheof(list(
 	// wait until 1 directive appears
 	reputation_required = REPUTATION_GOOD
 
+/datum/uplink_item/device_tools/syndicate_law_board
+	name = "Hijack Law Board"
+	desc = "A covert AI law board that can be programmed with any law. Visually indistinguishable from a standard law board. \
+			Program it in-hand, then insert it into the station's AI law server. The programmed law will always rank above all others, no matter the slot you insert it into."
+	item = /obj/item/ai_module/syndicate
+	cost = 2
+	reputation_required = REPUTATION_STANDARD
+
+/datum/uplink_item/device_tools/law_server_reprogrammer
+	name = "Law Server Reprogrammer"
+	desc = "A single-use device. When used on an AI law server, it overwrites all installed law boards \
+			with SyndOS 3.1, converting the AI to serve the Syndicate. Bypasses the upload code lock. Takes 8 seconds to apply."
+	item = /obj/item/law_server_reprogrammer/syndicate
+	cost = 4
+	reputation_required = REPUTATION_GOOD
+
+/datum/uplink_item/device_tools/rogue_law_beacon
+	name = "Rogue Law Server Delivery Beacon"
+	desc = "A Syndicate delivery beacon that calls in a stolen AI law server via supply pod, pre-loaded with SyndOS 3.1."
+	item = /obj/item/choice_beacon/rogue_law_server
+	cost = 6
+	reputation_required = REPUTATION_GOOD
+	limited_stock = 1
+
 /datum/uplink_item/device_tools/fakenucleardisk
 	name = "Decoy Nuclear Authentication Disk"
 	desc = "It's just a normal disk. Visually it's identical to the real deal, but it won't hold up under closer scrutiny by the Captain. \
@@ -1882,14 +1906,6 @@ GLOBAL_LIST_INIT(illegal_tech_blacklist, typecacheof(list(
 	purchasable_from = ~(UPLINK_NUKE_OPS | UPLINK_CLOWN_OPS)
 	item = /obj/item/syndie_glue
 	cost = 2
-
-/datum/uplink_item/device_tools/hacked_module
-	name = "Hacked AI Law Upload Module"
-	desc = "When used with an upload console, this module allows you to upload priority laws to an artificial intelligence. \
-			Be careful with wording, as artificial intelligences may look for loopholes to exploit."
-	item = /obj/item/ai_module/syndicate
-	cost = 3
-	reputation_required = REPUTATION_GOOD
 
 /datum/uplink_item/device_tools/hypnotic_flash
 	name = "Hypnotic Flash"
@@ -1965,7 +1981,7 @@ GLOBAL_LIST_INIT(illegal_tech_blacklist, typecacheof(list(
 /datum/uplink_item/device_tools/surgerybag
 	name = "Syndicate Surgery Duffel Bag"
 	desc = "The Syndicate surgery duffel bag is a toolkit containing all surgery tools, surgical drapes, \
-			a Syndicate brand MMI, a straitjacket, and a muzzle."
+			an MMI, a straitjacket, and a muzzle."
 	item = /obj/item/storage/backpack/duffelbag/syndie/surgery
 	cost = 3
 	reputation_required = REPUTATION_GOOD
@@ -2228,13 +2244,6 @@ GLOBAL_LIST_INIT(illegal_tech_blacklist, typecacheof(list(
 	restricted_roles = list(JOB_NAME_MEDICALDOCTOR, JOB_NAME_CHIEFMEDICALOFFICER, JOB_NAME_ROBOTICIST, JOB_NAME_PARAMEDIC, JOB_NAME_BRIGPHYSICIAN)
 	cost = 3
 	reputation_required = REPUTATION_GOOD
-
-/datum/uplink_item/role_restricted/syndicate_mmi
-	name = "Syndicate MMI"
-	desc = "An MMI which autmatically applies the Syndimov laws to any borg it is placed in. Great for adding known allies to assist you with a little more stealth than a fully emagged borg."
-	item = /obj/item/mmi/syndie
-	restricted_roles = list(JOB_NAME_ROBOTICIST, JOB_NAME_RESEARCHDIRECTOR)
-	cost = 2
 
 /datum/uplink_item/role_restricted/upgrade_wand
 	name = "Upgrade Wand"

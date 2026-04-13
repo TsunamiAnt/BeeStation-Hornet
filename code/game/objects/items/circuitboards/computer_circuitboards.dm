@@ -1,16 +1,4 @@
 //Command boards
-
-
-/obj/item/circuitboard/computer/aiupload
-	name = "AI upload (Computer Board)"
-	icon_state = "command"
-	build_path = /obj/machinery/computer/upload/ai
-
-/obj/item/circuitboard/computer/borgupload
-	name = "cyborg upload (Computer Board)"
-	icon_state = "command"
-	build_path = /obj/machinery/computer/upload/borg
-
 /obj/item/circuitboard/computer/bsa_control
 	name = "bluespace artillery controls (Computer Board)"
 	icon_state = "command"

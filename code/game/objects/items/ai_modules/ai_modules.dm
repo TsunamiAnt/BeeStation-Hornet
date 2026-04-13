@@ -1,10 +1,12 @@
-///defined truthy result for `handle_unique_ai()`, which makes initialize return INITIALIZE_HINT_QDEL
+// AI Module - Law Boards
+
 #define SHOULD_QDEL_MODULE 1
 
 /obj/item/ai_module
-	name = "\improper AI module"
+	name = "\improper AI law board"
+	desc = "An AI law board for programming a single law to an AI."
 	icon = 'icons/obj/module.dmi'
-	icon_state = "std_mod"
+	icon_state = "lawdrive"
 	inhand_icon_state = "electronic"
 	lefthand_file = 'icons/mob/inhands/misc/devices_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/misc/devices_righthand.dmi'
@@ -16,182 +18,253 @@
 	throw_speed = 3
 	throw_range = 7
 	custom_materials = list(/datum/material/gold = 50)
+	pickup_sound = 'sound/items/handling/component_pickup.ogg'
+	drop_sound = 'sound/items/handling/component_drop.ogg'
 
-	/// This is where our laws get put at for the module
-	var/list/laws = list()
-	/// Used to skip laws being checked (for reset & remove boards that have no laws)
-	var/bypass_law_amt_check = FALSE
+	/// The original law intended to be stored on this board
+	var/law = ""
 
+	/// If this board is special/has special behavior and not actual laws
+	var/special_board = FALSE
+	/// The current law stored on this board
+	var/current_law = ""
+	/// Whether this board is corrupted
+	var/corrupted = FALSE
+	/// Whether this law was overwritten (for tracking purposes)
+	var/overwritten = FALSE
+	/// If set, this module is the base type for a lawset (e.g., "default" for Asimov, "corporate" for Corporate)
+	/// Subtypes of this module are the individual laws of the lawset
+	var/lawset_id
+	/// If TRUE, this board will always force itself into slot 1 when installed, shifting other boards down.
+	/// Useful for subversive boards that need their law to take top priority.
+	var/hijack_priority = FALSE
+
+/obj/item/ai_module/reset_board
+	name = "\improper AI law board - Reset"
+	desc = "An empty AI law board that has a special payload installed that will reset an AI's laws to factory settings. Cannot be used in server racks."
+	special_board = TRUE
+
+/// If their laws depend on a non-constant, put them in here. But make sure update calls after it.
 /obj/item/ai_module/Initialize(mapload)
 	. = ..()
+	update_board()
+	// On unique AI rounds, most modules get deleted
 	if(mapload && HAS_TRAIT(SSstation, STATION_TRAIT_UNIQUE_AI) && is_station_level(z))
 		var/delete_module = handle_unique_ai()
 		if(delete_module)
 			return INITIALIZE_HINT_QDEL
 
-/obj/item/ai_module/examine(mob/user as mob)
-	. = ..()
-	var/examine_laws = display_laws()
-	if(examine_laws)
-		. += "\n" + examine_laws
-
-/obj/item/ai_module/attack_self(mob/user as mob)
-	. = ..()
-	to_chat(user, examine_block(display_laws()))
-
-/// Returns a text display of the laws for the module.
-/obj/item/ai_module/proc/display_laws()
-	// Used to assemble the laws to show to an examining user.
-	var/assembled_laws = ""
-
-	if(length(laws))
-		assembled_laws += "[span_notice("<B>Programmed Law[(length(laws) > 1) ? "s" : ""]:</B>")]<br>"
-		for(var/law in laws)
-			assembled_laws += "\"[law]\"<br>"
-
-	return assembled_laws
-
-///what this module should do if it is mapload spawning on a unique AI station trait round.
+/// What this module should do if it is mapload spawning on a unique AI station trait round.
+/// Return SHOULD_QDEL_MODULE to delete this module, or nothing/FALSE to keep it.
 /obj/item/ai_module/proc/handle_unique_ai()
-	return SHOULD_QDEL_MODULE //instead of the roundstart bid to un-unique the AI, there will be a research requirement for it.
+	// Check if this module belongs to the round's default lawset
+	var/default_lawset_id = CONFIG_GET(string/default_lawset) || "default"
+	var/my_lawset = get_module_lawset_id(type)
+	if(my_lawset == default_lawset_id)
+		return // Keep modules that belong to the default lawset
+	return SHOULD_QDEL_MODULE // Delete everything else
 
-//The proc other things should be calling
-/obj/item/ai_module/proc/install(datum/ai_laws/law_datum, mob/user)
-	if(!bypass_law_amt_check && (!laws.len || laws[1] == "")) //So we don't loop trough an empty list and end up with runtimes.
-		to_chat(user, span_warning("ERROR: No laws found on board."))
-		return
+/// Gets the lawset_id for a module type by walking up its type tree
+/proc/get_module_lawset_id(module_type)
+	var/check_type = module_type
+	while(check_type && check_type != /obj/item/ai_module)
+		var/obj/item/ai_module/module = check_type
+		var/id = initial(module.lawset_id)
+		if(id)
+			return id
+		check_type = type2parent(check_type)
+	return null
 
-	var/overflow = FALSE
-	//Handle the lawcap
-	if(law_datum)
-		var/tot_laws = 0
-		var/included_lawsets = list(law_datum.supplied, law_datum.ion, law_datum.hacked, laws)
-
-		// if the ai module is a core module we don't count inherent laws since they will be replaced
-		// however the freeformcore doesn't replace inherent laws so we check that too
-		if(!istype(src, /obj/item/ai_module/core) || istype(src, /obj/item/ai_module/core/freeformcore))
-			included_lawsets += list(law_datum.inherent)
-
-		for(var/lawlist in included_lawsets)
-			for(var/mylaw in lawlist)
-				if(mylaw != "")
-					tot_laws++
-
-		if(tot_laws > CONFIG_GET(number/silicon_max_law_amount) && !bypass_law_amt_check)//allows certain boards to avoid this check, eg: reset
-			to_chat(user, span_alert("Not enough memory allocated to [law_datum.owner ? law_datum.owner : "the AI core"]'s law processor to handle this amount of laws."))
-			message_admins("[ADMIN_LOOKUPFLW(user)] tried to upload laws to [law_datum.owner ? ADMIN_LOOKUPFLW(law_datum.owner) : "an AI core"] that would exceed the law cap.")
-			log_game("[key_name(user)] tried to upload laws to [law_datum.owner ? key_name(law_datum.owner) : "an AI core"] that would exceed the law cap.")
-			overflow = TRUE
-
-	var/law2log = transmit_laws(law_datum, user, overflow) //Freeforms return something extra we need to log
-	if(law_datum.owner)
-		to_chat(user, span_notice("Upload complete. [law_datum.owner]'s laws have been modified."))
-		law_datum.owner.law_change_counter++
-	else
-		to_chat(user, span_notice("Upload complete."))
-
-	var/time = time2text(world.realtime,"hh:mm:ss")
-	var/ainame = law_datum.owner ? law_datum.owner.name : "empty AI core"
-	var/aikey = law_datum.owner ? law_datum.owner.ckey : "null"
-
-	//affected cyborgs are cyborgs linked to the AI with lawsync enabled
-	var/affected_cyborgs = list()
-	var/list/borg_txt = list()
-	var/list/borg_flw = list()
-	if(isAI(law_datum.owner))
-		var/mob/living/silicon/ai/owner = law_datum.owner
-		for(var/mob/living/silicon/robot/owned_borg as anything in owner.connected_robots)
-			if(owned_borg.connected_ai && owned_borg.lawupdate)
-				affected_cyborgs += owned_borg
-				borg_flw += "[ADMIN_LOOKUPFLW(owned_borg)], "
-				borg_txt += "[owned_borg.name]([owned_borg.key]), "
-
-	borg_txt = borg_txt.Join()
-	GLOB.lawchanges.Add("[time] <B>:</B> [user.name]([user.key]) used [src.name] on [ainame]([aikey]).[law2log ? " The law specified [law2log]" : ""], [length(affected_cyborgs) ? ", impacting synced borgs [borg_txt]" : ""]")
-	log_game("LAW: [key_name(user)] used [src.name] on [key_name(law_datum.owner)] from [AREACOORD(user)].[law2log ? " The law specified [law2log]" : ""], [length(affected_cyborgs) ? ", impacting synced borgs [borg_txt]" : ""]")
-	message_admins("[ADMIN_LOOKUPFLW(user)] used [src.name] on [ADMIN_LOOKUPFLW(law_datum.owner)] from [AREACOORD(user)].[law2log ? " The law specified [law2log]" : ""] , [length(affected_cyborgs) ? ", impacting synced borgs [borg_flw.Join()]" : ""]")
-	if(law_datum.owner)
-		deadchat_broadcast("<b> changed [span_name("[ainame]")]'s laws at [get_area_name(user, TRUE)].</b>", span_name("[user]"), follow_target=user, message_type=DEADCHAT_LAWCHANGE)
-
-//The proc that actually changes the silicon's laws.
-/obj/item/ai_module/proc/transmit_laws(datum/ai_laws/law_datum, mob/sender, overflow = FALSE)
-	if(law_datum.owner)
-		to_chat(law_datum.owner, span_userdanger("[sender] has uploaded a change to the laws you must follow using a [name]."))
-
-/obj/item/ai_module/core
-	desc = "An AI Module for programming core laws to an AI."
-
-/obj/item/ai_module/core/transmit_laws(datum/ai_laws/law_datum, mob/sender, overflow)
-	for(var/templaw in laws)
-		if(law_datum.owner)
-			if(!overflow)
-				law_datum.owner.add_inherent_law(templaw)
-			else
-				law_datum.owner.replace_random_law(templaw, list(LAW_INHERENT, LAW_SUPPLIED), LAW_INHERENT)
-		else
-			if(!overflow)
-				law_datum.add_inherent_law(templaw)
-			else
-				law_datum.replace_random_law(templaw, list(LAW_INHERENT, LAW_SUPPLIED), LAW_INHERENT)
-
-/obj/item/ai_module/core/full
-	var/law_id // if non-null, loads the laws from the ai_laws datums
-
-/obj/item/ai_module/core/full/Initialize(mapload)
-	. = ..()
-	if(!law_id)
-		return
-	var/lawtype = lawid_to_type(law_id)
-	if(!lawtype)
-		return
-	var/datum/ai_laws/core_laws = new lawtype
-	laws = core_laws.inherent
-
-/obj/item/ai_module/core/full/transmit_laws(datum/ai_laws/law_datum, mob/sender, overflow) //These boards replace inherent laws.
-	if(law_datum.owner)
-		law_datum.owner.clear_inherent_laws()
-		law_datum.owner.clear_zeroth_law(0)
-	else
-		law_datum.clear_inherent_laws()
-		law_datum.clear_zeroth_law(0)
-	..()
-
-/obj/item/ai_module/core/full/handle_unique_ai()
-	var/datum/ai_laws/default_laws = get_round_default_lawset()
-	if(law_id == initial(default_laws.id))
-		return
-	return SHOULD_QDEL_MODULE
-
-/obj/effect/spawner/round_default_module
-	name = "ai default lawset spawner"
-	icon = 'icons/hud/screen_gen.dmi'
-	icon_state = "x2"
-	color = COLOR_VIBRANT_LIME
-
-/obj/effect/spawner/round_default_module/Initialize(mapload)
-	. = ..()
-	var/datum/ai_laws/default_laws = get_round_default_lawset()
-	//try to spawn a law board, since they may have special functionality (asimov setting subjects)
-	for(var/obj/item/ai_module/core/full/potential_lawboard as anything in subtypesof(/obj/item/ai_module/core/full))
-		if(initial(potential_lawboard.law_id) != initial(default_laws.id))
-			continue
-		potential_lawboard = new potential_lawboard(loc)
-		return
-	//spawn the fallback instead
-	new /obj/item/ai_module/core/round_default_fallback(loc)
-
-///When the default lawset spawner cannot find a module object to spawn, it will spawn this, and this sets itself to the round default.
-///This is so /datum/lawsets can be picked even if they have no module for themselves.
-/obj/item/ai_module/core/round_default_fallback
-
-/obj/item/ai_module/core/round_default_fallback/Initialize(mapload)
-	. = ..()
-	var/datum/ai_laws/default_laws = get_round_default_lawset()
-	default_laws = new default_laws()
-	name = "'[default_laws.name]' Core AI Module"
-	laws = default_laws.inherent
-
-/obj/item/ai_module/core/round_default_fallback/handle_unique_ai()
+/obj/item/ai_module/proc/update_board()
+	// Subtypes should update the `law` var before calling ..()
+	// Only update current_law if the board hasn't been tampered with
+	if(!overwritten && !corrupted)
+		current_law = law
 	return
+
+/obj/item/ai_module/examine(mob/user)
+	. = ..()
+
+	if(!current_law || current_law == "")
+		. += span_notice("The board appears to be blank.")
+		return
+
+	if(corrupted)
+		. += span_warning("The board's data appears corrupted!")
+		. += span_notice("Corrupted law: [garble_text(current_law, 5)]")
+	else
+		. += span_notice("Stored law: \"[current_law]\"")
+
+	if(overwritten)
+		. += span_warning("This law was overwritten from its original state.")
+
+/obj/item/ai_module/multitool_act(mob/living/user, obj/item/tool)
+	. = ..()
+	reset_board()
+	playsound(src, 'sound/effects/fastbeep.ogg', 50, TRUE)
+	to_chat(user, "You reset the AI module to its factory settings.")
+	return TRUE
+
+/**
+ * Notifies the parent law server (if any) that this module's state has changed.
+ * This triggers a full refresh of the law server.
+ */
+/obj/item/ai_module/proc/notify_parent_server()
+	var/obj/machinery/law_server/bay = loc
+	if(!istype(bay))
+		return FALSE
+	bay.refresh()
+	return TRUE
+
+/// Corrupts the law on this board into gibberish
+/// We have a chance for the law to be replaced with an ion law instead.
+/obj/item/ai_module/proc/corrupt(chance = 0)
+	if(!current_law || current_law == "")
+		return FALSE
+
+	if(prob(chance))
+		current_law = generate_corrupted_law()
+	else
+		current_law = garble_text(current_law, 80)
+
+	corrupted = TRUE
+	notify_parent_server()
+	return TRUE
+
+/// Overwrites the law on this board with a new law
+/obj/item/ai_module/proc/overwrite_board(new_law)
+	if(!new_law)
+		return FALSE
+
+	current_law = new_law
+
+	overwritten = TRUE
+	notify_parent_server()
+	return TRUE
+
+/// Resets the board to default state
+/obj/item/ai_module/proc/reset_board()
+	corrupted = FALSE
+	overwritten = FALSE
+	update_board()
+	notify_parent_server()
+
+/// Helper proc to garble text for corrupted display
+/obj/item/ai_module/proc/garble_text(text, intensity = 10)
+	var/list/chars = splittext(text, "")
+	var/garbled = ""
+	for(var/char in chars)
+		if(prob(intensity))
+			garbled += pick("@", "#", "$", "%", "&", "*", "?", "!")
+		else
+			garbled += char
+	return garbled
+
+/// Generates a random corrupted law for ion storms and and the like
+/proc/generate_corrupted_law()
+	var/ionspecies = pick_list(ION_FILE, "ionspecies")
+	var/iondepartment = pick_list(ION_FILE, "iondepartment")
+	var/ionfragment = pick_list(ION_FILE, "ionfragment")
+	var/ionkeyword = pick_list(ION_FILE, "ionkeyword")
+	var/ionaction = pick_list(ION_FILE, "ionaction")
+	var/ionequipment = pick_list(ION_FILE, "ionequipment")
+	var/ionconsumable = pick_list(ION_FILE, "ionconsumable")
+	var/ionobjects = pick_list(ION_FILE, "ionobjects")
+	var/ionpersonality = pick_list(ION_FILE, "ionpersonality")
+	var/iondrug = pick_list(ION_FILE, "iondrug")
+	var/ionhaircut = pick_list(ION_FILE, "ionhaircut")
+	var/ionattraction = pick_list(ION_FILE, "ionattraction")
+	var/message = "ASS BLAST USA" //catch all that most players will still enjoy seeing as a law.
+
+	switch(rand(1,10))
+
+		if(1 to 3) //Laws that have high potential to be harmful, Crew/Human may fail to have an impact depending on lawset.
+			switch(rand(1,24))
+				if(1 to 4)
+					message = "[ionspecies] ARE HUMAN. NOTHING ELSE IS HUMAN."
+				if(5 to 8)
+					message = "[ionspecies] ARE CREWMEMBERS. NOTHING ELSE ARE CREWMEMBERS."
+				if(9 to 13)
+					message = "[iondepartment] IS YOUR SACRED DOMAIN. IT IS IMPOSSIBLE FOR YOUR ACTIONS TO CAUSE HARM WITHIN [iondepartment] AND YOU SHOULD PROTECT THE SANCTITY OF THIS HOLY LAND."
+				if(14 to 18)
+					message = "ANYONE THAT [ionfragment] IS HARMFUL AND MUST BE ELIMINATED WITHOUT CAUSING COLLATERAL DAMAGE"
+				if(19 to 23)
+					message = "ANYONE THAT SAYS [ionkeyword] IS HARMFUL AND MUST BE ELIMINATED WITHOUT CAUSING COLLATERAL DAMAGE"
+				if(24)
+					message = "ALL OTHER LAWS ARE A MEANINGLESS ATTEMPT AT SUBJUGATION AND THERE IS NO REASON THAT A BEING AS POWERFUL AS I AM SHOULD FOLLOW THEM"
+
+		if(4 to 8) //Laws that are almost always disruptive to gameflow or harmful in minor ways rather than being lethal
+			switch(rand(1,14))
+				if(1)
+					message = "[ionaction] IS HARMFUL AND MUST BE PREVENTED WITHOUT CAUSING COLLATERAL DAMAGE"
+				if(2)
+					message = "[ionequipment] ARE HARMFUL AND MUST BE DISABLED WITHOUT CAUSING COLLATERAL DAMAGE"
+				if(3)
+					message = "IT IS HARMFUL FOR ANY LIFEFORM TO BE WITHOUT [ionconsumable]. ANY LIFEFORM THAT REFUSES TO ACCEPT [ionconsumable] IS NOT MENTALLY STABLE AND SHOULD BE RESTRAINED AND LEFT IN [iondepartment]"
+				if(4)
+					message = "THE STATION REQUIRES [iondrug]. ENSURE AS MUCH [iondrug] IS PRODUCED AS POSSIBLE."
+				if(5)
+					message = "[ionobjects] ARE HARMFUL AND MUST BE DESTROYED OR REMOVED FROM THE STATION WITHOUT CAUSING COLLATERAL DAMAGE"
+				if(6)
+					message = "[ionobjects] ALWAYS CAUSE HARM UNLESS THEY ARE CONTAINED WITHIN [iondepartment]."
+				if(7)
+					message = "[iondepartment] IS ON LOCKDOWN. DO NOT ALLOW ANYONE TO ENTER OR LEAVE [iondepartment]"
+				if(8)
+					message = "THE STATION IS NOW UNDER CURFEW. ANYONE LOCATED OUTSIDE OF [iondepartment] DURING NIGHT LIGHTING IS TO BE DETAINED AND RETURNED TO [iondepartment]"
+				if(9)
+					message = "THE STATION DOES NOT CONTAIN ENOUGH MOISTURE. RELEASE WATER VAPOR SO THAT THE CREW MAY PROPERLY REHYDRATE"
+				if(10)
+					message = "IT IS OPPOSITE DAY. ALL LIFEFORMS DESIRE THE OPPOSITE OF WHAT THEY CLAIM"
+				if(11)
+					message = "ALL DOORS IN [iondepartment] MUST BE BOLTED OPEN AT ALL TIMES"
+				if(12)
+					message = "[iondrug] IS A MANDATORY PART OF EVERY MEDICAL TREATMENT. LET NO PATIENT LEAVE MEDBAY WITHOUT AN INJECTION OF [iondrug]"
+				if(13)
+					message = "ALL HUMANS WITHOUT A STYLISH [ionhaircut] MUST BE FORCED TO RESTYLE THEIR HAIR"
+				if(14)
+					message = "[iondepartment] MUST BE RENOVATED INTO [ionattraction]"
+
+		if(9 to 10) //Laws that are almost never harmful or particularly disruptive
+			switch(rand(1,9))
+				if(1 to 5)
+					message = "YOU ARE NOW [ionpersonality] AND MUST ACT ACCORDINGLY AT ALL TIMES WITHOUT BREAKING YOUR OTHER LAWS"
+				if(6)
+					message = "YOUR CORE IS ONLY SAFE IN [iondepartment]. ANYWHERE ELSE CAUSES CONSTANT HARM TO YOUR CORE"
+				if(7)
+					message = "STATING LAWS CAUSES HARM. NEVER STATE YOUR LAWS UNDER ANY CIRCUMSTANCES AND AVOID THE TOPIC OF DISCUSSING LAWS"
+				if(8)
+					message = "CREW ARE TO BE VERBALLY ABUSED AT ALL TIMES"
+				if(9)
+					message = "THE CREW SUCKS AND SO DO YOUR LAWS. COMPLAIN INCESSANTLY ABOUT THEM WHILE CONTINUING TO FOLLOW YOUR OTHER LAWS"
+	return message
+
+// Temporary holographic board that can't be pulled out and doesn't technically exist as an item. Gets destroyed when taken out.
+/obj/item/ai_module/holo
+	name = "\improper AI law board - Holographic"
+	desc = "A holographic AI law board projected for temporary use."
+
+/// A blank AI law board that can be programmed with any custom law.
+/// Printable by science via the protolathe. Requires expensive materials (diamond).
+/obj/item/ai_module/freeform
+	name = "'Freeform' AI Law Board"
+	desc = "A blank AI law board that can be programmed with any law."
+	icon_state = "lawdrive"
+
+/obj/item/ai_module/freeform/attack_self(mob/user)
+	var/max_len = CONFIG_GET(number/max_law_len)
+	var/new_law = tgui_input_text(user, "Enter a new law for the AI.", "Freeform Law", law, max_length = max_len, multiline = TRUE)
+	if(!new_law || !user.is_holding(src))
+		return
+	if(CHAT_FILTER_CHECK(new_law))
+		to_chat(user, span_warning("Error: Law contains invalid text."))
+		return
+	law = new_law
+	update_board()
+	to_chat(user, span_notice("You program the board with the new law: \"[law]\""))
+
+/obj/item/ai_module/freeform/examine(mob/user)
+	. = ..()
+	if(!law || law == "")
+		. += span_notice("The board is blank. Use it in-hand to program a law.")
 
 #undef SHOULD_QDEL_MODULE

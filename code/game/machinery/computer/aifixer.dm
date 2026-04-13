@@ -50,7 +50,7 @@
 		data["restoring"] = restoring
 		data["health"] = (occupier.health + 100) / 2
 		data["isDead"] = occupier.stat == DEAD
-		data["laws"] = occupier.laws.get_law_list(include_zeroth = 1)
+		data["laws"] = occupier.get_law_list()
 
 	return data
 

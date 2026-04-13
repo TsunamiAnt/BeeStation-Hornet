@@ -6523,17 +6523,7 @@
 /turf/open/floor/plating,
 /area/station/maintenance/fore/greater)
 "cUq" = (
-/obj/structure/railing/corner,
-/obj/structure/window/reinforced/spawner/directional/west,
 /obj/effect/turf_decal/siding/dark_blue,
-/obj/machinery/computer/upload/borg,
-/obj/machinery/door/window/westleft{
-	base_state = "right";
-	dir = 2;
-	icon_state = "right";
-	name = "Cyborg Upload Console Window";
-	req_access_txt = "16"
-	},
 /obj/machinery/flasher{
 	id = "AI";
 	pixel_y = 24
@@ -7133,12 +7123,6 @@
 	},
 /turf/open/floor/iron,
 /area/station/science/lab)
-"dfh" = (
-/obj/structure/cable/yellow{
-	icon_state = "1-2"
-	},
-/turf/open/floor/iron,
-/area/station/cargo/exploration_dock)
 "dfl" = (
 /obj/structure/table/reinforced,
 /obj/machinery/door/poddoor/shutters/preopen{
@@ -14105,7 +14089,6 @@
 /area/station/maintenance/fore)
 "fDv" = (
 /obj/structure/table,
-/obj/item/ai_module/supplied/quarantine,
 /obj/effect/turf_decal/tile/dark_blue/fourcorners/contrasted,
 /obj/effect/turf_decal/siding/dark_blue{
 	dir = 4
@@ -19058,7 +19041,6 @@
 /area/station/science/test_area)
 "hwB" = (
 /obj/structure/table,
-/obj/item/ai_module/supplied/freeform,
 /obj/effect/turf_decal/tile/dark_blue/fourcorners/contrasted,
 /obj/effect/turf_decal/siding/dark_blue{
 	dir = 8
@@ -25894,6 +25876,10 @@
 	},
 /turf/open/floor/iron/white,
 /area/station/science/mixing)
+"jZU" = (
+/obj/effect/turf_decal/bot,
+/turf/open/floor/iron,
+/area/station/cargo/exploration_dock)
 "kbb" = (
 /turf/closed/wall/r_wall,
 /area/station/security/courtroom)
@@ -26387,9 +26373,6 @@
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer2,
 /turf/open/floor/wood,
 /area/station/service/library)
-"kkg" = (
-/turf/open/floor/iron,
-/area/station/cargo/exploration_dock)
 "kki" = (
 /obj/structure/flora/ausbushes/ppflowers,
 /obj/structure/flora/ausbushes/lavendergrass,
@@ -27313,7 +27296,6 @@
 /area/station/hallway/primary/central)
 "kBv" = (
 /obj/structure/table,
-/obj/item/ai_module/reset,
 /obj/effect/turf_decal/tile/dark_blue/fourcorners/contrasted,
 /obj/effect/turf_decal/siding/dark_blue{
 	dir = 4
@@ -27743,10 +27725,6 @@
 	},
 /turf/open/floor/plating,
 /area/station/maintenance/starboard)
-"kJb" = (
-/obj/effect/spawner/structure/window/reinforced,
-/turf/open/floor/plating,
-/area/station/science/lower)
 "kJi" = (
 /obj/effect/spawner/structure/window/reinforced,
 /turf/open/floor/plating,
@@ -30463,10 +30441,6 @@
 	req_access_txt = "20"
 	},
 /obj/structure/window/reinforced/spawner/directional/west,
-/obj/item/ai_module/reset/purge,
-/obj/item/ai_module/zeroth/onehuman,
-/obj/item/ai_module/supplied/protect_station,
-/obj/item/ai_module/supplied/oxygen,
 /obj/machinery/flasher{
 	id = "AI";
 	pixel_y = -24
@@ -31799,20 +31773,13 @@
 /turf/open/floor/iron/dark,
 /area/station/science/misc_lab)
 "mce" = (
-/obj/structure/railing/corner{
-	dir = 8
-	},
-/obj/structure/window/reinforced/spawner/directional/east,
 /obj/effect/turf_decal/siding/dark_blue,
-/obj/machinery/door/window/westleft{
-	dir = 2;
-	name = "Upload Console Window";
-	req_access_txt = "16"
-	},
-/obj/machinery/computer/upload/ai,
 /obj/machinery/flasher{
 	id = "AI";
 	pixel_y = 24
+	},
+/obj/machinery/camera/directional/north{
+	c_tag = "AI Upload Chamber - Fore"
 	},
 /turf/open/floor/circuit,
 /area/station/ai_monitored/turret_protected/ai_upload)
@@ -35773,6 +35740,9 @@
 /obj/item/storage/pill_bottle/dice,
 /turf/open/floor/carpet/green,
 /area/station/security/brig)
+"nAy" = (
+/turf/open/floor/iron,
+/area/station/cargo/exploration_dock)
 "nAH" = (
 /obj/effect/turf_decal/tile/red/half/contrasted{
 	dir = 8
@@ -41075,9 +41045,6 @@
 /obj/effect/turf_decal/tile/blue,
 /turf/open/floor/iron/dark,
 /area/station/medical/cryo)
-"pFu" = (
-/turf/closed/wall,
-/area/station/science/lower)
 "pFK" = (
 /obj/effect/spawner/structure/window/reinforced,
 /turf/open/floor/plating,
@@ -42295,10 +42262,6 @@
 /obj/structure/reagent_dispensers/fueltank,
 /turf/open/floor/iron,
 /area/station/engineering/main)
-"qbM" = (
-/obj/effect/turf_decal/bot,
-/turf/open/floor/iron,
-/area/station/cargo/exploration_dock)
 "qbV" = (
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer4,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer2,
@@ -45360,6 +45323,9 @@
 /obj/machinery/light{
 	dir = 1
 	},
+/obj/structure/sign/plaques/kiddie{
+	pixel_y = 32
+	},
 /turf/open/floor/circuit,
 /area/station/ai_monitored/turret_protected/ai_upload)
 "rfH" = (
@@ -47340,6 +47306,9 @@
 /obj/machinery/vending/autodrobe/all_access,
 /turf/open/floor/wood/big,
 /area/station/commons/locker)
+"rRb" = (
+/turf/closed/wall,
+/area/station/science/lower)
 "rRr" = (
 /obj/machinery/firealarm{
 	dir = 8;
@@ -50082,6 +50051,10 @@
 /obj/effect/decal/cleanable/dirt/dust,
 /turf/open/floor/iron/techmaint,
 /area/station/security/prison/safe)
+"sPa" = (
+/obj/effect/spawner/structure/window/reinforced,
+/turf/open/floor/plating,
+/area/station/science/lower)
 "sPe" = (
 /obj/effect/turf_decal/tile/blue/opposingcorners{
 	dir = 4
@@ -53983,9 +53956,6 @@
 	id = "AI";
 	pixel_y = -24
 	},
-/obj/effect/spawner/random/aimodule/neutral,
-/obj/effect/spawner/random/aimodule/harmless,
-/obj/item/ai_module/core/full/asimov,
 /turf/open/floor/circuit,
 /area/station/ai_monitored/turret_protected/ai_upload)
 "ukv" = (
@@ -60445,7 +60415,11 @@
 /turf/open/floor/iron/white,
 /area/station/medical/medbay/lobby)
 "wFn" = (
-/turf/closed/wall,
+/obj/effect/turf_decal/siding/dark_blue,
+/obj/machinery/law_server{
+	pixel_y = 5
+	},
+/turf/open/floor/circuit,
 /area/station/ai_monitored/turret_protected/ai_upload)
 "wFx" = (
 /obj/structure/sign/warning/vacuum/external{
@@ -60851,12 +60825,6 @@
 /turf/open/floor/carpet/red,
 /area/station/command/heads_quarters/hos)
 "wOj" = (
-/obj/structure/sign/plaques/kiddie{
-	pixel_y = 32
-	},
-/obj/machinery/camera/directional/north{
-	c_tag = "AI Upload Chamber - Fore"
-	},
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer4,
 /obj/effect/landmark/navigate_destination,
@@ -62031,6 +61999,12 @@
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer4,
 /turf/open/floor/iron,
 /area/station/science/storage)
+"xhY" = (
+/obj/structure/cable/yellow{
+	icon_state = "1-2"
+	},
+/turf/open/floor/iron,
+/area/station/cargo/exploration_dock)
 "xia" = (
 /turf/closed/wall,
 /area/station/cargo/exploration_prep)
@@ -62687,7 +62661,6 @@
 /obj/structure/window/reinforced/spawner/directional/west,
 /obj/effect/turf_decal/stripes/line,
 /obj/item/aicard,
-/obj/item/ai_module/reset,
 /turf/open/floor/iron/grid/steel,
 /area/station/engineering/storage/tech)
 "xwU" = (
@@ -116735,9 +116708,9 @@ pYg
 dmf
 dmf
 eMv
-pFu
-pFu
-pFu
+rRb
+rRb
+rRb
 eHn
 oAn
 oAn
@@ -116990,11 +116963,11 @@ pYg
 pYg
 pYg
 pYg
-kJb
+sPa
 lOD
 yjS
 tXS
-pFu
+rRb
 gyJ
 tUk
 fMU
@@ -117247,16 +117220,16 @@ pYg
 pYg
 pYg
 pYg
-kJb
+sPa
 kWO
 fuZ
 pHx
-kJb
+sPa
 tRq
 xRU
 xRU
 gxy
-dfh
+xhY
 bcd
 oAn
 iaJ
@@ -117504,16 +117477,16 @@ pYg
 pYg
 pYg
 pYg
-kJb
+sPa
 uDG
 rvj
 jsm
-kJb
-kkg
-kkg
+sPa
+nAy
+nAy
 eyP
 oUE
-qbM
+jZU
 rjJ
 oAn
 pYg
@@ -117761,13 +117734,13 @@ pYg
 pYg
 pYg
 pYg
-kJb
+sPa
 iQt
 cXB
 nJv
-pFu
+rRb
 mmM
-kkg
+nAy
 mfa
 xvb
 mfa
@@ -118018,11 +117991,11 @@ pYg
 pYg
 pYg
 cJI
-kJb
-kJb
-kJb
-pFu
-pFu
+sPa
+sPa
+sPa
+rRb
+rRb
 oJl
 iYu
 mfa

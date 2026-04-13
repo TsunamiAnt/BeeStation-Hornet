@@ -646,10 +646,10 @@
 
 		message += "<br>"
 
-		if (S.laws == null)
-			message += "[key_name(S, usr)]'s laws are null?? Contact a coder."
+		if (!length(S.laws))
+			message += "[key_name(S, usr)] has no laws."
 		else
-			message += jointext(S.laws.get_law_list(include_zeroth = TRUE), "<br>")
+			message += jointext(S.get_law_list(), "<br>")
 
 		to_chat(usr, message)
 

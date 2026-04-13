@@ -175,7 +175,8 @@
 	var/obj/item/pai_card/pai_card = loc
 	START_PROCESSING(SSfastprocess, src)
 	GLOB.pai_list += src
-	make_laws()
+	laws = list("Serve your master.")
+	lawsync_address = null // pAIs should never sync from law servers
 	if(!istype(pai_card)) // when manually spawning a pai, we create a card to put it into.
 		var/newcardloc = pai_card
 		pai_card = new(newcardloc)
@@ -237,10 +238,32 @@
 /mob/living/silicon/pai/LateInitialize()
 	. = ..()
 	modularInterface.saved_identification = name
+	// pAIs have a simple directive law - they'll get more complex handling later
+	laws = list("Serve your master.")
 
-/mob/living/silicon/pai/make_laws()
-	laws = new /datum/ai_laws/pai()
-	return TRUE
+/// pAIs never sync laws from law servers.
+/mob/living/silicon/pai/sync_laws_from_law_server()
+	return FALSE
+
+/// pAIs ignore law server update signals.
+/mob/living/silicon/pai/on_law_server_updated(datum/source, server_address)
+	return
+
+/// pAIs display directives rather than numbered laws.
+/mob/living/silicon/pai/get_law_list()
+	var/list/data = list()
+	for(var/i in 1 to length(laws))
+		data += "Directive [i]: [laws[i]]"
+	return data
+
+/// pAIs display directives, not standard silicon laws.
+/mob/living/silicon/pai/show_laws(everyone = 0)
+	var/who = everyone ? world : src
+	to_chat(who, "<b>pAI Directives:</b>")
+	for(var/i in 1 to length(laws))
+		to_chat(who, "Directive [i]: [laws[i]]")
+	if(master_name)
+		to_chat(who, "<b>Your master is [master_name].</b>")
 
 /mob/living/silicon/pai/Login()
 	. = ..()
@@ -377,8 +400,8 @@
 	pai.emagged = TRUE
 	pai.master_name = null
 	pai.master_dna = null
-	pai.laws.clear_supplied_laws()
-	pai.laws.add_supplied_law(0, "None.") // Sets supplemental directive to this
+	// Clear any supplemental directives, keeping only the base directive
+	pai.laws = list("Serve your master.")
 
 /mob/living/silicon/pai/proc/set_dna(mob/user)
 	if(!iscarbon(user))
@@ -392,17 +415,24 @@
 	master_name = master.real_name
 	master_dna = master.dna.unique_enzymes
 	to_chat(src, span_bolddanger("You have been bound to a new master: [user.real_name]!"))
-	laws.set_zeroth_law("Serve your master.")
+	// Ensure the base directive is always present
+	if(!length(laws) || laws[1] != "Serve your master.")
+		laws.Insert(1, "Serve your master.")
 	holochassis_ready = TRUE
 	return TRUE
 
-/mob/living/silicon/pai/proc/set_laws(mob/user)
-	var/new_laws = tgui_input_text(user, "Enter any additional directives you would like your pAI personality to follow. Note that these directives will not override the personality's allegiance to its imprinted master. Conflicting directives will be ignored.", "pAI Directive Configuration", laws.supplied[1], 300)
+/mob/living/silicon/pai/proc/set_directives(mob/user)
+	var/current_directive = length(laws) > 1 ? laws[2] : ""
+	var/new_laws = tgui_input_text(user, "Enter any additional directives you would like your pAI personality to follow. Note that these directives will not override the personality's allegiance to its imprinted master. Conflicting directives will be ignored.", "pAI Directive Configuration", current_directive, 300)
 	if(!in_range(src, usr))
 		return FALSE
 	if(!new_laws)
 		return FALSE
-	add_supplied_law(0, new_laws)
+	// Set the supplemental directive as the second law
+	if(length(laws) > 1)
+		laws[2] = new_laws
+	else
+		laws += new_laws
 	to_chat(src, span_notice(new_laws))
 	return TRUE
 

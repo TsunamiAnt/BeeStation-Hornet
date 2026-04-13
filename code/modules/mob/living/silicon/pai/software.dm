@@ -53,7 +53,8 @@
 
 /mob/living/silicon/pai/ui_data(mob/user)
 	var/list/data = list()
-	data["directives"] = laws.supplied
+	// For pAIs, directives are any laws beyond the first "Serve your master." law
+	data["directives"] = length(laws) > 1 ? laws.Copy(2) : list()
 	data["door_jack"] = hacking_cable || null
 	data["emagged"] = emagged
 	data["image"] = card.emotion_icon

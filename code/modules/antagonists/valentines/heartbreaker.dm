@@ -24,10 +24,6 @@
 
 /datum/antagonist/heartbreaker/on_gain()
 	forge_objectives()
-	if(issilicon(owner.current))
-		var/mob/living/silicon/S = owner.current
-		var/laws = list("Accomplish your objectives by ruining everyone's date!")
-		S.set_valentines_laws(laws)
 	. = ..()
 
 /datum/antagonist/heartbreaker/greet()

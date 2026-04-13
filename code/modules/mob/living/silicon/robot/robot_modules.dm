@@ -16,15 +16,10 @@
 		var/obj/item/I = new i(src)
 		emag_modules += I
 		emag_modules -= i
-	for(var/i in ratvar_modules)
-		var/obj/item/I = new i(src)
-		ratvar_modules += I
-		ratvar_modules -= i
 
 /obj/item/robot_model/Destroy()
 	basic_modules.Cut()
 	emag_modules.Cut()
-	ratvar_modules.Cut()
 	modules.Cut()
 	added_modules.Cut()
 	storages.Cut()
@@ -71,7 +66,6 @@
 	basic_modules -= item
 	modules -= item
 	emag_modules -= item
-	ratvar_modules -= item
 	added_modules -= item
 	rebuild_modules()
 	if(delete_after)
@@ -90,12 +84,6 @@
 	if(robot.emagged)
 		for(var/obj/item/emag_module in emag_modules)
 			add_module(emag_module, FALSE, FALSE)
-	// Ratvar
-	if(IS_SERVANT_OF_RATVAR(robot) && !robot.ratvar)	//It just works :^)
-		robot.SetRatvar(TRUE, FALSE)
-	if(robot.ratvar)
-		for(var/obj/item/ratvar_module in ratvar_modules)
-			add_module(ratvar_module, FALSE, FALSE)
 	// tbh I have no idea what added_modules are but they are here
 	for(var/obj/item/added_module in added_modules)
 		add_module(added_module, FALSE, FALSE)

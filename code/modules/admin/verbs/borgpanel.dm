@@ -72,7 +72,7 @@
 		if (locate(upgradetype) in borg)
 			installed = TRUE
 		.["upgrades"] += list(list("name" = initial(upgrade.name), "installed" = installed, "type" = upgradetype))
-	.["laws"] = borg.laws ? borg.laws.get_law_list(include_zeroth = TRUE) : list()
+	.["laws"] = borg.get_law_list()
 	.["channels"] = list()
 	for (var/k in GLOB.radiochannels)
 		if (k == RADIO_CHANNEL_COMMON)
@@ -211,6 +211,8 @@
 				if(borg.shell)
 					borg.undeploy()
 				borg.connected_ai = newai
+				// Inherit the AI's lawsync address so we sync from the same server
+				borg.lawsync_address = newai.lawsync_address
 				borg.notify_ai(TRUE)
 				message_admins("[key_name_admin(user)] slaved [ADMIN_LOOKUPFLW(borg)] to the AI [ADMIN_LOOKUPFLW(newai)].")
 				log_admin("[key_name(user)] slaved [key_name(borg)] to the AI [key_name(newai)].")
@@ -222,6 +224,6 @@
 				message_admins("[key_name_admin(user)] freed [ADMIN_LOOKUPFLW(borg)] from being slaved to an AI.")
 				log_admin("[key_name(user)] freed [key_name(borg)] from being slaved to an AI.")
 			if (borg.lawupdate)
-				borg.lawsync()
+				borg.sync_laws_from_law_server()
 
 	. = TRUE

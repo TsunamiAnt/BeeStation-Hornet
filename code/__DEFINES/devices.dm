@@ -43,6 +43,7 @@
 #define THEME_RETRO "retro"
 
 #define THEME_SYNDICATE "syndicate"
+#define THEME_NTOS_CYBORG "ntos-cyborg"
 
 #define THEME_NEUTRAL "neutral"
 
@@ -67,6 +68,7 @@ GLOBAL_LIST_INIT(ntos_device_themes_default, list(
 	"NtOS Clown Pink" = THEME_NTOS_CLOWN_PINK,
 	"NtOS Clown Yellow" = THEME_NTOS_CLOWN_YELLOW,
 	"NtOS Hackerman" = THEME_NTOS_HACKERMAN,
+	"NtOS Cyborg" = THEME_NTOS_CYBORG,
 	"Hackerman" = THEME_HACKERMAN,
 	"Retro" = THEME_RETRO
 ))
