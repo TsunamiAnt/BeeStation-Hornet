@@ -753,7 +753,7 @@ update_label("John Doe", "Clowny")
 	// Create a dedicated immutable bank account for the spare
 	var/datum/job/captain/J = new/datum/job/captain
 	var/datum/bank_account/spare_account = new("Captain's Spare", J)
-	spare_account.account_security_level = ACCOUNT_SECURITY_LEVEL_CAPTAIN
+	spare_account.account_security_level = ACCOUNT_SECURITY_LEVEL_OFFSTATION
 	spare_account.access = J.get_access()
 	spare_account.access_immutable = TRUE
 	spare_account.bank_cards += src

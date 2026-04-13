@@ -57,7 +57,6 @@ export type AccountDetail = {
   security_level: number;
   suspended: BooleanLike;
   immutable: BooleanLike;
-  balance: number;
   /** The access flags currently on this account */
   access: number[];
   /** Payment per department (assoc: dept_id -> amount) */
@@ -68,6 +67,10 @@ export type AccountDetail = {
   active_departments: number;
   /** Icon state of the first linked card's trim, or null */
   card_trim: string | null;
+  /** Age from crew records, or null if no record */
+  age: number | null;
+  /** Species from crew records, or null */
+  species: string | null;
 };
 
 /** A region grouping of accesses for the UI grid */

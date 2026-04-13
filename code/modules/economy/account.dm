@@ -27,6 +27,8 @@
 	var/account_security_level = ACCOUNT_SECURITY_LEVEL_NORMAL
 	/// If TRUE, this account's access cannot be modified by any console (e.g. Captain's Spare).
 	var/access_immutable = FALSE
+	/// Running total of all salary credits paid to this account over its lifetime.
+	var/total_salary_earned = 0
 
 /datum/bank_account/New(newname, job)
 	account_holder = newname
@@ -96,6 +98,7 @@
 			money_to_transfer += bonus_per_department[D]
 		if(free)
 			adjust_money(money_to_transfer)
+			total_salary_earned += money_to_transfer
 			SSblackbox.record_feedback("amount", "free_income", money_to_transfer)
 			log_econ("[money_to_transfer] credits were given to [src.account_holder]'s account from income.")
 			if(bonus_per_department[D] > 0) //Get rid of bonus if we have one
@@ -111,6 +114,7 @@
 					continue
 				else
 					bank_card_talk("Payday processed, account now holds $[account_balance], paid with $[money_to_transfer] from [D] budget.")
+					total_salary_earned += money_to_transfer
 					//The bonus only resets once it goes through.
 					if(bonus_per_department[D] > 0) //And we're not getting rid of debt
 						bonus_per_department[D] = 0

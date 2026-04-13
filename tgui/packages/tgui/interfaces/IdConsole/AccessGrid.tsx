@@ -1,5 +1,5 @@
 import { useBackend, useLocalState } from 'tgui/backend';
-import { Button, Flex, Section, Tabs } from 'tgui/components';
+import { Button, Flex, Section, Stack, Tabs } from 'tgui/components';
 
 import { AccessEntry, AccessRegion, IdConsoleData } from './types';
 
@@ -48,36 +48,40 @@ export const AccessGrid = () => {
       scrollable
       title="Access"
       buttons={
-        <>
-          <Button
-            icon="check"
-            content="Grant Region"
-            color="good"
-            disabled={!activeRegion || !!selected_account.immutable}
-            onClick={() =>
-              act('grant_region', {
-                account_ref: selected_account.account_ref,
-                region_code: activeRegion?.region_code,
-              })
-            }
-          />
-          <Button
-            icon="times"
-            content="Deny Region"
-            color="bad"
-            disabled={!activeRegion || !!selected_account.immutable}
-            onClick={() =>
-              act('revoke_region', {
-                account_ref: selected_account.account_ref,
-                region_code: activeRegion?.region_code,
-              })
-            }
-          />
-        </>
+        <Stack>
+          <Stack.Item>
+            <Button
+              icon="check"
+              content="Grant Region"
+              color="good"
+              disabled={!activeRegion || !!selected_account.immutable}
+              onClick={() =>
+                act('grant_region', {
+                  account_ref: selected_account.account_ref,
+                  region_code: activeRegion?.region_code,
+                })
+              }
+            />
+          </Stack.Item>
+          <Stack.Item>
+            <Button
+              icon="times"
+              content="Deny Region"
+              color="bad"
+              disabled={!activeRegion || !!selected_account.immutable}
+              onClick={() =>
+                act('revoke_region', {
+                  account_ref: selected_account.account_ref,
+                  region_code: activeRegion?.region_code,
+                })
+              }
+            />
+          </Stack.Item>
+        </Stack>
       }
     >
       <Flex>
-        <Flex.Item>
+        <Flex.Item basis="140px" shrink={0}>
           <Tabs vertical>
             {visibleRegions.map((region) => {
               const status = getRegionStatus(region);
@@ -97,7 +101,7 @@ export const AccessGrid = () => {
             })}
           </Tabs>
         </Flex.Item>
-        <Flex.Item grow={1}>
+        <Flex.Item grow={1} ml={1} style={{ overflow: 'hidden' }}>
           {activeRegion &&
             activeRegion.accesses.map((entry) => (
               <AccessButton key={entry.access_code} entry={entry} />

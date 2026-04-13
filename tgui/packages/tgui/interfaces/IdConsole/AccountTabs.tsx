@@ -102,7 +102,16 @@ const AccountTab = (props: { account: AccountRecord }) => {
       onClick={selectAccount}
       selected={isSelected}
     >
-      <Box bold={isSelected} color={suspended ? 'bad' : 'default'} wrap>
+      <Box
+        bold={isSelected}
+        color={suspended ? 'bad' : 'default'}
+        style={{
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          maxWidth: '180px',
+        }}
+      >
         <Icon name={JOB2ICON[rank] || 'question'} /> {name}
         {suspended ? ' (Suspended)' : ''}
       </Box>

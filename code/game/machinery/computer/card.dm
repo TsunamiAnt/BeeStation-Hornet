@@ -217,10 +217,11 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 	data["target_dept"] = target_dept ? target_dept : 0
 
 	// Build the available trim/card styles grouped by department
-	// For department consoles, only show trims relevant to that department + Command + MISC
+	// For department consoles, only show trims relevant to that department + MISC (Unassigned only)
+	// Command trims and Prisoner are restricted to the master console
 	var/list/allowed_trim_depts = null // null = show all (master console)
 	if(target_dept)
-		allowed_trim_depts = list("Command", "MISC") // Always show these
+		allowed_trim_depts = list("MISC") // Allow unassigned for firing people
 		switch(target_dept)
 			if(DEPT_GEN) // Service + Supply (HoP)
 				allowed_trim_depts += list("Service", "Cargo")
@@ -250,6 +251,9 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 					))
 			current_dept = replacetext(replacetext(style_name, "----", ""), "----", "")
 			current_group_styles = list()
+			continue
+		// For department consoles, filter out Prisoner from MISC, only master can assign Prisoner
+		if(target_dept && current_dept == "MISC" && style_name == JOB_NAME_PRISONER)
 			continue
 		current_group_styles += list(list(
 			"name" = style_name,
@@ -338,22 +342,34 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 		detail["security_level"] = selected.account_security_level
 		detail["suspended"] = selected.suspended
 		detail["immutable"] = selected.access_immutable
-		detail["balance"] = selected.account_balance
 		detail["access"] = selected.access.Copy()
 		detail["active_departments"] = selected.active_departments
+
+		// Extended info from crew records
+		if(record)
+			detail["age"] = record.age
+			detail["species"] = record.species
+		else
+			detail["age"] = null
+			detail["species"] = null
 
 		// Include the current card trim name for the first linked card
 		if(length(selected.bank_cards))
 			var/obj/item/card/id/first_card = selected.bank_cards[1]
-			// Reverse-lookup the trim name from the card's icon_state
+			// Reverse-lookup the trim name from the card's icon_state and hud_state
+			// We check both to disambiguate trims that share the same icon (e.g. Captain/Acting Captain/Command Custom)
 			var/trim_name = null
+			var/fallback_trim_name = null
 			for(var/style_name in get_card_style_list(FALSE))
 				if(findtext(style_name, "----"))
 					continue
 				if(get_cardstyle_by_jobname(style_name) == first_card.icon_state)
-					trim_name = style_name
-					break
-			detail["card_trim"] = trim_name
+					if(!fallback_trim_name)
+						fallback_trim_name = style_name
+					if(get_hud_by_jobname(style_name) == first_card.hud_state)
+						trim_name = style_name
+						break
+			detail["card_trim"] = trim_name || fallback_trim_name
 		else
 			detail["card_trim"] = null
 

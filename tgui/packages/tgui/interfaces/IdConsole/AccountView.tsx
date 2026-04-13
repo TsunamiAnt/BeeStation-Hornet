@@ -141,16 +141,28 @@ const InfoTab = () => {
     account_id,
     suspended,
     immutable,
-    balance,
+    age,
+    species,
+    payments = {},
   } = selected_account;
+
+  // Build list of departments this account draws salary from
+  const paidFrom = Object.entries(payments)
+    .filter(([, amount]) => amount > 0)
+    .map(([dept]) => dept);
 
   return (
     <Section fill scrollable title="Account Information">
       <LabeledList>
         <LabeledList.Item label="Name">{name}</LabeledList.Item>
+        {age !== null && age !== undefined ? (
+          <LabeledList.Item label="Age">{age}</LabeledList.Item>
+        ) : null}
+        {species ? (
+          <LabeledList.Item label="Species">{species}</LabeledList.Item>
+        ) : null}
         <LabeledList.Item label="Job">{rank || 'Unknown'}</LabeledList.Item>
         <LabeledList.Item label="Account ID">{account_id}</LabeledList.Item>
-        <LabeledList.Item label="Balance">${balance}</LabeledList.Item>
         <LabeledList.Item label="Status">
           <Box color={suspended ? 'bad' : 'good'}>
             {suspended ? 'Suspended' : 'Active'}
@@ -163,6 +175,15 @@ const InfoTab = () => {
             </Box>
           </LabeledList.Item>
         ) : null}
+        <LabeledList.Item label="Paid From">
+          {paidFrom.length > 0 ? (
+            paidFrom.map((dept) => (
+              <Box key={dept}>{dept} Budget</Box>
+            ))
+          ) : (
+            <Box color="label">None</Box>
+          )}
+        </LabeledList.Item>
       </LabeledList>
       <Box mt={2}>
         <Button
@@ -194,10 +215,49 @@ const SalaryTab = () => {
 
   if (!selected_account) return null;
 
-  const { account_ref, payments = {}, bonuses = {} } = selected_account;
+  const {
+    account_ref,
+    payments = {},
+    bonuses = {},
+  } = selected_account;
 
   return (
     <Section fill scrollable title="Pay Management">
+      <Section title="All Salaries" mb={1}>
+        <table
+          style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+          }}
+        >
+          <thead>
+            <tr>
+              <th style={{ textAlign: 'left', padding: '2px 6px' }}>
+                <Box color="label">Budget</Box>
+              </th>
+              <th style={{ textAlign: 'right', padding: '2px 6px' }}>
+                <Box color="label">Paycheck</Box>
+              </th>
+              <th style={{ textAlign: 'right', padding: '2px 6px' }}>
+                <Box color="label">Bonus</Box>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {paycheck_departments.map((dept) => (
+              <tr key={dept}>
+                <td style={{ padding: '2px 6px' }}>{dept}</td>
+                <td style={{ textAlign: 'right', padding: '2px 6px' }}>
+                  ${payments[dept] || 0}
+                </td>
+                <td style={{ textAlign: 'right', padding: '2px 6px' }}>
+                  ${bonuses[dept] || 0}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Section>
       <Flex mb={1}>
         <Flex.Item>
           <Tabs>
