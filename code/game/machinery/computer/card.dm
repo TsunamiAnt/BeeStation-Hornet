@@ -17,7 +17,7 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 	desc = "You can use this to manage jobs and ID access."
 	icon_screen = "id"
 	icon_keyboard = "generic_key"
-	req_one_access = list(ACCESS_HEADS, ACCESS_CAPTAIN)
+	req_one_access = list(ACCESS_HEADS, ACCESS_CHANGE_IDS)
 	circuit = /obj/item/circuitboard/computer/card
 	var/mode = 0
 	var/printing = null
@@ -337,7 +337,7 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 			region_access = list()
 			region_access_payment = NONE
 			head_subordinates = list()
-			if(ACCESS_CAPTAIN in inserted_scan_id.access)
+			if(ACCESS_CHANGE_IDS in inserted_scan_id.access)
 				if(target_dept)
 					head_subordinates = get_all_jobs()
 					region_access |= target_dept
@@ -572,7 +572,7 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 					region_access = list()
 					region_access_payment = NONE
 					head_subordinates = list()
-					if(ACCESS_CAPTAIN in inserted_scan_id.access)
+					if(ACCESS_CHANGE_IDS in inserted_scan_id.access)
 						if(target_dept)
 							head_subordinates = get_all_jobs()
 							region_access |= target_dept
@@ -764,7 +764,7 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 
 		if("make_job_available")
 			// MAKE ANOTHER JOB POSITION AVAILABLE FOR LATE JOINERS
-			if(inserted_scan_id && (ACCESS_CAPTAIN in inserted_scan_id.access) && !target_dept)
+			if(inserted_scan_id && (ACCESS_CHANGE_IDS in inserted_scan_id.access) && !target_dept)
 				var/edit_job_target = href_list["job"]
 				var/datum/job/j = SSjob.GetJob(edit_job_target)
 				if(!j)
@@ -781,7 +781,7 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 
 		if("make_job_unavailable")
 			// MAKE JOB POSITION UNAVAILABLE FOR LATE JOINERS
-			if(inserted_scan_id && (ACCESS_CAPTAIN in inserted_scan_id.access) && !target_dept)
+			if(inserted_scan_id && (ACCESS_CHANGE_IDS in inserted_scan_id.access) && !target_dept)
 				var/edit_job_target = href_list["job"]
 				var/datum/job/j = SSjob.GetJob(edit_job_target)
 				if(!j)
@@ -799,7 +799,7 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 
 		if ("prioritize_job")
 			// TOGGLE WHETHER JOB APPEARS AS PRIORITIZED IN THE LOBBY
-			if(inserted_scan_id && (ACCESS_CAPTAIN in inserted_scan_id.access) && !target_dept)
+			if(inserted_scan_id && (ACCESS_CHANGE_IDS in inserted_scan_id.access) && !target_dept)
 				var/priority_target = href_list["job"]
 				var/datum/job/j = SSjob.GetJob(priority_target)
 				if(!j)
@@ -971,7 +971,7 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 
 /// Returns if auth id has head access that is eligible to adjust payment
 /obj/machinery/computer/card/proc/check_auth_payment()
-	for(var/each in list(ACCESS_HEADS, ACCESS_CAPTAIN, ACCESS_HOP, ACCESS_CMO, ACCESS_RD, ACCESS_CE))
+	for(var/each in list(ACCESS_HEADS, ACCESS_CHANGE_IDS, ACCESS_HOP, ACCESS_CMO, ACCESS_RD, ACCESS_CE))
 		if(each in inserted_scan_id.access)
 			return TRUE
 	return FALSE
