@@ -28,8 +28,10 @@ export type IdConsoleData = {
   printing: BooleanLike;
   /** Name of the inserted modify card, or null */
   modify_name: string | null;
-  /** Available card trim styles for remote recoloring */
-  trim_styles: TrimStyle[];
+  /** Available card trim styles for remote recoloring, grouped by department */
+  trim_groups: TrimGroup[];
+  /** The department code this console is restricted to (0 = all) */
+  target_dept: number;
 };
 
 /** A crew account as shown in the left-panel list */
@@ -91,4 +93,12 @@ export type TrimStyle = {
   name: string;
   /** The icon_state this trim maps to */
   icon: string;
+};
+
+/** A group of trim styles organized by department */
+export type TrimGroup = {
+  /** Department name (e.g. "Command", "Service") */
+  department: string;
+  /** Trim styles within this department */
+  styles: TrimStyle[];
 };

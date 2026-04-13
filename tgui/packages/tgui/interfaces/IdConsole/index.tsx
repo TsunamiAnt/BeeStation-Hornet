@@ -97,20 +97,20 @@ const AuthenticatedView = () => {
               Logged in as: <b>{scan_name || 'Unknown'}</b>
               <Button
                 align="right"
-                icon="eject"
-                ml={2}
-                onClick={() => act('eject_scan')}
-              >
-                Eject ID
-              </Button>
-              <Button
-                align="right"
                 icon="lock"
                 color="good"
-                ml={1}
+                ml={2}
                 onClick={() => act('logout')}
               >
                 Log Out
+              </Button>
+              <Button
+                align="right"
+                icon="eject"
+                ml={1}
+                onClick={() => act('eject_scan')}
+              >
+                Eject ID
               </Button>
             </NoticeBox>
           </Stack.Item>

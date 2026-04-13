@@ -214,18 +214,55 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 	data["is_master"] = !target_dept
 	data["is_silicon"] = issilicon(user)
 	data["paycheck_departments"] = available_paycheck_departments.Copy()
+	data["target_dept"] = target_dept ? target_dept : 0
 
-	// Build the available trim/card styles
-	var/list/trim_styles = list()
+	// Build the available trim/card styles grouped by department
+	// For department consoles, only show trims relevant to that department + Command + MISC
+	var/list/allowed_trim_depts = null // null = show all (master console)
+	if(target_dept)
+		allowed_trim_depts = list("Command", "MISC") // Always show these
+		switch(target_dept)
+			if(DEPT_GEN) // Service + Supply (HoP)
+				allowed_trim_depts += list("Service", "Cargo")
+			if(DEPT_SEC)
+				allowed_trim_depts += list("Security")
+			if(DEPT_MED)
+				allowed_trim_depts += list("Medical")
+			if(DEPT_SCI)
+				allowed_trim_depts += list("Science")
+			if(DEPT_ENG)
+				allowed_trim_depts += list("Engineering")
+			if(DEPT_SUP)
+				allowed_trim_depts += list("Cargo")
+
+	var/list/trim_groups = list()
+	var/list/current_group_styles = list()
+	var/current_dept = null
 	for(var/style_name in get_card_style_list(FALSE))
-		// Skip the separator labels (e.g. "----Command----")
+		// Separator labels like "----Command----" mark department boundaries
 		if(findtext(style_name, "----"))
+			// Save previous group
+			if(current_dept && length(current_group_styles))
+				if(!allowed_trim_depts || (current_dept in allowed_trim_depts))
+					trim_groups += list(list(
+						"department" = current_dept,
+						"styles" = current_group_styles,
+					))
+			current_dept = replacetext(replacetext(style_name, "----", ""), "----", "")
+			current_group_styles = list()
 			continue
-		trim_styles += list(list(
+		current_group_styles += list(list(
 			"name" = style_name,
 			"icon" = get_cardstyle_by_jobname(style_name),
 		))
-	data["trim_styles"] = trim_styles
+	// Don't forget the last group
+	if(current_dept && length(current_group_styles))
+		if(!allowed_trim_depts || (current_dept in allowed_trim_depts))
+			trim_groups += list(list(
+				"department" = current_dept,
+				"styles" = current_group_styles,
+			))
+	data["trim_groups"] = trim_groups
 
 	// Build the access region definitions (these don't change)
 	var/list/regions = list()
@@ -261,6 +298,18 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 				continue
 			if(B.account_security_level >= ACCOUNT_SECURITY_LEVEL_CAPTAIN && authenticated < 2)
 				continue
+			// For minor (department) consoles, only show accounts with at least one access in our region
+			if(target_dept && region_access)
+				var/has_relevant_access = FALSE
+				for(var/region in region_access)
+					for(var/A in get_region_accesses(region))
+						if(A in B.access)
+							has_relevant_access = TRUE
+							break
+					if(has_relevant_access)
+						break
+				if(!has_relevant_access)
+					continue
 			var/datum/record/crew/record = find_record(B.account_holder, GLOB.manifest.general)
 			accounts += list(list(
 				"account_ref" = REF(B),
@@ -293,10 +342,18 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 		detail["access"] = selected.access.Copy()
 		detail["active_departments"] = selected.active_departments
 
-		// Include the current card trim for the first linked card
+		// Include the current card trim name for the first linked card
 		if(length(selected.bank_cards))
 			var/obj/item/card/id/first_card = selected.bank_cards[1]
-			detail["card_trim"] = first_card.icon_state
+			// Reverse-lookup the trim name from the card's icon_state
+			var/trim_name = null
+			for(var/style_name in get_card_style_list(FALSE))
+				if(findtext(style_name, "----"))
+					continue
+				if(get_cardstyle_by_jobname(style_name) == first_card.icon_state)
+					trim_name = style_name
+					break
+			detail["card_trim"] = trim_name
 		else
 			detail["card_trim"] = null
 
@@ -311,8 +368,11 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 		data["selected_account"] = detail
 
 		// Build per-account access region data (with has_access and can_edit flags)
+		// For minor consoles, only send regions the console can edit
 		var/list/regions = list()
 		for(var/i in 1 to 7)
+			if(target_dept && region_access && !(i in region_access))
+				continue
 			var/can_edit_region = (authenticated == 2) || (region_access && (i in region_access))
 			var/list/region_data = list()
 			region_data["name"] = get_region_accesses_name(i)
@@ -565,6 +625,103 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 			playsound(src, 'sound/machines/terminal_prompt_confirm.ogg', 50, FALSE)
 			return TRUE
 
+		if("grant_region")
+			if(!authenticated)
+				return FALSE
+			var/target_ref = params["account_ref"]
+			var/region_code = text2num(params["region_code"])
+			if(!target_ref || isnull(region_code))
+				return FALSE
+			var/datum/bank_account/target = locate(target_ref)
+			if(!target || !(target in SSeconomy.bank_accounts))
+				return FALSE
+			if(target.access_immutable)
+				balloon_alert(user, "access locked")
+				return FALSE
+			if(!can_edit_access_region(region_code))
+				balloon_alert(user, "unauthorized")
+				return FALSE
+			var/list/to_grant = get_region_accesses(region_code)
+			target.grant_access(to_grant)
+			log_id("[key_name(user)] granted [get_region_accesses_name(region_code)] regional access to [target.account_holder]'s account using [inserted_scan_id] at [AREACOORD(user)].")
+			playsound(src, 'sound/machines/terminal_prompt_confirm.ogg', 50, FALSE)
+			return TRUE
+
+		if("revoke_region")
+			if(!authenticated)
+				return FALSE
+			var/target_ref = params["account_ref"]
+			var/region_code = text2num(params["region_code"])
+			if(!target_ref || isnull(region_code))
+				return FALSE
+			var/datum/bank_account/target = locate(target_ref)
+			if(!target || !(target in SSeconomy.bank_accounts))
+				return FALSE
+			if(target.access_immutable)
+				balloon_alert(user, "access locked")
+				return FALSE
+			if(!can_edit_access_region(region_code))
+				balloon_alert(user, "unauthorized")
+				return FALSE
+			var/list/to_revoke = get_region_accesses(region_code)
+			target.revoke_access(to_revoke)
+			log_id("[key_name(user)] revoked [get_region_accesses_name(region_code)] regional access from [target.account_holder]'s account using [inserted_scan_id] at [AREACOORD(user)].")
+			playsound(src, 'sound/machines/terminal_prompt_deny.ogg', 50, FALSE)
+			return TRUE
+
+		if("set_paycheck_dept")
+			var/dept = params["dept"]
+			if(!dept || !(dept in available_paycheck_departments))
+				return FALSE
+			target_paycheck = dept
+			return TRUE
+
+		if("sync_access")
+			if(!authenticated)
+				return FALSE
+			var/target_ref = params["account_ref"]
+			if(!target_ref)
+				return FALSE
+			var/datum/bank_account/target = locate(target_ref)
+			if(!target || !(target in SSeconomy.bank_accounts))
+				return FALSE
+			target.sync_access_to_cards()
+			balloon_alert(user, "access synced to cards")
+			playsound(src, 'sound/machines/terminal_prompt_confirm.ogg', 50, FALSE)
+			return TRUE
+
+		if("adjust_pay")
+			if(!authenticated)
+				return FALSE
+			var/target_ref = params["account_ref"]
+			var/dept = params["dept"]
+			var/amount = text2num(params["amount"])
+			if(!target_ref || !dept || isnull(amount))
+				return FALSE
+			var/datum/bank_account/target = locate(target_ref)
+			if(!target || !(target in SSeconomy.bank_accounts))
+				return FALSE
+			if(amount < 0)
+				return FALSE
+			target.payment_per_department[dept] = amount
+			log_id("[key_name(user)] set [target.account_holder]'s [dept] paycheck to [amount] using [inserted_scan_id] at [AREACOORD(user)].")
+			return TRUE
+
+		if("adjust_bonus")
+			if(!authenticated)
+				return FALSE
+			var/target_ref = params["account_ref"]
+			var/dept = params["dept"]
+			var/amount = text2num(params["amount"])
+			if(!target_ref || !dept || isnull(amount))
+				return FALSE
+			var/datum/bank_account/target = locate(target_ref)
+			if(!target || !(target in SSeconomy.bank_accounts))
+				return FALSE
+			target.bonus_per_department[dept] = amount
+			log_id("[key_name(user)] set [target.account_holder]'s [dept] bonus to [amount] using [inserted_scan_id] at [AREACOORD(user)].")
+			return TRUE
+
 	return FALSE
 
 /// Returns TRUE if this console is allowed to toggle the given access code.
@@ -575,6 +732,14 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 		for(var/region in region_access)
 			if(access_code in get_region_accesses(region))
 				return TRUE
+	return FALSE
+
+/// Returns TRUE if this console is allowed to modify accesses in the given region.
+/obj/machinery/computer/card/proc/can_edit_access_region(region_code)
+	if(authenticated == 2)
+		return TRUE
+	if(authenticated == 1 && region_access)
+		return (region_code in region_access)
 	return FALSE
 
 /obj/machinery/computer/card/Topic(href, href_list)

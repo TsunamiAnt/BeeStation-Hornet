@@ -81,7 +81,6 @@
 		progs_to_store += new /datum/computer_file/program/remote_airlock(src)
 
 	if(disk_flags & DISK_HOP)
-		progs_to_store += new /datum/computer_file/program/card_mod(src)
 		progs_to_store += new /datum/computer_file/program/job_management(src)
 
 	for (var/datum/computer_file/program/prog in progs_to_store)

@@ -159,10 +159,13 @@
 /**
  * Copies this account's authoritative access list to every linked card.
  * Called automatically by set_access(), grant_access(), and revoke_access().
+ * If notify is TRUE, sends a ping to the card holder informing them of the update.
  */
-/datum/bank_account/proc/sync_access_to_cards()
+/datum/bank_account/proc/sync_access_to_cards(notify = TRUE)
 	for(var/obj/item/card/id/card in bank_cards)
 		card.access = access.Copy()
+	if(notify)
+		bank_card_talk("Your access permissions have been updated.")
 
 /**
  * Replaces the entire access list and syncs to all linked cards.

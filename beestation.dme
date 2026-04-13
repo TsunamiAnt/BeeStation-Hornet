@@ -3845,7 +3845,6 @@
 #include "code\modules\modular_computers\file_system\programs\borg_monitor.dm"
 #include "code\modules\modular_computers\file_system\programs\borg_self_monitor.dm"
 #include "code\modules\modular_computers\file_system\programs\budgetordering.dm"
-#include "code\modules\modular_computers\file_system\programs\card.dm"
 #include "code\modules\modular_computers\file_system\programs\cargobounty.dm"
 #include "code\modules\modular_computers\file_system\programs\configurator.dm"
 #include "code\modules\modular_computers\file_system\programs\crewmanifest.dm"
