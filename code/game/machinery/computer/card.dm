@@ -22,7 +22,7 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 	var/mode = 0
 	var/printing = null
 	var/target_dept = DEPT_ALL //Which department this computer has access to.
-	var/available_paycheck_departments = list()
+	var/list/available_paycheck_departments = list()
 	var/target_paycheck = ACCOUNT_SRV_ID
 
 	//Cooldown for closing positions in seconds
@@ -621,11 +621,20 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 					var/access_type = text2num(href_list["access_target"])
 					var/access_allowed = text2num(href_list["allowed"])
 					if(access_type in (istype(src, /obj/machinery/computer/card/centcom)?get_all_centcom_access() : get_all_accesses()))
-						inserted_modify_id.access -= access_type
-						log_id("[key_name(usr)] removed [get_access_desc(access_type)] from [inserted_modify_id] using [inserted_scan_id] at [AREACOORD(usr)].")
-						if(access_allowed == 1)
-							inserted_modify_id.access |= access_type
-							log_id("[key_name(usr)] added [get_access_desc(access_type)] to [inserted_modify_id] using [inserted_scan_id] at [AREACOORD(usr)].")
+						var/datum/bank_account/target_account = inserted_modify_id?.registered_account
+						if(target_account && !target_account.access_immutable)
+							if(access_allowed == 1)
+								target_account.grant_access(access_type)
+								log_id("[key_name(usr)] added [get_access_desc(access_type)] to [inserted_modify_id] (via account) using [inserted_scan_id] at [AREACOORD(usr)].")
+							else
+								target_account.revoke_access(access_type)
+								log_id("[key_name(usr)] removed [get_access_desc(access_type)] from [inserted_modify_id] (via account) using [inserted_scan_id] at [AREACOORD(usr)].")
+						else
+							inserted_modify_id.access -= access_type
+							log_id("[key_name(usr)] removed [get_access_desc(access_type)] from [inserted_modify_id] using [inserted_scan_id] at [AREACOORD(usr)].")
+							if(access_allowed == 1)
+								inserted_modify_id.access |= access_type
+								log_id("[key_name(usr)] added [get_access_desc(access_type)] to [inserted_modify_id] using [inserted_scan_id] at [AREACOORD(usr)].")
 						playsound(src, "terminal_type", 50, FALSE)
 		if ("assign")
 			if (authenticated == 2)
@@ -639,7 +648,11 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 						log_id("[key_name(usr)] changed [inserted_modify_id] assignment to [newJob] using [inserted_scan_id] at [AREACOORD(usr)].")
 
 				else if(t1 == "Unassigned")
-					inserted_modify_id.access -= get_all_accesses()
+					var/datum/bank_account/target_account = inserted_modify_id.registered_account
+					if(target_account && !target_account.access_immutable)
+						target_account.set_access(list())
+					else
+						inserted_modify_id.access -= get_all_accesses()
 
 					// These lines are to make an individual to an assistant
 					if(B)
@@ -671,8 +684,12 @@ GLOBAL_VAR_INIT(time_last_changed_position, 0)
 							updateUsrDialog()
 							return
 
-						inserted_modify_id.access -= get_all_accesses()
-						inserted_modify_id.access |= jobdatum.get_access()
+						var/datum/bank_account/target_account = inserted_modify_id.registered_account
+						if(target_account && !target_account.access_immutable)
+							target_account.set_access(jobdatum.get_access())
+						else
+							inserted_modify_id.access -= get_all_accesses()
+							inserted_modify_id.access |= jobdatum.get_access()
 					else // centcom level
 						inserted_modify_id.access -= get_all_centcom_access()
 						inserted_modify_id.access |= get_centcom_access(t1)

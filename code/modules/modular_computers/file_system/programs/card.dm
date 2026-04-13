@@ -170,7 +170,11 @@
 				if(!(target_id_card.assignment in head_subordinates) && target_id_card.assignment != JOB_NAME_ASSISTANT)
 					return
 
-			target_id_card.access -= get_all_centcom_access() + get_all_accesses()
+			var/datum/bank_account/account = target_id_card.registered_account
+			if(account && !account.access_immutable)
+				account.set_access(list())
+			else
+				target_id_card.access -= get_all_centcom_access() + get_all_accesses()
 			target_id_card.assignment = "Unassigned"
 			target_id_card.update_label()
 			log_id("[key_name(usr)] unassigned and stripped all access from [target_id_card] using [user_id_card] via a portable ID console at [AREACOORD(usr)].")
@@ -224,8 +228,12 @@
 						playsound(computer, 'sound/machines/terminal_prompt_deny.ogg', 50, FALSE)
 						return
 
-					target_id_card.access -= get_all_accesses()
-					target_id_card.access |= jobdatum.get_access()
+					var/datum/bank_account/account = target_id_card.registered_account
+					if(account && !account.access_immutable)
+						account.set_access(jobdatum.get_access())
+					else
+						target_id_card.access -= get_all_accesses()
+						target_id_card.access |= jobdatum.get_access()
 				else // centcom level
 					target_id_card.access -= get_all_centcom_access()
 					target_id_card.access |= get_centcom_access(target)
@@ -244,25 +252,42 @@
 				return
 			var/access_type = text2num(params["access_target"])
 			if(access_type in (is_centcom ? get_all_centcom_access() : get_all_accesses()))
-				if(access_type in target_id_card.access)
-					target_id_card.access -= access_type
-					log_id("[key_name(usr)] removed [get_access_desc(access_type)] from [target_id_card] using [user_id_card] via a portable ID console at [AREACOORD(usr)].")
+				var/datum/bank_account/account = target_id_card.registered_account
+				if(account && !account.access_immutable)
+					if(account.has_access(access_type))
+						account.revoke_access(access_type)
+						log_id("[key_name(usr)] removed [get_access_desc(access_type)] from [target_id_card] (via account) using [user_id_card] via a portable ID console at [AREACOORD(usr)].")
+					else
+						account.grant_access(access_type)
+						log_id("[key_name(usr)] added [get_access_desc(access_type)] to [target_id_card] (via account) using [user_id_card] via a portable ID console at [AREACOORD(usr)].")
 				else
-					target_id_card.access |= access_type
-					log_id("[key_name(usr)] added [get_access_desc(access_type)] to [target_id_card] using [user_id_card] via a portable ID console at [AREACOORD(usr)].")
+					if(access_type in target_id_card.access)
+						target_id_card.access -= access_type
+						log_id("[key_name(usr)] removed [get_access_desc(access_type)] from [target_id_card] using [user_id_card] via a portable ID console at [AREACOORD(usr)].")
+					else
+						target_id_card.access |= access_type
+						log_id("[key_name(usr)] added [get_access_desc(access_type)] to [target_id_card] using [user_id_card] via a portable ID console at [AREACOORD(usr)].")
 				playsound(computer, "terminal_type", 50, FALSE)
 				return TRUE
 		if("PRG_grantall")
 			if(!authenticated || minor)
 				return
-			target_id_card.access |= (is_centcom ? get_all_centcom_access() : get_all_accesses())
+			var/datum/bank_account/account = target_id_card.registered_account
+			if(account && !account.access_immutable)
+				account.grant_access(is_centcom ? get_all_centcom_access() : get_all_accesses())
+			else
+				target_id_card.access |= (is_centcom ? get_all_centcom_access() : get_all_accesses())
 			log_id("[key_name(usr)] granted All Access to [target_id_card] using [user_id_card] via a portable ID console at [AREACOORD(usr)].")
 			playsound(computer, 'sound/machines/terminal_prompt_confirm.ogg', 50, FALSE)
 			return TRUE
 		if("PRG_denyall")
 			if(!authenticated || minor)
 				return
-			target_id_card.access.Cut()
+			var/datum/bank_account/account = target_id_card.registered_account
+			if(account && !account.access_immutable)
+				account.revoke_access(is_centcom ? get_all_centcom_access() : get_all_accesses())
+			else
+				target_id_card.access -= (is_centcom ? get_all_centcom_access() : get_all_accesses())
 			log_id("[key_name(usr)] removed All Access from [target_id_card] using [user_id_card] via a portable ID console at [AREACOORD(usr)].")
 			playsound(computer, 'sound/machines/terminal_prompt_deny.ogg', 50, FALSE)
 			return TRUE
@@ -272,7 +297,12 @@
 			var/region = text2num(params["region"])
 			if(isnull(region))
 				return
-			target_id_card.access |= get_region_accesses(region)
+			var/list/region_accesses = get_region_accesses(region)
+			var/datum/bank_account/account = target_id_card.registered_account
+			if(account && !account.access_immutable)
+				account.grant_access(region_accesses)
+			else
+				target_id_card.access |= region_accesses
 			log_id("[key_name(usr)] granted [get_region_accesses_name(region)] regional access to [target_id_card] using [user_id_card] via a portable ID console at [AREACOORD(usr)].")
 			playsound(computer, 'sound/machines/terminal_prompt_confirm.ogg', 50, FALSE)
 			return TRUE
@@ -282,8 +312,13 @@
 			var/region = text2num(params["region"])
 			if(isnull(region))
 				return
-			target_id_card.access -= get_region_accesses(region)
-			log_id("[key_name(usr)] removed [region] regional access from [target_id_card] using [user_id_card] via a portable ID console at [AREACOORD(usr)].")
+			var/list/region_accesses = get_region_accesses(region)
+			var/datum/bank_account/account = target_id_card.registered_account
+			if(account && !account.access_immutable)
+				account.revoke_access(region_accesses)
+			else
+				target_id_card.access -= region_accesses
+			log_id("[key_name(usr)] removed [get_region_accesses_name(region)] regional access from [target_id_card] using [user_id_card] via a portable ID console at [AREACOORD(usr)].")
 			playsound(computer, 'sound/machines/terminal_prompt_deny.ogg', 50, FALSE)
 			return TRUE
 
@@ -372,7 +407,8 @@
 	if(id_card)
 		data["id_rank"] = id_card.assignment ? id_card.assignment : "Unassigned"
 		data["id_owner"] = id_card.registered_name ? id_card.registered_name : "-----"
-		data["access_on_card"] = id_card.access
+		var/datum/bank_account/account = id_card.registered_account
+		data["access_on_card"] = (account ? account.access : id_card.access)
 
 	return data
 
