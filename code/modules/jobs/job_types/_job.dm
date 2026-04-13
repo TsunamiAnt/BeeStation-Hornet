@@ -450,6 +450,7 @@
 	if(!visuals_only)
 		var/datum/bank_account/bank_account = new(H.real_name, src)
 		bank_account.payday(STARTING_PAYCHECKS, TRUE)
+		bank_account.access = src.get_access()
 		H.mind?.account_id = bank_account.account_id
 
 	//Equip the rest of the gear
@@ -638,6 +639,8 @@
 
 	var/obj/item/card/id/card = user.wear_id
 	if(istype(card))
+		// Access will be synced from the account once linked below.
+		// Set it from the job as a fallback in case account linking fails.
 		card.access = equipped_job.get_access()
 		shuffle_inplace(card.access) // Shuffle access list to make NTNet passkeys less predictable
 		card.registered_name = user.real_name
@@ -656,6 +659,9 @@
 			if(account.account_id == user.mind.account_id)
 				card.registered_account = account
 				account.bank_cards += card
+				// Sync the card's access from the account
+				card.access = account.access.Copy()
+				shuffle_inplace(card.access) // No idea what NTnet passkeys are, but sure, can't hurt.
 				break
 		user.sec_hud_set_ID()
 

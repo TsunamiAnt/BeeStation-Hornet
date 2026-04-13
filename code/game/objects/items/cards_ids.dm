@@ -370,6 +370,8 @@
 
 			B.bank_cards += src
 			registered_account = B
+			// Sync the card's access from the newly linked account
+			access = B.access.Copy()
 			to_chat(user, span_notice("The provided account has been linked to this ID card."))
 
 			return TRUE
@@ -643,6 +645,7 @@ update_label("John Doe", "Clowny")
 							account.bank_cards += src
 							registered_account = account
 							to_chat(user, span_notice("Your account number has been automatically assigned."))
+							break
 			return
 		else if (popup_input == "Change Account ID")
 			set_new_account(user)
