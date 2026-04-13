@@ -451,10 +451,8 @@
 		var/datum/bank_account/bank_account = new(H.real_name, src)
 		bank_account.payday(STARTING_PAYCHECKS, TRUE)
 		bank_account.access = src.get_access()
-		// Captain gets immutable All Access — cannot be changed by any console
 		if(istype(src, /datum/job/captain))
 			bank_account.account_security_level = ACCOUNT_SECURITY_LEVEL_CAPTAIN
-			bank_account.access_immutable = TRUE
 		H.mind?.account_id = bank_account.account_id
 
 	//Equip the rest of the gear
